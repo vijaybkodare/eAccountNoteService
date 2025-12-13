@@ -1,0 +1,47 @@
+# Build outputs
+bin/
+obj/
+
+# Visual Studio / Rider / VS Code
+.vs/
+.idea/
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# Logs
+logs/
+*.log
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+
+# Publish outputs
+**/publish/
+**/Publish/
+
+# Resharper / Analyzer caches
+_ReSharper*/
+*.DotSettings.user
+
+# ASP.NET Core
+appsettings.Development.json
+appsettings.*.local.json
+
+# Static web assets (if generated)
+wwwroot/dist/
+wwwroot/node_modules/
+
+# Node / front-end
+node_modules/
+npm-debug.log*
+yarn.lock
+package-lock.json
+
+# Other
+*.swp
+*.tmp
+~$*

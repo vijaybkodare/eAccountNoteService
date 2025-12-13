@@ -1,0 +1,6 @@
+@eAccounteService_HostAddress = http://localhost:5239
+
+GET {{eAccounteService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
