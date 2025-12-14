@@ -16,12 +16,12 @@ public class AdvChargeService
     public async Task<IEnumerable<AdvCharge>> GetRecordsAsync(decimal orgId)
     {
         const string sql = @"SELECT AC.*, AM1.AccountName AS DrAccount, AM2.AccountName AS CrAccount, IM.ItemName
-+                             FROM AdvCharge AC
-+                             INNER JOIN AccountMaster AM1 ON AM1.AccountId = AC.DrAccountId
-+                             INNER JOIN AccountMaster AM2 ON AM2.AccountId = AC.CrAccountId
-+                             INNER JOIN ItemMaster IM ON IM.ItemId = AC.ItemId
-+                             WHERE AC.OrgId = @OrgId
-+                             ORDER BY AC.AdvChargeNo";
+                             FROM AdvCharge AC
+                             INNER JOIN AccountMaster AM1 ON AM1.AccountId = AC.DrAccountId
+                             INNER JOIN AccountMaster AM2 ON AM2.AccountId = AC.CrAccountId
+                             INNER JOIN ItemMaster IM ON IM.ItemId = AC.ItemId
+                             WHERE AC.OrgId = @OrgId
+                             ORDER BY AC.AdvChargeNo";
 
         return await _dapperService.QueryAsync<AdvCharge>(sql, new { OrgId = orgId });
     }
@@ -41,10 +41,10 @@ public class AdvChargeService
     public async Task<AdvCharge> GetAccountSummaryAsync(decimal accountId)
     {
         const string sql = @"SELECT TOP 1 AdvChargeId, Amount, SettleAmount
-+                             FROM AdvCharge
-+                             WHERE DrAccountId = @AccountId
-+                               AND SettleAmount < Amount
-+                             ORDER BY AdvChargeNo";
+                             FROM AdvCharge
+                             WHERE DrAccountId = @AccountId
+                               AND SettleAmount < Amount
+                             ORDER BY AdvChargeNo";
 
         var result = await _dapperService.QuerySingleOrDefaultAsync<AdvCharge>(sql, new { AccountId = accountId });
         return result ?? new AdvCharge();
@@ -86,8 +86,8 @@ public class AdvChargeService
     public async Task<bool> TransactionIdExistsAsync(decimal orgId, string transactionId)
     {
         const string sql = @"SELECT COUNT(1)
-+                             FROM AdvCharge
-+                             WHERE OrgId = @OrgId AND TransactionId = @TransactionId";
+                             FROM AdvCharge
+                             WHERE OrgId = @OrgId AND TransactionId = @TransactionId";
 
         var count = await _dapperService.QuerySingleOrDefaultAsync<int>(sql, new { OrgId = orgId, TransactionId = transactionId });
         return count > 0;
@@ -96,9 +96,9 @@ public class AdvChargeService
     private async Task<string> GetOrderNoAsync(decimal orgId)
     {
         const string sql = @"SELECT TOP 1 AdvChargeNo
-+                             FROM AdvCharge
-+                             WHERE OrgId = @OrgId
-+                             ORDER BY AdvChargeId DESC";
+                             FROM AdvCharge
+                             WHERE OrgId = @OrgId
+                             ORDER BY AdvChargeId DESC";
 
         var lastNo = await _dapperService.QuerySingleOrDefaultAsync<string>(sql, new { OrgId = orgId });
         if (string.IsNullOrWhiteSpace(lastNo))

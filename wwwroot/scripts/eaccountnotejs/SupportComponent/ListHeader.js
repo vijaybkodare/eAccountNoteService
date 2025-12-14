@@ -8,10 +8,10 @@ var ListHeader = React.createClass({
             { className: "panel-heading" },
             React.createElement(
                 "button",
-                { className: "btn btn-primary", onClick: this.props.ShowNextComponent },
+                { className: "btn btn-primary", style: { marginRight: 7 }, onClick: this.props.ShowNextComponent },
                 React.createElement("span", { className: className })
             ),
-            "\xA0",
+            "123",
             this.props.Title,
             React.createElement(
                 "span",

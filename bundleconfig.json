@@ -127,6 +127,6 @@
     "minify": {
       "enabled": true
     },
-    "sourceMap": false
+    "sourceMap": true
   }
 ]

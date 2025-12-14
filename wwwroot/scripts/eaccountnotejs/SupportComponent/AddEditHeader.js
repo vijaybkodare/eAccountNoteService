@@ -7,10 +7,9 @@ var AddEditHeader = React.createClass({
             { className: "panel-heading" },
             React.createElement(
                 "button",
-                { className: "btn btn-primary", onClick: this.props.ShowList },
+                { className: "btn btn-primary", style: { marginRight: 7 }, onClick: this.props.ShowList },
                 React.createElement("span", { className: "glyphicon glyphicon-chevron-left" })
             ),
-            " \xA0",
             this.props.Title,
             React.createElement(
                 "span",

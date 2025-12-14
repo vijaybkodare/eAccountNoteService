@@ -3,10 +3,9 @@ var ListHeader = React.createClass({
         var className = "glyphicon  glyphicon-" + (this.props.ItemSelMode? "chevron-left" : "home");
         return (
             <div className="panel-heading">
-                <button className="btn btn-primary" onClick={this.props.ShowNextComponent}>
+                <button className="btn btn-primary" style={{ marginRight: 7 }} onClick={this.props.ShowNextComponent}>
                     <span className={className} />
                 </button>
-                &nbsp;
                 {this.props.Title}
                 <span style={{ position: "absolute", top: 17, right: 10 }}>
                     <span className="glyphicon glyphicon-th" />

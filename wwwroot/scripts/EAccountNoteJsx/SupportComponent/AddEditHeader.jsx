@@ -2,9 +2,9 @@ var AddEditHeader = React.createClass({
     render: function() {
         return (
             <div className="panel-heading">
-                <button className="btn btn-primary" onClick={this.props.ShowList}>
+                <button className="btn btn-primary" style={{ marginRight: 7 }} onClick={this.props.ShowList}>
                     <span className="glyphicon glyphicon-chevron-left" />
-                </button> &nbsp;
+                </button>
                 {this.props.Title}
                 <span style={{ position: "absolute", top: 17, right: 10 }}>
                     <span className="glyphicon glyphicon-th" />
