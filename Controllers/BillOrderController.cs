@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace eAccountNoteService.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class BillOrderController : ControllerBase
 {
     private readonly BillOrderService _billOrderService;

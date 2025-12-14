@@ -16,5 +16,5 @@ public class ChargeOrder
     public string Remark { get; set; } = string.Empty;
     public string ItemName { get; set; } = string.Empty;
     public string AccountName { get; set; } = string.Empty;
-    // For now we omit ChargePayeeDetails details handling in the API implementation
+    public List<ChargePayeeDetail> ChargePayeeDetails { get; set; } = new();
 }

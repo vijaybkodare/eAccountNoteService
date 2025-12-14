@@ -20,11 +20,11 @@ public class BillOrderService
     public async Task<BillOrder> GetRecordAsync(decimal billOrderId, decimal orgId)
     {
         const string sql = @"SELECT BO.*, AM1.AccountName, AM2.AccountName AS BankAccount, IM.ItemName
-+                             FROM BillOrder BO
-+                             INNER JOIN AccountMaster AM1 ON AM1.AccountId = BO.AccountId
-+                             INNER JOIN AccountMaster AM2 ON AM2.AccountId = BO.BankAccountId
-+                             INNER JOIN ItemMaster IM ON IM.ItemId = BO.ItemId
-+                             WHERE BO.BillOrderId = @BillOrderId";
+                             FROM BillOrder BO
+                             INNER JOIN AccountMaster AM1 ON AM1.AccountId = BO.AccountId
+                             INNER JOIN AccountMaster AM2 ON AM2.AccountId = BO.BankAccountId
+                             INNER JOIN ItemMaster IM ON IM.ItemId = BO.ItemId
+                             WHERE BO.BillOrderId = @BillOrderId";
 
         var entity = await _dapperService.QuerySingleOrDefaultAsync<BillOrder>(sql, new { BillOrderId = billOrderId });
         if (entity == null)
@@ -43,12 +43,12 @@ public class BillOrderService
     public async Task<IEnumerable<BillOrder>> GetRecordsAsync(decimal orgId)
     {
         const string sql = @"SELECT BO.*, AM1.AccountName, AM2.AccountName AS BankAccount, IM.ItemName
-+                             FROM BillOrder BO
-+                             INNER JOIN AccountMaster AM1 ON AM1.AccountId = BO.AccountId
-+                             INNER JOIN AccountMaster AM2 ON AM2.AccountId = BO.BankAccountId
-+                             INNER JOIN ItemMaster IM ON IM.ItemId = BO.ItemId
-+                             WHERE BO.OrgId = @OrgId
-+                             ORDER BY BO.BillOrderId DESC";
+                             FROM BillOrder BO
+                             INNER JOIN AccountMaster AM1 ON AM1.AccountId = BO.AccountId
+                             INNER JOIN AccountMaster AM2 ON AM2.AccountId = BO.BankAccountId
+                             INNER JOIN ItemMaster IM ON IM.ItemId = BO.ItemId
+                             WHERE BO.OrgId = @OrgId
+                             ORDER BY BO.BillOrderId DESC";
 
         return await _dapperService.QueryAsync<BillOrder>(sql, new { OrgId = orgId });
     }
@@ -99,9 +99,9 @@ public class BillOrderService
     private async Task<string> GetOrderNoAsync(decimal orgId)
     {
         const string sql = @"SELECT TOP 1 BillNo
-+                             FROM BillOrder
-+                             WHERE OrgId = @OrgId
-+                             ORDER BY BillOrderId DESC";
+                             FROM BillOrder
+                             WHERE OrgId = @OrgId
+                             ORDER BY BillOrderId DESC";
 
         var lastNo = await _dapperService.QuerySingleOrDefaultAsync<string>(sql, new { OrgId = orgId });
         if (string.IsNullOrWhiteSpace(lastNo))

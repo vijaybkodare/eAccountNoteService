@@ -20,13 +20,13 @@ public class ChargePayeeDetailService
     public async Task<IEnumerable<ChargePayeeDetail>> GetMemberPendingChargesAsync(int orgId, decimal accountId)
     {
         var sql = @"SELECT CO.ChargeOrderNo, CO.ChargeDt, CO.AccountId AS ItemAccountId, CO.Remark,
-+                           CPD.*, IM.ItemName, AM.AccountName
-+                    FROM ChargePayeeDetail CPD
-+                    INNER JOIN ChargeOrder CO ON CO.ChargeOrderId = CPD.ChargeOrderId
-+                    INNER JOIN ItemMaster IM ON IM.ItemId = CO.ItemId
-+                    INNER JOIN AccountMaster AM ON AM.AccountId = CPD.AccountId AND AM.AccountType = 1
-+                    WHERE CPD.Amount > CPD.PaidAmount
-+                      AND AM.OrgId = @OrgId";
+                           CPD.*, IM.ItemName, AM.AccountName
+                    FROM ChargePayeeDetail CPD
+                    INNER JOIN ChargeOrder CO ON CO.ChargeOrderId = CPD.ChargeOrderId
+                    INNER JOIN ItemMaster IM ON IM.ItemId = CO.ItemId
+                    INNER JOIN AccountMaster AM ON AM.AccountId = CPD.AccountId AND AM.AccountType = 1
+                    WHERE CPD.Amount > CPD.PaidAmount
+                      AND AM.OrgId = @OrgId";
 
         var parameters = new DynamicParameters();
         parameters.Add("@OrgId", orgId, DbType.Int32);
@@ -79,11 +79,11 @@ public class ChargePayeeDetailService
     public async Task<decimal> GetTotalPendingChargesAsync(decimal accountId, decimal itemAccountId, decimal[] chargePayeeDetails)
     {
         const string sqlBase = @"SELECT SUM(CPD.Amount - CPD.PaidAmount) AS TotalPending
-+                                 FROM ChargePayeeDetail CPD
-+                                 INNER JOIN ChargeOrder CO ON CO.ChargeOrderId = CPD.ChargeOrderId
-+                                 WHERE CPD.AccountId = @AccountId
-+                                   AND CO.AccountId = @ItemAccountId
-+                                   AND CPD.ChargePayeeDetailId IN ({0})";
+                                 FROM ChargePayeeDetail CPD
+                                 INNER JOIN ChargeOrder CO ON CO.ChargeOrderId = CPD.ChargeOrderId
+                                 WHERE CPD.AccountId = @AccountId
+                                   AND CO.AccountId = @ItemAccountId
+                                   AND CPD.ChargePayeeDetailId IN ({0})";
 
         if (chargePayeeDetails.Length == 0)
         {
@@ -108,16 +108,16 @@ public class ChargePayeeDetailService
     public async Task<IEnumerable<ChargePayeeDetail>> GetPendingChargesAsync(decimal accountId, decimal itemAccountId, decimal[] chargePayeeDetails)
     {
         const string sqlBase = @"SELECT CO.ChargeOrderNo, CO.ChargeDt, CO.AccountId AS ItemAccountId, CO.Remark,
-+                                       CPD.*, IM.ItemName, AM.AccountName
-+                                FROM ChargePayeeDetail CPD
-+                                INNER JOIN ChargeOrder CO ON CO.ChargeOrderId = CPD.ChargeOrderId
-+                                INNER JOIN ItemMaster IM ON IM.ItemId = CO.ItemId
-+                                INNER JOIN AccountMaster AM ON AM.AccountId = CPD.AccountId
-+                                WHERE CPD.AccountId = @AccountId
-+                                  AND CO.AccountId = @ItemAccountId
-+                                  AND CPD.PaidAmount < CPD.Amount
-+                                  AND CPD.ChargePayeeDetailId IN ({0})
-+                                ORDER BY CPD.ChargePayeeDetailId";
+                                       CPD.*, IM.ItemName, AM.AccountName
+                                FROM ChargePayeeDetail CPD
+                                INNER JOIN ChargeOrder CO ON CO.ChargeOrderId = CPD.ChargeOrderId
+                                INNER JOIN ItemMaster IM ON IM.ItemId = CO.ItemId
+                                INNER JOIN AccountMaster AM ON AM.AccountId = CPD.AccountId
+                                WHERE CPD.AccountId = @AccountId
+                                  AND CO.AccountId = @ItemAccountId
+                                  AND CPD.PaidAmount < CPD.Amount
+                                  AND CPD.ChargePayeeDetailId IN ({0})
+                                ORDER BY CPD.ChargePayeeDetailId";
 
         if (chargePayeeDetails.Length == 0)
         {
@@ -141,22 +141,22 @@ public class ChargePayeeDetailService
     public async Task<DataTable> GetMemberAccountStatusAsync(decimal orgId, decimal accountId)
     {
         var query = @"SELECT AccountId, AccountName,
-+                             SUM(Amount) AS Amount,
-+                             SUM(PaidAmount) AS PaidAmount,
-+                             SUM(Amount - PaidAmount) AS PendingAmount
-+                      FROM (
-+                          SELECT AM.AccountId, AM.AccountName, CPD.Amount, CPD.PaidAmount
-+                              FROM ChargePayeeDetail CPD INNER JOIN AccountMaster AM
-+                                  ON CPD.AccountId = AM.AccountId
-+                              WHERE AM.OrgId = @OrgId AND AM.AccountType = 1 {0}
-+                          UNION ALL
-+                          SELECT AM.AccountId, AM.AccountName, 0 AS Amount, AC.Amount - AC.SettleAmount AS PaidAmount
-+                              FROM AdvCharge AC INNER JOIN AccountMaster AM
-+                                  ON AC.DrAccountId = AM.AccountId
-+                              WHERE AM.OrgId = @OrgId AND AM.AccountType = 1 {1}
-+                      ) AS RESULT
-+                      GROUP BY AccountId, AccountName
-+                      ORDER BY AccountName";
+                             SUM(Amount) AS Amount,
+                             SUM(PaidAmount) AS PaidAmount,
+                             SUM(Amount - PaidAmount) AS PendingAmount
+                      FROM (
+                          SELECT AM.AccountId, AM.AccountName, CPD.Amount, CPD.PaidAmount
+                              FROM ChargePayeeDetail CPD INNER JOIN AccountMaster AM
+                                  ON CPD.AccountId = AM.AccountId
+                              WHERE AM.OrgId = @OrgId AND AM.AccountType = 1 {0}
+                          UNION ALL
+                          SELECT AM.AccountId, AM.AccountName, 0 AS Amount, AC.Amount - AC.SettleAmount AS PaidAmount
+                              FROM AdvCharge AC INNER JOIN AccountMaster AM
+                                  ON AC.DrAccountId = AM.AccountId
+                              WHERE AM.OrgId = @OrgId AND AM.AccountType = 1 {1}
+                      ) AS RESULT
+                      GROUP BY AccountId, AccountName
+                      ORDER BY AccountName";
 
         string filter = accountId != -1 ? " AND AM.AccountId = @AccountId" : string.Empty;
         query = string.Format(query, filter, filter);
@@ -218,5 +218,53 @@ public class ChargePayeeDetailService
 
         var bytes = memoryStream.ToArray();
         return (bytes, "text/csv", "memberAccountStatus.csv");
+    }
+
+    public async Task<IEnumerable<AccountMaster>> GetPayAccountsAsync(decimal profileId)
+    {
+        // Port of legacy GetPayAccounts: determine role, then return accounts with pending amount
+        const string roleSql = @"SELECT UPR.RoleId
+                                  FROM UserProfile UP
+                                  INNER JOIN UserProfileRole UPR ON UP.ProfileId = UPR.UserProfileId
+                                  WHERE UP.ProfileId = @ProfileId";
+
+        var roleId = await _dapperService.QuerySingleOrDefaultAsync<decimal>(roleSql, new { ProfileId = profileId });
+
+        string sql;
+        object parameters;
+
+        if (roleId != 0 && IsAdminRole(roleId))
+        {
+            const string orgSql = "SELECT OrgId FROM UserProfile WHERE ProfileId = @ProfileId";
+            var orgId = await _dapperService.QuerySingleOrDefaultAsync<decimal>(orgSql, new { ProfileId = profileId });
+
+            sql = @"SELECT AM.AccountId, AM.AccountName, SUM(CPD.Amount - CPD.PaidAmount) AS PendingAmount
+                     FROM ChargePayeeDetail CPD
+                     INNER JOIN AccountMaster AM ON CPD.AccountId = AM.AccountId
+                     WHERE AM.OrgId = @OrgId
+                     GROUP BY AM.AccountId, AM.AccountName
+                     ORDER BY AM.AccountName";
+
+            parameters = new { OrgId = orgId };
+        }
+        else
+        {
+            sql = @"SELECT AM.AccountId, AM.AccountName, SUM(CPD.Amount - CPD.PaidAmount) AS PendingAmount
+                     FROM UserAccount UA
+                     INNER JOIN AccountMaster AM ON UA.AccountId = AM.AccountId
+                     INNER JOIN ChargePayeeDetail CPD ON CPD.AccountId = AM.AccountId
+                     WHERE UA.UserProfileId = @ProfileId
+                     GROUP BY AM.AccountId, AM.AccountName
+                     ORDER BY AM.AccountName";
+
+            parameters = new { ProfileId = profileId };
+        }
+
+        return await _dapperService.QueryAsync<AccountMaster>(sql, parameters);
+    }
+
+    private bool IsAdminRole(decimal roleId)
+    {
+        return roleId == 1 || roleId == 100;
     }
 }

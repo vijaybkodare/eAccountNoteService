@@ -16,10 +16,10 @@ public class CummulativeChargePayTransService
     public async Task<IEnumerable<CummulativeChargePayTrans>> GetRecordsToRevertAsync(decimal orgId, decimal accountId, string? fromDate, string? toDate)
     {
         var sql = @"SELECT CCPT.*, AM1.AccountName AS DrAccount, AM2.AccountName AS CrAccount
-+                    FROM CummulativeChargePayTrans CCPT
-+                    INNER JOIN AccountMaster AM1 ON AM1.AccountId = CCPT.DrAccountId
-+                    INNER JOIN AccountMaster AM2 ON AM2.AccountId = CCPT.CrAccountId
-+                    WHERE CCPT.OrgId = @OrgId AND CCPT.Status = 0";
+                    FROM CummulativeChargePayTrans CCPT
+                    INNER JOIN AccountMaster AM1 ON AM1.AccountId = CCPT.DrAccountId
+                    INNER JOIN AccountMaster AM2 ON AM2.AccountId = CCPT.CrAccountId
+                    WHERE CCPT.OrgId = @OrgId AND CCPT.Status = 0";
 
         var parameters = new DynamicParameters();
         parameters.Add("@OrgId", orgId, DbType.Decimal);
@@ -59,5 +59,17 @@ public class CummulativeChargePayTransService
         {
             return (false, ex.Message);
         }
+    }
+
+    public async Task<bool> UpdateCummulativeChargePayTransAsync(ChargePayTrans entity)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("CummulativeChargePayTransId", entity.Id, DbType.Decimal);
+        parameters.Add("TransMode", entity.TransMode, DbType.Decimal);
+        parameters.Add("Remark", entity.Remark ?? string.Empty, DbType.String);
+        parameters.Add("TransactionId", entity.TransactionId ?? string.Empty, DbType.String);
+
+        await _dapperService.ExecuteStoredProcedureAsync("Proc_Update_CummulativeChargePayTrans", parameters);
+        return true;
     }
 }

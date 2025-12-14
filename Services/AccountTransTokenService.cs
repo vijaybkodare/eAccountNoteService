@@ -28,10 +28,10 @@ public class AccountTransTokenService
     public async Task<IEnumerable<AccountTransToken>> GetTransTokensAsync(decimal orgId, decimal accountId)
     {
         var sql = @"SELECT ATT.AccountId, ATT.TokenTypeId, ATT.TokenValue, ATT.TokenWeight, TTM.TokenName
-+                    FROM AccountTransToken ATT
-+                    INNER JOIN AccountMaster AM ON ATT.AccountId = AM.AccountId
-+                    INNER JOIN TransTokenMaster TTM ON ATT.TokenTypeId = TTM.TokenTypeId
-+                    WHERE 1 = 1";
+                    FROM AccountTransToken ATT
+                    INNER JOIN AccountMaster AM ON ATT.AccountId = AM.AccountId
+                    INNER JOIN TransTokenMaster TTM ON ATT.TokenTypeId = TTM.TokenTypeId
+                    WHERE 1 = 1";
 
         var parameters = new DynamicParameters();
 
@@ -65,7 +65,7 @@ public class AccountTransTokenService
     public async Task<bool> DeleteAsync(decimal accountId, int tokenTypeId)
     {
         const string sql = @"DELETE FROM AccountTransToken
-+                             WHERE AccountId = @AccountId AND TokenTypeId = @TokenTypeId";
+                             WHERE AccountId = @AccountId AND TokenTypeId = @TokenTypeId";
 
         var affected = await _dapperService.ExecuteAsync(sql, new { AccountId = accountId, TokenTypeId = tokenTypeId });
         return affected > 0;

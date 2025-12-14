@@ -1,4 +1,5 @@
 using System.Data;
+using System.Linq;
 using Dapper;
 using eAccountNoteService.Models;
 
@@ -16,12 +17,12 @@ public class ChargeOrderService
     public async Task<IEnumerable<ChargeOrder>> GetRecordsAsync(int orgId, string? fromDate, string? toDate)
     {
         var sql = @"SELECT CO.ChargeOrderId, CO.OrgId, CO.ChargeOrderNo, CO.ChargeDt,
-+                           CO.ItemId, CO.AccountId, CO.Charges, CO.Amount, CO.PaidAmount, CO.Remark,
-+                           IM.ItemName, AM.AccountName
-+                    FROM ChargeOrder CO
-+                    INNER JOIN ItemMaster IM ON IM.ItemId = CO.ItemId
-+                    INNER JOIN AccountMaster AM ON AM.AccountId = CO.AccountId
-+                    WHERE CO.OrgId = @OrgId";
+                           CO.ItemId, CO.AccountId, CO.Charges, CO.Amount, CO.PaidAmount, CO.Remark,
+                           IM.ItemName, AM.AccountName
+                    FROM ChargeOrder CO
+                    INNER JOIN ItemMaster IM ON IM.ItemId = CO.ItemId
+                    INNER JOIN AccountMaster AM ON AM.AccountId = CO.AccountId
+                    WHERE CO.OrgId = @OrgId";
 
         var parameters = new DynamicParameters();
         parameters.Add("@OrgId", orgId, DbType.Int32);
@@ -44,15 +45,15 @@ public class ChargeOrderService
 
     public async Task<ChargeOrder> GetRecordAsync(decimal chargeOrderId, decimal orgId)
     {
-        const string sql = @"SELECT CO.ChargeOrderId, CO.OrgId, CO.ChargeOrderNo, CO.ChargeDt,
-+                                   CO.ItemId, CO.AccountId, CO.Charges, CO.Amount, CO.PaidAmount, CO.Remark,
-+                                   IM.ItemName, AM.AccountName
-+                            FROM ChargeOrder CO
-+                            INNER JOIN ItemMaster IM ON IM.ItemId = CO.ItemId
-+                            INNER JOIN AccountMaster AM ON AM.AccountId = CO.AccountId
-+                            WHERE CO.ChargeOrderId = @ChargeOrderId";
+        const string sqlHeader = @"SELECT CO.ChargeOrderId, CO.OrgId, CO.ChargeOrderNo, CO.ChargeDt,
+                                          CO.ItemId, CO.AccountId, CO.Charges, CO.Amount, CO.PaidAmount, CO.Remark,
+                                          IM.ItemName, AM.AccountName
+                                   FROM ChargeOrder CO
+                                   INNER JOIN ItemMaster IM ON IM.ItemId = CO.ItemId
+                                   INNER JOIN AccountMaster AM ON AM.AccountId = CO.AccountId
+                                   WHERE CO.ChargeOrderId = @ChargeOrderId";
 
-        var entity = await _dapperService.QuerySingleOrDefaultAsync<ChargeOrder>(sql, new { ChargeOrderId = chargeOrderId });
+        var entity = await _dapperService.QuerySingleOrDefaultAsync<ChargeOrder>(sqlHeader, new { ChargeOrderId = chargeOrderId });
         if (entity == null)
         {
             entity = new ChargeOrder
@@ -60,8 +61,19 @@ public class ChargeOrderService
                 ChargeOrderId = -1,
                 OrgId = orgId,
                 ChargeOrderNo = await GetChargeOrderNoAsync(orgId),
-                ChargeDt = DateTime.Now
+                ChargeDt = DateTime.Now,
+                ChargePayeeDetails = new List<ChargePayeeDetail>()
             };
+        }
+        else
+        {
+            const string sqlDetails = @"SELECT CPD.*, AM.AccountName
+                                       FROM ChargePayeeDetail CPD
+                                       INNER JOIN AccountMaster AM ON AM.AccountId = CPD.AccountId
+                                       WHERE CPD.ChargeOrderId = @ChargeOrderId";
+
+            var details = await _dapperService.QueryAsync<ChargePayeeDetail>(sqlDetails, new { ChargeOrderId = chargeOrderId });
+            entity.ChargePayeeDetails = details.ToList();
         }
 
         return entity;
@@ -70,13 +82,13 @@ public class ChargeOrderService
     public async Task<ChargeOrder?> GetLatestRecordAsync(decimal orgId)
     {
         const string sql = @"SELECT TOP 1 CO.ChargeOrderId, CO.OrgId, CO.ChargeOrderNo, CO.ChargeDt,
-+                                   CO.ItemId, CO.AccountId, CO.Charges, CO.Amount, CO.PaidAmount, CO.Remark,
-+                                   IM.ItemName, AM.AccountName
-+                            FROM ChargeOrder CO
-+                            INNER JOIN ItemMaster IM ON IM.ItemId = CO.ItemId
-+                            INNER JOIN AccountMaster AM ON AM.AccountId = CO.AccountId
-+                            WHERE CO.OrgId = @OrgId
-+                            ORDER BY CO.ChargeOrderId DESC";
+                                   CO.ItemId, CO.AccountId, CO.Charges, CO.Amount, CO.PaidAmount, CO.Remark,
+                                   IM.ItemName, AM.AccountName
+                            FROM ChargeOrder CO
+                            INNER JOIN ItemMaster IM ON IM.ItemId = CO.ItemId
+                            INNER JOIN AccountMaster AM ON AM.AccountId = CO.AccountId
+                            WHERE CO.OrgId = @OrgId
+                            ORDER BY CO.ChargeOrderId DESC";
 
         return await _dapperService.QuerySingleOrDefaultAsync<ChargeOrder>(sql, new { OrgId = orgId });
     }
@@ -134,9 +146,9 @@ public class ChargeOrderService
     private async Task<string> GetChargeOrderNoAsync(decimal orgId)
     {
         const string sql = @"SELECT TOP 1 ChargeOrderNo
-+                             FROM ChargeOrder
-+                             WHERE OrgId = @OrgId
-+                             ORDER BY ChargeOrderId DESC";
+                             FROM ChargeOrder
+                             WHERE OrgId = @OrgId
+                             ORDER BY ChargeOrderId DESC";
 
         var lastNo = await _dapperService.QuerySingleOrDefaultAsync<string>(sql, new { OrgId = orgId });
         if (string.IsNullOrWhiteSpace(lastNo))

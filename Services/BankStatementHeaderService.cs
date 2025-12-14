@@ -48,9 +48,9 @@ public class BankStatementHeaderService
     private async Task<string> GetOrderNoAsync(decimal orgId)
     {
         const string sql = @"SELECT TOP 1 BankStatementNo
-+                             FROM BankStatementHeader
-+                             WHERE OrgId = @OrgId
-+                             ORDER BY BankStatementHeaderId DESC";
+                             FROM BankStatementHeader
+                             WHERE OrgId = @OrgId
+                             ORDER BY BankStatementHeaderId DESC";
 
         var lastNo = await _dapperService.QuerySingleOrDefaultAsync<string>(sql, new { OrgId = orgId });
         if (string.IsNullOrWhiteSpace(lastNo))

@@ -16,13 +16,13 @@ public class JVOrderService
     public async Task<IEnumerable<JVOrder>> GetRecordsAsync(decimal orgId)
     {
         const string sql = @"SELECT JVO.JVOrderId, JVO.OrgId, JVO.JVOrderNo, JVO.AddedDt,
-+                                   JVO.DrAccountId, JVO.CrAccountId, JVO.Amount, JVO.Remark,
-+                                   AM1.AccountName AS DrAccount, AM2.AccountName AS CrAccount
-+                            FROM JVOrder JVO
-+                            INNER JOIN AccountMaster AM1 ON AM1.AccountId = JVO.DrAccountId
-+                            INNER JOIN AccountMaster AM2 ON AM2.AccountId = JVO.CrAccountId
-+                            WHERE JVO.OrgId = @OrgId
-+                            ORDER BY JVO.JVOrderNo";
+                                   JVO.DrAccountId, JVO.CrAccountId, JVO.Amount, JVO.Remark,
+                                   AM1.AccountName AS DrAccount, AM2.AccountName AS CrAccount
+                            FROM JVOrder JVO
+                            INNER JOIN AccountMaster AM1 ON AM1.AccountId = JVO.DrAccountId
+                            INNER JOIN AccountMaster AM2 ON AM2.AccountId = JVO.CrAccountId
+                            WHERE JVO.OrgId = @OrgId
+                            ORDER BY JVO.JVOrderNo";
 
         return await _dapperService.QueryAsync<JVOrder>(sql, new { OrgId = orgId });
     }
@@ -67,9 +67,9 @@ public class JVOrderService
     private async Task<string> GetOrderNoAsync(decimal orgId)
     {
         const string sql = @"SELECT TOP 1 JVOrderNo
-+                             FROM JVOrder
-+                             WHERE OrgId = @OrgId
-+                             ORDER BY JVOrderId DESC";
+                             FROM JVOrder
+                             WHERE OrgId = @OrgId
+                             ORDER BY JVOrderId DESC";
 
         var lastNo = await _dapperService.QuerySingleOrDefaultAsync<string>(sql, new { OrgId = orgId });
         if (string.IsNullOrWhiteSpace(lastNo))
