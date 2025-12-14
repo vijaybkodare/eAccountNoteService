@@ -17,7 +17,7 @@ public class TransactionService
     {
         var summary = new SummaryData();
 
-        const string baseSql = @"SELECT SUM(TR.Amount) AS Total
+        const string baseSql = @"SELECT ISNULL(SUM(TR.Amount), 0) AS Total
                                  FROM [Transaction] TR
                                  INNER JOIN AccountMaster AM ON AM.AccountId = TR.AccountId
                                  WHERE AM.OrgId = @OrgId
@@ -33,8 +33,8 @@ public class TransactionService
         var incomeSql = baseSql + " AND TR.Amount > 0";
         var expenseSql = baseSql + " AND TR.Amount < 0";
 
-        summary.TotalIncome = await _dapperService.QuerySingleOrDefaultAsync<Decimal>(incomeSql, parameters);
-        var totalExpense = await _dapperService.QuerySingleOrDefaultAsync<Decimal>(expenseSql, parameters);
+        summary.TotalIncome = await _dapperService.QuerySingleOrDefaultAsync<decimal>(incomeSql, parameters);
+        var totalExpense = await _dapperService.QuerySingleOrDefaultAsync<decimal>(expenseSql, parameters);
         summary.TotalExpense = totalExpense; // keep sign consistent with legacy (negative values)
 
         return summary;
@@ -57,7 +57,7 @@ public class TransactionService
             if (monthStart < fromDate)
                 monthStart = fromDate;
 
-            const string baseSql = @"SELECT SUM(TR.Amount) AS Total
+            const string baseSql = @"SELECT ISNULL(SUM(TR.Amount), 0) AS Total
                                      FROM [Transaction] TR
                                      INNER JOIN AccountMaster AM ON AM.AccountId = TR.AccountId
                                      WHERE AM.OrgId = @OrgId
@@ -73,8 +73,8 @@ public class TransactionService
             var incomeSql = baseSql + " AND TR.Amount > 0";
             var expenseSql = baseSql + " AND TR.Amount < 0";
 
-            var income = await _dapperService.QuerySingleOrDefaultAsync<Decimal>(incomeSql, parameters);
-            var expense = await _dapperService.QuerySingleOrDefaultAsync<Decimal>(expenseSql, parameters);
+            var income = await _dapperService.QuerySingleOrDefaultAsync<decimal>(incomeSql, parameters);
+            var expense = await _dapperService.QuerySingleOrDefaultAsync<decimal>(expenseSql, parameters);
 
             result.Add(new PeriodIncomeExpense
             {

@@ -14,18 +14,24 @@ public class UserService
     private readonly EmailSenderService _emailSender;
     private readonly Fast2SmsSender _smsSender;
     private readonly DapperService _dapperService;
+    private readonly OrgMasterService _orgMasterService;
+    private readonly UserProfileService _userProfileService;
 
     public UserService(
         IConfiguration configuration,
         ILogger<UserService> logger,
         EmailSenderService emailSender,
         Fast2SmsSender smsSender,
-        DapperService dapperService)
+        DapperService dapperService,
+        OrgMasterService orgMasterService,
+        UserProfileService userProfileService)
     {
         _logger = logger;
         _emailSender = emailSender;
         _smsSender = smsSender;
         _dapperService = dapperService;
+        _orgMasterService = orgMasterService;
+        _userProfileService = userProfileService;
         _connectionString = configuration.GetConnectionString("DefaultConnection")
                          ?? throw new ArgumentNullException("Connection string 'DefaultConnection' not found");
     }
@@ -81,6 +87,127 @@ public class UserService
             _logger.LogError(ex, "Error updating password for {LoginId}", loginId);
             return new ServerResponse { IsSuccess = false, Error = ex.Message };
         }
+    }
+
+    // Modern equivalent of legacy OrgController.save(UserMaster entity)
+    public async Task<ServerResponse> SaveUserAndOrgAsync(UserMaster entity)
+    {
+        try
+        {
+            return await _dapperService.ExecuteInTransactionAsync<ServerResponse>(async (connection, transaction) =>
+            {
+                var newUser = entity.UserId == -1;
+
+                // 1) Create or update UserMaster
+                var password = await SaveUserMasterAsync(entity, connection, transaction);
+
+                // 2) OrgMaster: only insert on new user, like legacy AddRec(iDBManager, OrgMaster)
+                if (newUser)
+                {
+                    var org = new OrgMaster
+                    {
+                        OrgId = entity.OrgId,
+                        OrgName = entity.OrgName,
+                        Address = entity.Address
+                    };
+
+                    if (org.OrgId <= 0)
+                    {
+                        await _orgMasterService.InsertAsync(org, connection, transaction);
+                        entity.OrgId = org.OrgId;
+                    }
+                }
+
+                // 3) UserProfile: for new user only
+                var userProfile = new UserProfile
+                {
+                    UserId = entity.UserId,
+                    OrgId = entity.OrgId,
+                    ProfileId = entity.ProfileId
+                };
+
+                if (newUser)
+                {
+                    await _userProfileService.InsertAsync(userProfile, connection, transaction);
+                    entity.ProfileId = userProfile.ProfileId;
+                }
+
+                // 4) UserProfileRole: always insert like legacy code
+                var userProfileRole = new UserProfileRole
+                {
+                    UserProfileId = userProfile.ProfileId,
+                    RoleId = entity.RoleId
+                };
+
+                var roleParams = new DynamicParameters();
+                roleParams.Add("RoleId", userProfileRole.RoleId, DbType.Decimal);
+                roleParams.Add("UserProfileId", userProfileRole.UserProfileId, DbType.Decimal);
+
+                await connection.ExecuteAsync("Proc_Insert_UserProfileRole", roleParams, transaction, commandType: CommandType.StoredProcedure);
+
+                // 5) Send email for new user, inside transaction as in legacy code
+                if (newUser && !string.IsNullOrEmpty(password))
+                {
+                    var emailSubject = $"Your eAccountNote password is {password}";
+                    var emailBody = "eAccountNote";
+                    var sent = _emailSender.SendEmail(entity.EmailId, emailSubject, emailBody);
+                    if (!sent)
+                    {
+                        throw new Exception("Fail to sent an email.");
+                    }
+                }
+
+                return new ServerResponse { IsSuccess = true };
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error saving user and org for {LoginId}", entity.LoginId);
+            return new ServerResponse { IsSuccess = false, Error = ex.Message };
+        }
+    }
+
+    private async Task<string?> SaveUserMasterAsync(UserMaster entity, IDbConnection connection, IDbTransaction transaction)
+    {
+        var newUser = entity.UserId == -1;
+        string? password = null;
+
+        if (newUser)
+        {
+            if (string.IsNullOrWhiteSpace(entity.Password))
+            {
+                password = GenRandomAlphanumericString(5);
+                entity.Password = password;
+            }
+            else
+            {
+                password = entity.Password;
+            }
+
+            var userParams = new DynamicParameters();
+            userParams.Add("LoginId", entity.LoginId, DbType.String);
+            userParams.Add("EmailId", entity.EmailId, DbType.String);
+            userParams.Add("MobileNo", entity.MobileNo, DbType.String);
+            userParams.Add("UserName", entity.UserName, DbType.String);
+            userParams.Add("Password", entity.Password, DbType.String);
+            userParams.Add("RecordId", dbType: DbType.Decimal, direction: ParameterDirection.Output);
+
+            await connection.ExecuteAsync("Proc_Insert_UserMaster", userParams, transaction, commandType: CommandType.StoredProcedure);
+            entity.UserId = userParams.Get<decimal>("RecordId");
+        }
+        else
+        {
+            var userParams = new DynamicParameters();
+            userParams.Add("LoginId", entity.LoginId, DbType.String);
+            userParams.Add("EmailId", entity.EmailId, DbType.String);
+            userParams.Add("MobileNo", entity.MobileNo, DbType.String);
+            userParams.Add("UserName", entity.UserName, DbType.String);
+            userParams.Add("UserId", entity.UserId, DbType.Decimal);
+
+            await connection.ExecuteAsync("Proc_Update_UserMaster", userParams, transaction, commandType: CommandType.StoredProcedure);
+        }
+
+        return password;
     }
 
     private async Task<bool> UpdatePasswordWithoutOldAsync(SqlConnection connection, SqlTransaction transaction, string loginId, string newPassword)

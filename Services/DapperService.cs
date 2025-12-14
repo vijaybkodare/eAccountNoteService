@@ -33,20 +33,6 @@ public class DapperService
         }
     }
 
-    /*public async Task<decimal> QuerySingleOrDefaultNumberAsync(string sql, object? parameters = null, CommandType commandType = CommandType.Text)
-    {
-        try
-        {
-            using var connection = new SqlConnection(_connectionString);
-            await connection.OpenAsync();
-            return await connection.QuerySingleOrDefaultAsync<decimal>(sql, parameters, commandType: commandType);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error executing QuerySingleOrDefaultAsync: {Sql}", sql);
-            return 0;
-        }
-    }*/
     public async Task<T?> QuerySingleOrDefaultAsync<T>(string sql, object? parameters = null, CommandType commandType = CommandType.Text)
     {
         try

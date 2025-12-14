@@ -1,11 +1,20 @@
 using eAccountNoteService.Services;
 using eAccountNoteService.Utility;
+using eAccountNoteService.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
+var appEnv = builder.Configuration["AppSettings:env"];
+if (appEnv == "PROD")
+{
+    builder.WebHost.UseUrls("http://0.0.0.0:5040");
+}
 
 // Add services to the container.
-builder.Services.AddControllers();
-builder.Services.AddControllers()
+builder.Services.AddControllers(options =>
+    {
+        // Global auth filter, equivalent to [AuthActionFilter] on all controllers
+        options.Filters.Add<AuthActionFilter>();
+    })
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = null;
@@ -15,6 +24,7 @@ builder.Services.AddSwaggerGen();
 
 // Dependency Injection registrations
 builder.Services.AddScoped<DapperService>();
+builder.Services.AddScoped<AuthActionFilter>();
 builder.Services.AddScoped<OrgMasterService>();
 builder.Services.AddScoped<AccountMasterService>();
 builder.Services.AddScoped<AppSettingService>();
@@ -35,6 +45,7 @@ builder.Services.AddScoped<MLAutoTrans2Service>();
 builder.Services.AddScoped<AccountTransTokenService>();
 builder.Services.AddHttpClient<Fast2SmsSender>();
 builder.Services.AddScoped<EmailSenderService>();
+builder.Services.AddScoped<UserProfileService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UserAuthService>();
 builder.Services.AddScoped<TransNoEvaluator>();

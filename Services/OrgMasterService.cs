@@ -63,6 +63,18 @@ public class OrgMasterService
         entity.OrgId = parameters.Get<decimal>("@RecordId");
     }
 
+    public async Task InsertAsync(OrgMaster entity, IDbConnection connection, IDbTransaction transaction)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("OrgName", entity.OrgName);
+        parameters.Add("Address", entity.Address);
+        parameters.Add("RecordId", dbType: DbType.Decimal, direction: ParameterDirection.Output);
+
+        await connection.ExecuteAsync("Proc_Insert_OrgMaster", parameters, transaction, commandType: CommandType.StoredProcedure);
+
+        entity.OrgId = parameters.Get<decimal>("RecordId");
+    }
+
     private async Task UpdateAsync(OrgMaster entity)
     {
         var parameters = new DynamicParameters();

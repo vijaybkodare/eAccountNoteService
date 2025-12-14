@@ -3,10 +3,9 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>eAccountNote</title>
-    <link href="/Content/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet" />
-    <link href="/Content/common.css" rel="stylesheet" />
-    <link rel="icon" type="image" href="/Content/images/fnaman_2_512X512_wot_bg.png" />
-    <script src="/Content/axios.min.js_1.4.0/axios.min.js"></script>
+    <link href="/content/bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet" />
+    <link href="/content/common.css" rel="stylesheet" />
+    <link rel="icon" type="image" href="/content/images/fnaman_2_512X512_wot_bg.png" />
     <style type="text/css">
         html, body {
             overflow-x: hidden;
@@ -16,6 +15,8 @@
 <body>
     <div class="container">
         <div class="well well-sm well-Title" style="position:relative;">
+            <img src="/content/images/fnaman_2_512X512_wot_bg.png" width="40" style="border-radius:3px;background-color:white;">
+            <span style="font-size:medium">WCPF Note</span>
             <div id="userLogout"></div>
         </div>
         <div>
@@ -37,168 +38,6 @@
             </div>
         </div>
     </div>
-    <!-- Core scripts previously included via ~/bundles/scripts in the legacy MVC app -->
-    <script src="/Scripts/Chart.js"></script>
-    <script src="/Scripts/react/react.js"></script>
-    <script src="/Scripts/react/react-dom.js"></script>
-
-    <!-- All EAccountNote scripts from /Scripts/eaccountnotejs (mirrors legacy bundle) -->
-    <script src="/Scripts/eaccountnotejs/AccountComponent/AccountExpRep.js"></script>
-    <script src="/Scripts/eaccountnotejs/AccountComponent/AccountList.js"></script>
-    <script src="/Scripts/eaccountnotejs/AccountComponent/AccountRow.js"></script>
-    <script src="/Scripts/eaccountnotejs/AccountComponent/AccountTransTokenItemRow.js"></script>
-    <script src="/Scripts/eaccountnotejs/AccountComponent/AccountTransTokenRow.js"></script>
-    <script src="/Scripts/eaccountnotejs/AccountComponent/AddAccount.js"></script>
-    <script src="/Scripts/eaccountnotejs/AccountComponent/AddTransToken.js"></script>
-    <script src="/Scripts/eaccountnotejs/AccountComponent/MemberAccountList.js"></script>
-    <script src="/Scripts/eaccountnotejs/AccountComponent/TransTokenAccountList.js"></script>
-    <script src="/Scripts/eaccountnotejs/AccountComponent/TransTokenRow.js"></script>
-
-    <!-- Org components -->
-    <script src="/Scripts/eaccountnotejs/OrgComponent/AddOrg.js"></script>
-    <script src="/Scripts/eaccountnotejs/OrgComponent/EditOrg.js"></script>
-    <script src="/Scripts/eaccountnotejs/OrgComponent/OrgList.js"></script>
-    <script src="/Scripts/eaccountnotejs/OrgComponent/OrgProfile.js"></script>
-    <script src="/Scripts/eaccountnotejs/OrgComponent/OrgRow.js"></script>
-
-    <script src="/Scripts/eaccountnotejs/AdvChargeComponent/AddAdvCharge.js"></script>
-    <script src="/Scripts/eaccountnotejs/AdvChargeComponent/AddAdvMonthlyMaintainance.js"></script>
-    <script src="/Scripts/eaccountnotejs/AdvChargeComponent/AdvChargeList.js"></script>
-    <script src="/Scripts/eaccountnotejs/AdvChargeComponent/AdvChargeRow.js"></script>
-
-    <!-- Item components -->
-    <script src="/Scripts/eaccountnotejs/ItemComponent/AddItem.js"></script>
-    <script src="/Scripts/eaccountnotejs/ItemComponent/ItemList.js"></script>
-    <script src="/Scripts/eaccountnotejs/ItemComponent/ItemRow.js"></script>
-
-    <script src="/Scripts/eaccountnotejs/AutoTransEntryComponent/AutoTransEntry.js"></script>
-    <script src="/Scripts/eaccountnotejs/AutoTransEntryComponent/AutoTransEntryRep.js"></script>
-
-    <script src="/Scripts/eaccountnotejs/BankStatementComponent/AddBankStatement.js"></script>
-    <script src="/Scripts/eaccountnotejs/BankStatementComponent/BankStatement.js"></script>
-    <script src="/Scripts/eaccountnotejs/BankStatementComponent/BankStatementList.js"></script>
-    <script src="/Scripts/eaccountnotejs/BankStatementComponent/BankStatementRep.js"></script>
-    <script src="/Scripts/eaccountnotejs/BankStatementComponent/BankStatementRep2.js"></script>
-    <script src="/Scripts/eaccountnotejs/BankStatementComponent/BankStatementRow.js"></script>
-
-    <script src="/Scripts/eaccountnotejs/BillComponent/AddBill.js"></script>
-    <script src="/Scripts/eaccountnotejs/BillComponent/BillList.js"></script>
-    <script src="/Scripts/eaccountnotejs/BillComponent/BillRow.js"></script>
-
-    <!-- Donation components -->
-    <script src="/Scripts/eaccountnotejs/DonationComponent/AddDonation.js"></script>
-    <script src="/Scripts/eaccountnotejs/DonationComponent/AddDonationDetail.js"></script>
-    <script src="/Scripts/eaccountnotejs/DonationComponent/DonationDetailList.js"></script>
-    <script src="/Scripts/eaccountnotejs/DonationComponent/DonationDetailRow.js"></script>
-    <script src="/Scripts/eaccountnotejs/DonationComponent/DonationHeaderEntry.js"></script>
-    <script src="/Scripts/eaccountnotejs/DonationComponent/DonationList.js"></script>
-    <script src="/Scripts/eaccountnotejs/DonationComponent/DonationRow.js"></script>
-
-    <!-- Pay bill components -->
-    <script src="/Scripts/eaccountnotejs/PayBillComponent/AddPayBill.js"></script>
-    <script src="/Scripts/eaccountnotejs/PayBillComponent/PayBillList.js"></script>
-    <script src="/Scripts/eaccountnotejs/PayBillComponent/PayBillRow.js"></script>
-
-    <!-- Pay charge components -->
-    <script src="/Scripts/eaccountnotejs/PayChargeComponent/AddChargePayment.js"></script>
-    <script src="/Scripts/eaccountnotejs/PayChargeComponent/ChargeDetail.js"></script>
-    <script src="/Scripts/eaccountnotejs/PayChargeComponent/PayAccountList.js"></script>
-    <script src="/Scripts/eaccountnotejs/PayChargeComponent/PayAccountRow.js"></script>
-    <script src="/Scripts/eaccountnotejs/PayChargeComponent/PayChargeList.js"></script>
-    <script src="/Scripts/eaccountnotejs/PayChargeComponent/PayChargeRow.js"></script>
-
-    <script src="/Scripts/eaccountnotejs/ChargeComponent/AddCharge.js"></script>
-    <script src="/Scripts/eaccountnotejs/ChargeComponent/ChargeAccountRow.js"></script>
-    <script src="/Scripts/eaccountnotejs/ChargeComponent/ChargeList.js"></script>
-    <script src="/Scripts/eaccountnotejs/ChargeComponent/ChargeRow.js"></script>
-
-    <!-- JV order components -->
-    <script src="/Scripts/eaccountnotejs/JVOrderComponent/AddJV.js"></script>
-    <script src="/Scripts/eaccountnotejs/JVOrderComponent/JVList.js"></script>
-    <script src="/Scripts/eaccountnotejs/JVOrderComponent/JVRow.js"></script>
-
-    <!-- Report components -->
-    <script src="/Scripts/eaccountnotejs/ReportComponent/AccountRep.js"></script>
-    <script src="/Scripts/eaccountnotejs/ReportComponent/AccountSummary.js"></script>
-    <script src="/Scripts/eaccountnotejs/ReportComponent/BillOrderRep.js"></script>
-    <script src="/Scripts/eaccountnotejs/ReportComponent/ChargeOrderRep.js"></script>
-    <script src="/Scripts/eaccountnotejs/ReportComponent/ChargePayeeItemRep.js"></script>
-    <script src="/Scripts/eaccountnotejs/ReportComponent/ChargeTransRep.js"></script>
-    <script src="/Scripts/eaccountnotejs/ReportComponent/ReportFilter.js"></script>
-
-    <!-- Reconciliation components -->
-    <script src="/Scripts/eaccountnotejs/ReconciliationComponent/Reconciliation.js"></script>
-    <script src="/Scripts/eaccountnotejs/ReconciliationComponent/ReconciliationRep.js"></script>
-
-    <script src="/Scripts/eaccountnotejs/ChartComponent/BarChart.js"></script>
-    <script src="/Scripts/eaccountnotejs/ChartComponent/IncomeExpChart.js"></script>
-    <script src="/Scripts/eaccountnotejs/ChartComponent/MonthwiseIncExpChart.js"></script>
-    <script src="/Scripts/eaccountnotejs/ChartComponent/PieChart.js"></script>
-
-    <!-- Revert advance charge trans components -->
-    <script src="/Scripts/eaccountnotejs/RevertAdvChargeTransComponent/AddRevertAdvChargeTrans.js"></script>
-    <script src="/Scripts/eaccountnotejs/RevertAdvChargeTransComponent/RevertAdvChargeTransList.js"></script>
-    <script src="/Scripts/eaccountnotejs/RevertAdvChargeTransComponent/RevertAdvChargeTransRow.js"></script>
-    <script src="/Scripts/eaccountnotejs/RevertAdvChargeTransComponent/RevertTransRow.js"></script>
-
-    <!-- Revert charge trans components -->
-    <script src="/Scripts/eaccountnotejs/RevertChargeTransComponent/AddRevertChargeTrans.js"></script>
-    <script src="/Scripts/eaccountnotejs/RevertChargeTransComponent/RevertChargeTransList.js"></script>
-    <script src="/Scripts/eaccountnotejs/RevertChargeTransComponent/RevertChargeTransRow.js"></script>
-
-    <!-- Revert cumulative charge trans components -->
-    <script src="/Scripts/eaccountnotejs/RevertCummChargeTransComponent/AddRevertCummChargeTrans.js"></script>
-    <script src="/Scripts/eaccountnotejs/RevertCummChargeTransComponent/RevertCummChargeTransList.js"></script>
-    <script src="/Scripts/eaccountnotejs/RevertCummChargeTransComponent/RevertCummChargeTransRow.js"></script>
-
-    <!-- Revert bill trans components -->
-    <script src="/Scripts/eaccountnotejs/RevertBillTransComponent/AddRevertBillTrans.js"></script>
-    <script src="/Scripts/eaccountnotejs/RevertBillTransComponent/RevertBillTransList.js"></script>
-    <script src="/Scripts/eaccountnotejs/RevertBillTransComponent/RevertBillTransRow.js"></script>
-
-    <!-- Support components -->
-    <script src="/Scripts/eaccountnotejs/SupportComponent/ActivityProgress.js"></script>
-    <script src="/Scripts/eaccountnotejs/SupportComponent/AddEditFooter.js"></script>
-    <script src="/Scripts/eaccountnotejs/SupportComponent/AddEditHeader.js"></script>
-    <script src="/Scripts/eaccountnotejs/SupportComponent/Alert.js"></script>
-    <script src="/Scripts/eaccountnotejs/SupportComponent/AppFeatures.js"></script>
-    <script src="/Scripts/eaccountnotejs/SupportComponent/Confirmation.js"></script>
-    <script src="/Scripts/eaccountnotejs/SupportComponent/Counter.js"></script>
-    <script src="/Scripts/eaccountnotejs/SupportComponent/DateSelector.js"></script>
-    <script src="/Scripts/eaccountnotejs/SupportComponent/Filter.js"></script>
-    <script src="/Scripts/eaccountnotejs/SupportComponent/ItemSelect.js"></script>
-    <script src="/Scripts/eaccountnotejs/SupportComponent/ListCommand.js"></script>
-    <script src="/Scripts/eaccountnotejs/SupportComponent/ListFilter.js"></script>
-    <script src="/Scripts/eaccountnotejs/SupportComponent/ListHeader.js"></script>
-    <script src="/Scripts/eaccountnotejs/SupportComponent/OkMustReadInfo.js"></script>
-    <script src="/Scripts/eaccountnotejs/SupportComponent/PaymentScreenshot.js"></script>
-    <script src="/Scripts/eaccountnotejs/SupportComponent/ReportCommand.js"></script>
-    <script src="/Scripts/eaccountnotejs/SupportComponent/RevertTransFooter.js"></script>
-    <script src="/Scripts/eaccountnotejs/SupportComponent/UpdateTransNo.js"></script>
-
-    <script src="/Scripts/eaccountnotejs/DashboardComponent/Dashboard.js"></script>
-
-    <!-- User components -->
-    <script src="/Scripts/eaccountnotejs/UserComponent/AddUser.js"></script>
-    <script src="/Scripts/eaccountnotejs/UserComponent/AssignUserAccount.js"></script>
-    <script src="/Scripts/eaccountnotejs/UserComponent/ChangePassword.js"></script>
-    <script src="/Scripts/eaccountnotejs/UserComponent/RegisterMobileNo.js"></script>
-    <script src="/Scripts/eaccountnotejs/UserComponent/UserList.js"></script>
-    <script src="/Scripts/eaccountnotejs/UserComponent/UserProfile.js"></script>
-    <script src="/Scripts/eaccountnotejs/UserComponent/UserRow.js"></script>
-
-    <script src="/Scripts/eaccountnotejs/TransMapper/TransMapper.js"></script>
-
-    <script src="/Scripts/eaccountnotejs/DashboardComponent/Dashboard.js"></script>
-    <script src="/Scripts/eaccountnotejs/DashboardComponent/DashboardItem.js"></script>
-    <script src="/Scripts/eaccountnotejs/DashboardComponent/GroupHeader.js"></script>
-
-    <!-- Root EAccountNote shell scripts -->
-    <script src="/Scripts/eaccountnotejs/EAccountNote.js"></script>
-    <script src="/Scripts/eaccountnotejs/UserLogout.js"></script>
-    <script src="/Scripts/eaccountnotejs/EAccountHome.js"></script>
-    <script src="/Scripts/eaccountnotejs/Login.js"></script>
-    <script src="/Scripts/eaccountnotejs/UserReg.js"></script>
-    <script src="/Scripts/eaccountnotejs/Main.js"></script>
-</body>
-</html>
+    <script src="/scripts/eaccountnote.bundle.min.js"></script>
+  </body>
+  </html>

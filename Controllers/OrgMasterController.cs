@@ -5,14 +5,16 @@ using Microsoft.AspNetCore.Mvc;
 namespace eAccountNoteService.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/Org")]
 public class OrgMasterController : ControllerBase
 {
     private readonly OrgMasterService _service;
+    private readonly UserService _userService;
 
-    public OrgMasterController(OrgMasterService service)
+    public OrgMasterController(OrgMasterService service, UserService userService)
     {
         _service = service;
+        _userService = userService;
     }
 
     // GET: api/orgmaster/list
@@ -35,13 +37,32 @@ public class OrgMasterController : ControllerBase
         return Ok(entity);
     }
 
-    // POST: api/orgmaster/save
+    // POST: api/Org/save
+    // This mirrors legacy OrgController.save(UserMaster), using Proc_Create_User under the hood
     [HttpPost("save")]
-    public async Task<ActionResult<OrgMaster>> Save([FromBody] OrgMaster entity)
+    public async Task<ActionResult<ServerResponse>> Save([FromBody] UserMaster entity)
     {
         if (entity == null)
         {
             return BadRequest("Entity is required");
+        }
+
+        var response = await _userService.SaveUserAndOrgAsync(entity);
+        return Ok(response);
+    }
+
+    // POST: api/Org/update
+    [HttpPost("update")]
+    public async Task<ActionResult<OrgMaster>> Update([FromBody] OrgMaster entity)
+    {
+        if (entity == null)
+        {
+            return BadRequest("Entity is required");
+        }
+
+        if (entity.OrgId == 0)
+        {
+            return BadRequest("OrgId is required for update");
         }
 
         var saved = await _service.SaveRecordAsync(entity);

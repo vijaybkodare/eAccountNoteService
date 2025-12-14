@@ -15,19 +15,19 @@ public class AccountMasterService
 
     public async Task<IEnumerable<AccountMaster>> GetRecordsAsync(int orgId)
     {
-        const string sql = @"SELECT OrgId, AccountId, AccountType, AccountName, Amount, Active, PendingAmount, PaidAmount
-+                              FROM AccountMaster
-+                              WHERE OrgId = @OrgId
-+                              ORDER BY AccountName";
+        const string sql = @"SELECT OrgId, AccountId, AccountType, AccountName, Amount, Active
+                              FROM AccountMaster
+                              WHERE OrgId = @OrgId
+                              ORDER BY AccountName";
 
         return await _dapperService.QueryAsync<AccountMaster>(sql, new { OrgId = orgId });
     }
 
     public async Task<AccountMaster?> GetRecordAsync(decimal accountId)
     {
-        const string sql = @"SELECT OrgId, AccountId, AccountType, AccountName, Amount, Active, PendingAmount, PaidAmount
-+                              FROM AccountMaster
-+                              WHERE AccountId = @AccountId";
+        const string sql = @"SELECT OrgId, AccountId, AccountType, AccountName, Amount, Active
+                              FROM AccountMaster
+                              WHERE AccountId = @AccountId";
 
         return await _dapperService.QuerySingleOrDefaultAsync<AccountMaster>(sql, new { AccountId = accountId });
     }

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace eAccountNoteService.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("account")]
 public class AccountMasterController : ControllerBase
 {
     private readonly AccountMasterService _service;
@@ -45,7 +45,7 @@ public class AccountMasterController : ControllerBase
 
     // POST: api/accountmaster/save
     [HttpPost("save")]
-    public async Task<ActionResult<ServerResponse>> Save([FromBody] AccountMaster entity)
+    public async Task<ActionResult<ServerResponse>> Save([FromForm] AccountMaster entity)
     {
         if (entity == null)
         {
