@@ -34,6 +34,7 @@ appsettings.*.local.json
 # Static web assets (if generated)
 wwwroot/dist/
 wwwroot/node_modules/
+wwwroot/scripts/eaccountnotejs
 
 # Node / front-end
 node_modules/
