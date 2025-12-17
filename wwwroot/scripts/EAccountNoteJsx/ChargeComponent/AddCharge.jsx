@@ -250,7 +250,6 @@ var AddCharge = React.createClass({
         }.bind(this));
     },
     save: function () {
-        var dataToPost = new FormData();
         var entity = {
             ChargeOrderId: this.state.Entity.ChargeOrderId,
             OrgId: _LoginAccount.OrgId,
@@ -260,9 +259,8 @@ var AddCharge = React.createClass({
             Charges: this.Charges.value,
             ChargePayeeDetails: this.state.Accounts,
         }
-        appendObjectToFormData(entity, dataToPost, "");
         _ProgressBar.IMBusy();
-        ajaxPost('ChargeOrder/save', dataToPost, function(data){
+        axiosPost('ChargeOrder/save', entity, function(data){
             _ProgressBar.IMDone();
             if(data.IsSuccess){
                 this.props.ShowList();           

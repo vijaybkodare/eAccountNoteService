@@ -143,6 +143,80 @@ public class ChargeOrderService
         return entity;
     }
 
+    public async Task<bool> SaveAsync(ChargeOrder entity)
+    {
+        return await _dapperService.ExecuteInTransactionAsync<bool>(async (connection, transaction) =>
+        {
+            // Insert or update ChargeOrder header
+            if (entity.ChargeOrderId == -1)
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("OrgId", entity.OrgId, DbType.Decimal);
+                parameters.Add("ChargeOrderNo", await GetChargeOrderNoAsync(entity.OrgId), DbType.String);
+                parameters.Add("ItemId", entity.ItemId, DbType.Decimal);
+                parameters.Add("AccountId", entity.AccountId, DbType.Decimal);
+                parameters.Add("Charges", entity.Charges, DbType.Decimal);
+                parameters.Add("Amount", entity.Amount, DbType.Decimal);
+                parameters.Add("PaidAmount", entity.PaidAmount, DbType.Decimal);
+                parameters.Add("Remark", entity.Remark ?? string.Empty, DbType.String);
+                parameters.Add("RecordId", dbType: DbType.Decimal, direction: ParameterDirection.Output);
+
+                await connection.ExecuteAsync(
+                    "Proc_Insert_ChargeOrder",
+                    parameters,
+                    transaction,
+                    commandType: CommandType.StoredProcedure);
+
+                entity.ChargeOrderId = parameters.Get<decimal>("RecordId");
+            }
+            else
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("ChargeOrderId", entity.ChargeOrderId, DbType.Decimal);
+                parameters.Add("ItemId", entity.ItemId, DbType.Decimal);
+                parameters.Add("AccountId", entity.AccountId, DbType.Decimal);
+                parameters.Add("Charges", entity.Charges, DbType.Decimal);
+                parameters.Add("Amount", entity.Amount, DbType.Decimal);
+                parameters.Add("Remark", entity.Remark ?? string.Empty, DbType.String);
+
+                await connection.ExecuteAsync(
+                    "Proc_Update_ChargeOrder",
+                    parameters,
+                    transaction,
+                    commandType: CommandType.StoredProcedure);
+            }
+
+            // Delete existing unpaid ChargePayeeDetail rows for this order
+            const string deleteSql = "DELETE FROM ChargePayeeDetail WHERE PaidAmount = 0 AND ChargeOrderId = @ChargeOrderId";
+            await connection.ExecuteAsync(deleteSql, new { ChargeOrderId = entity.ChargeOrderId }, transaction);
+
+            // Insert new unpaid ChargePayeeDetail rows
+            if (entity.ChargePayeeDetails != null)
+            {
+                foreach (var item in entity.ChargePayeeDetails)
+                {
+                    if (item.PaidAmount > 0) continue;
+
+                    item.ChargeOrderId = entity.ChargeOrderId;
+
+                    var dtlParams = new DynamicParameters();
+                    dtlParams.Add("ChargeOrderId", item.ChargeOrderId, DbType.Decimal);
+                    dtlParams.Add("AccountId", item.AccountId, DbType.Decimal);
+                    dtlParams.Add("Amount", item.Amount, DbType.Decimal);
+                    dtlParams.Add("PaidAmount", item.PaidAmount, DbType.Decimal);
+
+                    await connection.ExecuteAsync(
+                        "Proc_Insert_ChargePayeeDetail",
+                        dtlParams,
+                        transaction,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+
+            return true;
+        });
+    }
+
     private async Task<string> GetChargeOrderNoAsync(decimal orgId)
     {
         const string sql = @"SELECT TOP 1 ChargeOrderNo

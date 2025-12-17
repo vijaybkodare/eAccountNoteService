@@ -72,4 +72,29 @@ public class CummulativeChargePayTransService
         await _dapperService.ExecuteStoredProcedureAsync("Proc_Update_CummulativeChargePayTrans", parameters);
         return true;
     }
+
+    public async Task AddAsync(CummulativeChargePayTrans entity, IDbConnection connection, IDbTransaction transaction)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("@OrgId", entity.OrgId, DbType.Decimal);
+        parameters.Add("@AccountId", entity.AccountId, DbType.Decimal);
+        parameters.Add("@DrAccountId", entity.DrAccountId, DbType.Decimal);
+        parameters.Add("@CrAccountId", entity.CrAccountId, DbType.Decimal);
+        parameters.Add("@Amount", entity.Amount, DbType.Decimal);
+        parameters.Add("@TransactionId", entity.TransactionId ?? string.Empty, DbType.String);
+        parameters.Add("@Remark", entity.Remark ?? string.Empty, DbType.String);
+        parameters.Add("@Status", entity.Status, DbType.Decimal);
+        parameters.Add("@TransMode", entity.TransMode, DbType.Decimal);
+        parameters.Add("@RefType", entity.RefType, DbType.Decimal);
+        parameters.Add("@RefId", entity.RefId, DbType.Decimal);
+        parameters.Add("@RecordId", dbType: DbType.Decimal, direction: ParameterDirection.Output);
+
+        await connection.ExecuteAsync(
+            "Proc_Insert_CummulativeChargePayTrans",
+            parameters,
+            transaction,
+            commandType: CommandType.StoredProcedure);
+
+        entity.CummulativeChargePayTransId = parameters.Get<decimal>("@RecordId");
+    }
 }

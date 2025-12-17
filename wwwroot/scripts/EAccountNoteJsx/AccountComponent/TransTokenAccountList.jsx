@@ -38,7 +38,7 @@
     getList: function () {
         var srNo = 0;
         return this.state.Items.map(function (accountDto) {
-            if (accountDto.accountMaster.AccountName.toLowerCase().indexOf(this.state.Filter.toLowerCase()) > -1
+            if (accountDto.AccountMaster.AccountName.toLowerCase().indexOf(this.state.Filter.toLowerCase()) > -1
                 || this.state.Filter == "") {
                 srNo += 1;
                 return this.getListRow(accountDto, srNo);
@@ -56,7 +56,7 @@
     },
     getListRow: function (accountDto, srNo) {
         return (
-            <AccountTransTokenRow key={accountDto.accountMaster.AccountId}
+            <AccountTransTokenRow key={accountDto.AccountMaster.AccountId}
                 AddNavigEntity={this.props.AddNavigEntity}
                 ToggleAccountTrans={this.props.ToggleAccountTrans}
                 OperMode={this.props.OperMode}

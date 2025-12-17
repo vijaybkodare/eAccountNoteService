@@ -149,7 +149,7 @@ var AddBill = React.createClass({
             dataToPost.append('file', this.FileInput.files[0]);
         }
         _ProgressBar.IMBusy();
-        ajaxPost('BillOrder/save', dataToPost, function(data){
+        axiosost('BillOrder/save', dataToPost, function(data){
             _ProgressBar.IMDone();
             if(data.IsSuccess){
                 this.props.ShowList();           

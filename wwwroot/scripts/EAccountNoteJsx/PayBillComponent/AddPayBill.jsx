@@ -103,7 +103,6 @@ var AddPayBill = React.createClass({
         });
     },
     save: function () {
-        var dataToPost = new FormData();
         var entity = {
             BillOrderId: this.state.Entity.BillOrderId,
             DrAccountId: this.state.Entity.BankAccountId,
@@ -115,9 +114,8 @@ var AddPayBill = React.createClass({
             RefType: 0,
             RefId: 0,
         }
-        appendObjectToFormData(entity, dataToPost, "");
         _ProgressBar.IMBusy();
-        ajaxPost('BillOrder/billPayment', dataToPost, function(data){
+        axiosPost('BillOrder/billPayment', entity, function(data){
             _ProgressBar.IMDone();
             if(data.IsSuccess){
                 this.props.ShowList();        

@@ -114,7 +114,11 @@
       "wwwroot/scripts/eaccountnotejs/UserComponent/UserList.js",
       "wwwroot/scripts/eaccountnotejs/UserComponent/UserProfile.js",
       "wwwroot/scripts/eaccountnotejs/UserComponent/UserRow.js",
-      "wwwroot/scripts/eaccountnotejs/TransMapper/TransMapper.js",
+      "wwwroot/scripts/eaccountnotejs/TransMapperComponent/TransMapAccountChargeRow.js",
+      "wwwroot/scripts/eaccountnotejs/TransMapperComponent/TransMapAccountRow.js",
+      "wwwroot/scripts/eaccountnotejs/TransMapperComponent/TransMapAccountTokenRow.js",
+      "wwwroot/scripts/eaccountnotejs/TransMapperComponent/TransMapper.js",
+      "wwwroot/scripts/eaccountnotejs/TransMapperComponent/TransMapRow.js",
       "wwwroot/scripts/eaccountnotejs/DashboardComponent/DashboardItem.js",
       "wwwroot/scripts/eaccountnotejs/DashboardComponent/GroupHeader.js",
       "wwwroot/scripts/eaccountnotejs/EAccountNote.js",
@@ -125,7 +129,7 @@
       "wwwroot/scripts/eaccountnotejs/Main.js"
     ],
     "minify": {
-      "enabled": true
+      "enabled": false
     },
     "sourceMap": true
   }

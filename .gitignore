@@ -35,6 +35,7 @@ appsettings.*.local.json
 wwwroot/dist/
 wwwroot/node_modules/
 wwwroot/scripts/eaccountnotejs
+wwwroot/scripts/eaccountnote.bundle.min.js
 
 # Node / front-end
 node_modules/

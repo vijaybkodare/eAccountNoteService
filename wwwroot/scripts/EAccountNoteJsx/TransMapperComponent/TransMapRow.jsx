@@ -10,13 +10,13 @@
                 <div className="col col-sm-3">
                     <span className="badge badge-dark" style={{ marginRight: 4 }}>{this.props.SrNo}</span>
                     <span className="fontSizeSm">
-                        {getFormattedDate3(this.props.Item.bankStatement.TransDt)}
+                        {getFormattedDate(this.props.Item.BankStatement.TransDt)}
                     </span>&nbsp;&nbsp;&nbsp;
                     <span className="fontSizeLg fontWeightB">
-                        {this.props.Item.bankStatement.Amount}
+                        {this.props.Item.BankStatement.Amount}
                     </span>
                     <br />
-                    {this.props.Item.bankStatement.Remark}
+                    {this.props.Item.BankStatement.Remark}
                 </div>
                 <div className="col col-sm-9">
                     {this.loadMapAccounts()}
@@ -30,8 +30,8 @@
         }
         return this.props.Item.accountDtos.map(function (item) {
             return <TransMapAccountRow
-                key={item.accountMaster.AccountId}
-                BankStatement={this.props.Item.bankStatement}
+                key={item.AccountMaster.AccountId}
+                BankStatement={this.props.Item.BankStatement}
                 AccountDto={item}
                 SelCharges={this.props.SelCharges}
                 ChargeItemSelChange={this.props.ChargeItemSelChange}

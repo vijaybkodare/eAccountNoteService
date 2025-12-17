@@ -151,4 +151,25 @@ public class BankStatementService
         var bytes = memoryStream.ToArray();
         return (bytes, "text/csv", "bankStatement.csv");
     }
+
+    public static async Task UpdateReconciliationStatusAsync(
+        decimal bankStatementId,
+        decimal refType,
+        decimal refId,
+        decimal status,
+        IDbConnection connection,
+        IDbTransaction transaction)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("BankStatementId", bankStatementId, DbType.Decimal);
+        parameters.Add("RefType", refType, DbType.Decimal);
+        parameters.Add("RefId", refId, DbType.Decimal);
+        parameters.Add("Status", status, DbType.Decimal);
+
+        await connection.ExecuteAsync(
+            "Proc_Update_ReconciliationStatus",
+            parameters,
+            transaction,
+            commandType: CommandType.StoredProcedure);
+    }
 }

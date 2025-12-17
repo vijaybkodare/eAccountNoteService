@@ -9,12 +9,12 @@
                 <div className="row">
                     <div className="col-xs-7">
                         <span className="badge badge-dark" style={{ marginRight: 4 }}>{this.props.SrNo}</span>
-                        {this.props.AccountDto.accountMaster.AccountName}
+                        {this.props.AccountDto.AccountMaster.AccountName}
                     </div>
                 </div>
                 <div className="row">
                     {
-                        this.props.AccountDto.accountTransTokens.map(function (token) {
+                        this.props.AccountDto.AccountTransTokens.map(function (token) {
                             return (
                                 <AccountTransTokenItemRow
                                     Entity={token}
@@ -27,6 +27,6 @@
         );
     },
     actionOnItemSelect: function () {
-        this.props.ActionOnItemSelect(this.props.AccountDto.accountMaster);
+        this.props.ActionOnItemSelect(this.props.AccountDto.AccountMaster);
     },
 });

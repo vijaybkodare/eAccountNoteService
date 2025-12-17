@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\scripts\eaccountnotejs\TransMapper\**" />
+    <Content Remove="wwwroot\scripts\eaccountnotejs\TransMapper\**" />
+    <EmbeddedResource Remove="wwwroot\scripts\eaccountnotejs\TransMapper\**" />
+    <None Remove="wwwroot\scripts\eaccountnotejs\TransMapper\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\scripts\bootstrap\bootstrap.js" />
     <None Include="wwwroot\scripts\bootstrap\bootstrap.min.js" />
     <None Include="wwwroot\scripts\Chart.js" />
@@ -136,7 +143,6 @@
     <None Include="wwwroot\scripts\eaccountnotejs\AccountComponent\AccountTransTokenRow.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\AccountComponent\AddAccount.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\AccountComponent\AddTransToken.js" />
-    <None Include="wwwroot\scripts\eaccountnotejs\AccountComponent\MemberAccountList.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\AccountComponent\TransTokenAccountList.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\AccountComponent\TransTokenRow.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\AdvChargeComponent\AddAdvCharge.js" />
@@ -238,15 +244,10 @@
     <None Include="wwwroot\scripts\eaccountnotejs\SupportComponent\RevertTransFooter.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\SupportComponent\UpdateTransNo.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\TransMapperComponent\TransMapAccountChargeRow.js" />
-    <None Include="wwwroot\scripts\eaccountnotejs\TransMapperComponent\TransMapAccountChargesRow1.js" />
-    <None Include="wwwroot\scripts\eaccountnotejs\TransMapperComponent\TransMapAccountChargesRow2.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\TransMapperComponent\TransMapAccountRow.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\TransMapperComponent\TransMapAccountTokenRow.js" />
-    <None Include="wwwroot\scripts\eaccountnotejs\TransMapperComponent\TransMapAccountTokenRow1.js" />
-    <None Include="wwwroot\scripts\eaccountnotejs\TransMapperComponent\TransMapAccountTokenRow2.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\TransMapperComponent\TransMapper.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\TransMapperComponent\TransMapRow.js" />
-    <None Include="wwwroot\scripts\eaccountnotejs\TransMapper\TransMapper.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\UserComponent\AddUser.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\UserComponent\AssignUserAccount.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\UserComponent\ChangePassword.js" />

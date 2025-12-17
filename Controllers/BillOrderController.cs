@@ -34,7 +34,7 @@ public class BillOrderController : ControllerBase
 
     // POST: api/billorder/save
     [HttpPost("save")]
-    public async Task<ActionResult<ServerResponse>> Save([FromBody] BillOrder entity)
+    public async Task<ActionResult<ServerResponse>> Save([FromForm] BillOrder entity)
     {
         var success = await _billOrderService.AddUpdateAsync(entity);
         return Ok(new ServerResponse { IsSuccess = success });

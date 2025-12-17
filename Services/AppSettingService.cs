@@ -33,8 +33,8 @@ public class AppSettingService
         if (string.IsNullOrWhiteSpace(appSettingCode)) return null;
 
         const string sql = @"SELECT AppSettingCode, AppSettingVal, AppSettingDesc
-+                             FROM AppSetting
-+                             WHERE OrgId = @OrgId AND AppSettingCode = @AppSettingCode";
+                             FROM AppSetting
+                             WHERE OrgId = @OrgId AND AppSettingCode = @AppSettingCode";
 
         return await _dapperService.QuerySingleOrDefaultAsync<AppSetting>(sql, new { OrgId = orgId, AppSettingCode = appSettingCode });
     }

@@ -55,9 +55,9 @@ public class AdvChargeController : ControllerBase
         return Ok(response);
     }
 
-    // GET: api/advcharge/account_summary/{accountId}
-    [HttpGet("account_summary/{accountId:decimal}")]
-    public async Task<ActionResult<AdvCharge>> GetAccountSummary(decimal accountId)
+    // GET: api/advcharge/account_summary?accountId=1
+    [HttpGet("account_summary")]
+    public async Task<ActionResult<AdvCharge>> GetAccountSummary([FromQuery] decimal accountId)
     {
         var summary = await _service.GetAccountSummaryAsync(accountId);
         return Ok(summary);

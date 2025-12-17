@@ -15,19 +15,22 @@ public class ChargePayTransService
     private readonly ChargePayeeDetailService _chargePayeeDetailService;
     private readonly AdvChargeService _advChargeService;
     private readonly BankStatementService _bankStatementService;
+    private readonly CummulativeChargePayTransService _cummulativeChargePayTransService;
 
     public ChargePayTransService(
         DapperService dapperService,
         TransactionService transactionService,
         ChargePayeeDetailService chargePayeeDetailService,
         AdvChargeService advChargeService,
-        BankStatementService bankStatementService)
+        BankStatementService bankStatementService,
+        CummulativeChargePayTransService cummulativeChargePayTransService)
     {
         _dapperService = dapperService;
         _transactionService = transactionService;
         _chargePayeeDetailService = chargePayeeDetailService;
         _advChargeService = advChargeService;
         _bankStatementService = bankStatementService;
+        _cummulativeChargePayTransService = cummulativeChargePayTransService;
     }
 
     public async Task<IEnumerable<ChargePayTrans>> GetAllRecordsAsync(decimal orgId, decimal accountId, string fromDate, string toDate)
@@ -288,27 +291,8 @@ public class ChargePayTransService
         // 2) Transactional DB work mirroring legacy CummulativeChargePayment
         return await _dapperService.ExecuteInTransactionAsync<bool>(async (connection, transaction) =>
         {
-            // 2.1 Insert CummulativeChargePayTrans
-            var ccptParams = new DynamicParameters();
-            ccptParams.Add("@OrgId", entity.OrgId, DbType.Decimal);
-            ccptParams.Add("@DrAccountId", entity.DrAccountId, DbType.Decimal);
-            ccptParams.Add("@CrAccountId", entity.CrAccountId, DbType.Decimal);
-            ccptParams.Add("@Amount", entity.Amount, DbType.Decimal);
-            ccptParams.Add("@TransactionId", entity.TransactionId ?? string.Empty, DbType.String);
-            ccptParams.Add("@Remark", entity.Remark ?? string.Empty, DbType.String);
-            ccptParams.Add("@Status", entity.Status, DbType.Decimal);
-            ccptParams.Add("@TransMode", entity.TransMode, DbType.Decimal);
-            ccptParams.Add("@RefType", entity.RefType, DbType.Decimal);
-            ccptParams.Add("@RefId", entity.RefId, DbType.Decimal);
-            ccptParams.Add("@RecordId", dbType: DbType.Decimal, direction: ParameterDirection.Output);
-
-            await connection.ExecuteAsync(
-                "Proc_Insert_CummulativeChargePayTrans",
-                ccptParams,
-                transaction,
-                commandType: CommandType.StoredProcedure);
-
-            entity.CummulativeChargePayTransId = ccptParams.Get<decimal>("@RecordId");
+            // 2.1 Insert CummulativeChargePayTrans via dedicated service
+            await _cummulativeChargePayTransService.AddAsync(entity, connection, transaction);
 
             // 2.2 Create ChargePayTrans rows that consume pending charges
             decimal totalAmountToPay = entity.Amount;
@@ -326,43 +310,60 @@ public class ChargePayTransService
                 }
                 totalAmountToPay -= payAmount;
 
-                var cptParams = new DynamicParameters();
-                cptParams.Add("ChargePayeeDetailId", item.ChargePayeeDetailId, DbType.Decimal);
-                cptParams.Add("Amount", payAmount, DbType.Decimal);
-                cptParams.Add("Remark", entity.Remark ?? string.Empty, DbType.String);
-                cptParams.Add("TransactionId", entity.TransactionId ?? string.Empty, DbType.String);
-                cptParams.Add("DrAccountId", entity.DrAccountId, DbType.Decimal);
-                cptParams.Add("CrAccountId", entity.CrAccountId, DbType.Decimal);
-                cptParams.Add("Status", 0m, DbType.Decimal);
-                cptParams.Add("TransMode", entity.TransMode, DbType.Decimal);
-                cptParams.Add("RefType", 1m, DbType.Decimal);
-                cptParams.Add("RefId", entity.CummulativeChargePayTransId, DbType.Decimal);
-                cptParams.Add("RecordId", dbType: DbType.Decimal, direction: ParameterDirection.Output);
+                var chargePayTrans = new ChargePayTrans
+                {
+                    ChargePayeeDetailId = item.ChargePayeeDetailId,
+                    Amount = payAmount,
+                    Remark = entity.Remark ?? string.Empty,
+                    TransactionId = entity.TransactionId ?? string.Empty,
+                    DrAccountId = entity.DrAccountId,
+                    CrAccountId = entity.CrAccountId,
+                    Status = 0,
+                    TransMode = entity.TransMode,
+                    RefType = 1,
+                    RefId = entity.CummulativeChargePayTransId
+                };
 
-                await connection.ExecuteAsync(
-                    "Proc_Insert_ChargePayTrans",
-                    cptParams,
-                    transaction,
-                    commandType: CommandType.StoredProcedure);
+                await AddAsync(chargePayTrans, connection, transaction);
             }
 
             // 2.3 Update bank statement reconciliation if needed
             if (entity.BankStatementId > 0)
             {
-                var bsParams = new DynamicParameters();
-                bsParams.Add("BankStatementId", entity.BankStatementId, DbType.Decimal);
-                bsParams.Add("RefType", 1m, DbType.Decimal);
-                bsParams.Add("RefId", entity.CummulativeChargePayTransId, DbType.Decimal);
-                bsParams.Add("Status", 1m, DbType.Decimal);
-
-                await connection.ExecuteAsync(
-                    "Proc_Update_ReconciliationStatus",
-                    bsParams,
-                    transaction,
-                    commandType: CommandType.StoredProcedure);
+                await BankStatementService.UpdateReconciliationStatusAsync(
+                    bankStatementId: entity.BankStatementId,
+                    refType: 1m,
+                    refId: entity.CummulativeChargePayTransId,
+                    status: 1m,
+                    connection: connection,
+                    transaction: transaction);
             }
 
             return true;
         });
+    }
+
+    public static async Task AddAsync(ChargePayTrans entity, IDbConnection connection, IDbTransaction transaction)
+    {
+        var cptParams = new DynamicParameters();
+        cptParams.Add("ChargePayeeDetailId", entity.ChargePayeeDetailId, DbType.Decimal);
+        cptParams.Add("Amount", entity.Amount, DbType.Decimal);
+        cptParams.Add("Remark", entity.Remark ?? string.Empty, DbType.String);
+        cptParams.Add("TransactionId", entity.TransactionId ?? string.Empty, DbType.String);
+        cptParams.Add("DrAccountId", entity.DrAccountId, DbType.Decimal);
+        cptParams.Add("CrAccountId", entity.CrAccountId, DbType.Decimal);
+        cptParams.Add("Status", entity.Status, DbType.Decimal);
+        cptParams.Add("TransMode", entity.TransMode, DbType.Decimal);
+        cptParams.Add("RefType", entity.RefType, DbType.Decimal);
+        cptParams.Add("RefId", entity.RefId, DbType.Decimal);
+        cptParams.Add("RecordId", dbType: DbType.Decimal, direction: ParameterDirection.Output);
+
+        await connection.ExecuteAsync(
+            "Proc_Insert_ChargePayTrans",
+            cptParams,
+            transaction,
+            commandType: CommandType.StoredProcedure);
+
+        entity.ChargePayTransId = cptParams.Get<decimal>("RecordId");
     }
 }

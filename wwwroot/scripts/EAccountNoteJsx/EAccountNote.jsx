@@ -343,7 +343,7 @@ function getFormattedDate2(rawDate) {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return months[d.getMonth()] + '-' + d.getFullYear();
 }
-function getFormattedDate3(rawDate) {
+function getFormattedDate(rawDate) {
     if (!rawDate) {
         return;
     }
@@ -354,7 +354,7 @@ function getFormattedDate3(rawDate) {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return day + '-' + months[d.getMonth()] + '-' + d.getFullYear();
 }
-function getFormattedDate(rawDate) {
+function getFormattedDate3(rawDate) {
     if (!rawDate) {
         return;
     }

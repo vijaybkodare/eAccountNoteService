@@ -133,7 +133,6 @@ var AddChargePayment = React.createClass({
     },
     save: function () {
         let uri = 'ChargeOrder/cummulativeChargePayment';
-        var dataToPost = new FormData();
         var transId = '';
         if (this.state.TransMode == 0) {
             transId = this.TransactionId.value;
@@ -157,9 +156,8 @@ var AddChargePayment = React.createClass({
             entity.RefType = 1;
             entity.RefId = _LoginAccount.AdvPaySummary.AdvChargeId;
         }
-        appendObjectToFormData2(entity, dataToPost, "");
         _ProgressBar.IMBusy();
-        ajaxPost(uri, dataToPost, function(data){
+        axiosPost(uri, entity, function(data){
             _ProgressBar.IMDone();
             if(data.IsSuccess){
                 this.props.ShowList(this.state.Entity.AccountId);           
