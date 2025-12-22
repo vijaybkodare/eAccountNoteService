@@ -2,6 +2,8 @@ using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using eAccountNoteService.Utility;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
+using System.Linq;
 
 namespace eAccountNoteService.Controllers;
 
@@ -109,6 +111,27 @@ public class ReportController : ControllerBase
     {
         var list = await _chargePayeeDetailService.GetRecordsAsync(orgId, accountId, fromDate, toDate);
         return Ok(list);
+    }
+
+    // GET: Report/memberAccountStatus?OrgId=1&accountId=-1
+    [HttpGet("memberAccountStatus")]
+    public async Task<ActionResult> MemberAccountStatus([FromQuery] decimal orgId, [FromQuery] decimal accountId = -1)
+    {
+        var dt = await _chargePayeeDetailService.GetMemberAccountStatusAsync(orgId, accountId);
+
+        var items = dt.AsEnumerable()
+            .Select((row, index) => new
+            {
+                SrNo = index + 1,
+                AccountId = row.Field<decimal>("AccountId"),
+                AccountName = row.Field<string>("AccountName") ?? string.Empty,
+                Amount = row.Field<decimal?>("Amount") ?? 0m,
+                PaidAmount = row.Field<decimal?>("PaidAmount") ?? 0m,
+                PendingAmount = row.Field<decimal?>("PendingAmount") ?? 0m
+            })
+            .ToList();
+
+        return Ok(items);
     }
 
     // GET: api/report/downloadChargePayTransRep?orgId=1&accountId=...&fromDate=...&toDate=...

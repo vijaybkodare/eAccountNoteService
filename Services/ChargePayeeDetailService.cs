@@ -4,17 +4,22 @@ using System.IO;
 using System.Text;
 using CsvHelper;
 using Dapper;
+using FastReport;
+using FastReport.Export.PdfSimple;
 using eAccountNoteService.Models;
+using eAccountNoteService.Utility;
 
 namespace eAccountNoteService.Services;
 
 public class ChargePayeeDetailService
 {
     private readonly DapperService _dapperService;
+    private readonly ReportUtility _reportUtility;
 
-    public ChargePayeeDetailService(DapperService dapperService)
+    public ChargePayeeDetailService(DapperService dapperService, ReportUtility reportUtility)
     {
         _dapperService = dapperService;
+        _reportUtility = reportUtility;
     }
 
     public async Task<IEnumerable<ChargePayeeDetail>> GetMemberPendingChargesAsync(int orgId, decimal accountId)
@@ -218,6 +223,28 @@ public class ChargePayeeDetailService
 
         var bytes = memoryStream.ToArray();
         return (bytes, "text/csv", "memberAccountStatus.csv");
+    }
+
+    public async Task<(byte[] Content, string FileName)> GenerateAccountsReportPdfAsync(decimal orgId, string reportPath)
+    {
+        var dt = await GetMemberAccountStatusAsync(orgId, -1);
+
+        using var report = new Report();
+        report.Load(reportPath);
+
+        report.RegisterData(dt, "AccountStatus");
+
+        await _reportUtility.setReportParameters(report, orgId, "Account Status", string.Empty);
+
+        report.Prepare();
+        using var ms = new MemoryStream();
+        using (var pdfExport = new PDFSimpleExport())
+        {
+            pdfExport.Export(report, ms);
+            ms.Position = 0;
+            var fileName = $"AccountStatus_{DateTime.Now:yyyyMMddHHmmss}.pdf";
+            return (ms.ToArray(), fileName);
+        }
     }
 
     public async Task<IEnumerable<AccountMaster>> GetPayAccountsAsync(decimal profileId)

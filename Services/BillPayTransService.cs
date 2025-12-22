@@ -1,5 +1,8 @@
 using System.Data;
+using System.IO;
 using Dapper;
+using FastReport;
+using FastReport.Export.PdfSimple;
 using eAccountNoteService.Models;
 
 namespace eAccountNoteService.Services;
@@ -93,6 +96,64 @@ public class BillPayTransService
         catch (Exception ex)
         {
             return (false, ex.Message);
+        }
+    }
+
+    public async Task<DataTable> GetExpenseReportDataAsync(decimal orgId, decimal accountId, string fromDate, string toDate)
+    {
+        var sql = @"SELECT AM.AccountId, AM.AccountName, IM.ItemName, BO.BillNo, BO.Remark AS BORemark,
+                            BPT.PaymentDt, BPT.Amount, BPT.Remark
+                     FROM BillPayTrans BPT
+                     INNER JOIN BillOrder BO ON BO.BillOrderId = BPT.BillOrderId
+                     INNER JOIN AccountMaster AM ON AM.AccountId = BO.AccountId
+                     INNER JOIN ItemMaster IM ON IM.ItemId = BO.ItemId
+                     WHERE BO.OrgId = @OrgId
+                       AND BPT.Status = 0";
+
+        var parameters = new DynamicParameters();
+        parameters.Add("@OrgId", orgId, DbType.Decimal);
+
+        if (accountId != -1)
+        {
+            sql += " AND BO.AccountId = @AccountId";
+            parameters.Add("@AccountId", accountId, DbType.Decimal);
+        }
+        if (!string.IsNullOrWhiteSpace(fromDate))
+        {
+            sql += " AND BPT.PaymentDt >= @FromDate";
+            parameters.Add("@FromDate", fromDate, DbType.String);
+        }
+        if (!string.IsNullOrWhiteSpace(toDate))
+        {
+            sql += " AND BPT.PaymentDt <= @ToDate";
+            parameters.Add("@ToDate", toDate, DbType.String);
+        }
+
+        return await _dapperService.QueryToDataTableAsync(sql, parameters);
+    }
+
+    public async Task<(byte[] Content, string FileName)> GenerateExpenseReportPdfAsync(
+        decimal orgId,
+        decimal accountId,
+        string fromDate,
+        string toDate,
+        string reportPath)
+    {
+        var data = await GetExpenseReportDataAsync(orgId, accountId, fromDate, toDate);
+
+        using var report = new Report();
+        report.Load(reportPath);
+
+        report.RegisterData(data, "MyDS");
+
+        report.Prepare();
+        using var ms = new MemoryStream();
+        using (var pdfExport = new PDFSimpleExport())
+        {
+            pdfExport.Export(report, ms);
+            ms.Position = 0;
+            var fileName = $"ExpenseReport_{DateTime.Now:yyyyMMddHHmmss}.pdf";
+            return (ms.ToArray(), fileName);
         }
     }
 }

@@ -40,6 +40,7 @@ builder.Services.AddScoped<ImageTextExtractorService>();
 builder.Services.AddScoped<ChargePayTransService>();
 builder.Services.AddScoped<CummulativeChargePayTransService>();
 builder.Services.AddScoped<ChargePayeeDetailService>();
+builder.Services.AddScoped<ReportUtility>();
 builder.Services.AddScoped<DonationService>();
 builder.Services.AddScoped<MLAutoTransService>();
 builder.Services.AddScoped<MLAutoTrans2Service>();

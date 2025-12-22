@@ -87,3 +87,6 @@ To re-generate bundles, run:
 
 - Transactional logic uses `DapperService.ExecuteInTransactionAsync` to ensure consistency across related inserts/updates.
 - Many services have been ported to async patterns (`Task<T>` with Dapper) while preserving legacy SQL and stored procedure semantics.
+
+## Build js
+
