@@ -225,26 +225,17 @@ public class ChargePayeeDetailService
         return (bytes, "text/csv", "memberAccountStatus.csv");
     }
 
-    public async Task<(byte[] Content, string FileName)> GenerateAccountsReportPdfAsync(decimal orgId, string reportPath)
+    public async Task<(byte[] Content, string FileName)> GenerateAccountsReportPdfAsync(decimal orgId)
     {
         var dt = await GetMemberAccountStatusAsync(orgId, -1);
 
-        using var report = new Report();
-        report.Load(reportPath);
-
-        report.RegisterData(dt, "AccountStatus");
-
-        await _reportUtility.setReportParameters(report, orgId, "Account Status", string.Empty);
-
-        report.Prepare();
-        using var ms = new MemoryStream();
-        using (var pdfExport = new PDFSimpleExport())
-        {
-            pdfExport.Export(report, ms);
-            ms.Position = 0;
-            var fileName = $"AccountStatus_{DateTime.Now:yyyyMMddHHmmss}.pdf";
-            return (ms.ToArray(), fileName);
-        }
+        return await _reportUtility.GenerateReportPdfAsync(
+            dt,
+            "AccountStatus",
+            orgId,
+            "AccountReport.frx",
+            "Account Status",
+            System.DateTime.Now.ToString("dd-MMM-yyyy"));
     }
 
     public async Task<IEnumerable<AccountMaster>> GetPayAccountsAsync(decimal profileId)

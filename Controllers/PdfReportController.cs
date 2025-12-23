@@ -27,8 +27,7 @@ public class PdfReportController : ControllerBase
     [HttpGet("accounts")]
     public async Task<FileContentResult> GetAccounts([FromQuery] decimal orgId)
     {
-        var reportPath = Path.Combine(_env.ContentRootPath, "wwwroot/reports", "AccountReport.frx");
-        var result = await _chargePayeeDetailService.GenerateAccountsReportPdfAsync(orgId, reportPath);
+        var result = await _chargePayeeDetailService.GenerateAccountsReportPdfAsync(orgId);
 
         return File(result.Content, "application/pdf", result.FileName);
     }
