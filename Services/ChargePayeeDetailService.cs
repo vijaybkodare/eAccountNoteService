@@ -238,6 +238,97 @@ public class ChargePayeeDetailService
             System.DateTime.Now.ToString("dd-MMM-yyyy"));
     }
 
+    public async Task<DataTable> GetMemberAccountPendingSummaryAsync(decimal orgId)
+    {
+        var query = @"SELECT AccountId, AccountName,
+                             SUM(Amount) AS Amount,
+                             SUM(PaidAmount) AS PaidAmount,
+                             SUM(Amount - PaidAmount) AS PendingAmount
+                      FROM (
+                          SELECT AM.AccountId, AM.AccountName, CPD.Amount, CPD.PaidAmount
+                              FROM ChargePayeeDetail CPD INNER JOIN AccountMaster AM
+                                  ON CPD.AccountId = AM.AccountId
+                              WHERE AM.OrgId = @OrgId AND AM.AccountType = 1
+                          UNION ALL
+                          SELECT AM.AccountId, AM.AccountName, 0 AS Amount, AC.Amount - AC.SettleAmount AS PaidAmount
+                              FROM AdvCharge AC INNER JOIN AccountMaster AM
+                                  ON AC.DrAccountId = AM.AccountId
+                              WHERE AM.OrgId = @OrgId AND AM.AccountType = 1
+                      ) AS RESULT
+                      GROUP BY AccountId, AccountName
+                      ORDER BY AccountName";
+
+        var parameters = new DynamicParameters();
+        parameters.Add("@OrgId", orgId, DbType.Decimal);
+
+        return await _dapperService.QueryToDataTableAsync(query, parameters);
+    }
+
+    public async Task<(byte[] Content, string FileName)> GenerateAccountPendingSummaryReportPdfAsync(decimal orgId)
+    {
+        var sourceTable = await GetMemberAccountPendingSummaryAsync(orgId);
+
+        var summaryTable = new DataTable();
+        summaryTable.Columns.Add("BucketName", typeof(string));
+        summaryTable.Columns.Add("Accounts", typeof(string));
+        summaryTable.Columns.Add("PendingAmount", typeof(double));
+        summaryTable.Columns.Add("TotalAccouts", typeof(double));
+        summaryTable.Columns.Add("ColorCode", typeof(string));
+
+        AddPendingSummaryRow(summaryTable, sourceTable, 30001, int.MaxValue, "Above 30,000", "red");
+        AddPendingSummaryRow(summaryTable, sourceTable, 20001, 30000, "Between 20,001 to 30,000", "orange");
+        AddPendingSummaryRow(summaryTable, sourceTable, 10001, 20000, "Between 10,001 to 20,000", "olive");
+        AddPendingSummaryRow(summaryTable, sourceTable, 5001, 10000, "Between 5,001 to 10,000", "green");
+        AddPendingSummaryRow(summaryTable, sourceTable, 2001, 5000, "Between 2,001 to 5,000", "blue");
+        AddPendingSummaryRow(summaryTable, sourceTable, 1, 2000, "Between 1 to 2,000", "black");
+        AddPendingSummaryRow(summaryTable, sourceTable, -int.MaxValue, 0, "0", "black");
+
+        return await _reportUtility.GenerateReportPdfAsync(
+            summaryTable,
+            "AccountPendingSummary",
+            orgId,
+            "AccountPendingSummary.frx",
+            "Account Pending Status Report",
+            System.DateTime.Now.ToString("dd-MMM-yyyy"));
+    }
+
+    private static void AddPendingSummaryRow(DataTable targetTable, DataTable sourceTable, int minLimit, int maxLimit, string bucketName, string colorCode)
+    {
+        var row = targetTable.NewRow();
+        row["BucketName"] = bucketName;
+        row["ColorCode"] = colorCode;
+
+        var view = new DataView(sourceTable)
+        {
+            RowFilter = $"PendingAmount >= {minLimit} AND PendingAmount <= {maxLimit}"
+        };
+
+        var sb = new StringBuilder();
+        decimal totalPending = 0;
+
+        foreach (DataRowView drv in view)
+        {
+            var accountName = drv["AccountName"]?.ToString() ?? string.Empty;
+            if (!string.IsNullOrEmpty(accountName))
+            {
+                sb.Append(accountName);
+                sb.Append(',');
+            }
+
+            var amount = drv["PendingAmount"] != DBNull.Value ? Convert.ToDecimal(drv["PendingAmount"]) : 0m;
+            if (amount > 0)
+            {
+                totalPending += amount;
+            }
+        }
+
+        row["Accounts"] = sb.ToString();
+        row["PendingAmount"] = (double)totalPending;
+        row["TotalAccouts"] = view.Count;
+
+        targetTable.Rows.Add(row);
+    }
+
     public async Task<IEnumerable<AccountMaster>> GetPayAccountsAsync(decimal profileId)
     {
         // Port of legacy GetPayAccounts: determine role, then return accounts with pending amount

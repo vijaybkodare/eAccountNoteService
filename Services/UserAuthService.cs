@@ -1,31 +1,25 @@
 using System.Data;
 using Dapper;
 using eAccountNoteService.Models;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace eAccountNoteService.Services;
 
 public class UserAuthService
 {
-    private readonly string _connectionString;
+    private readonly DapperService _dapperService;
     private readonly ILogger<UserAuthService> _logger;
 
-    public UserAuthService(IConfiguration configuration, ILogger<UserAuthService> logger)
+    public UserAuthService(DapperService dapperService, ILogger<UserAuthService> logger)
     {
+        _dapperService = dapperService;
         _logger = logger;
-        _connectionString = configuration.GetConnectionString("DefaultConnection")
-                         ?? throw new ArgumentNullException("Connection string 'DefaultConnection' not found");
     }
 
     public async Task<ServerResponse> AuthorizeMeAsync(string loginId, string password)
     {
         try
         {
-            using var connection = new SqlConnection(_connectionString);
-            await connection.OpenAsync();
-
             // Generate a new access key similar to legacy Common.GetAccessKey
             var accessKey = Guid.NewGuid().ToString("N");
 
@@ -35,7 +29,7 @@ public class UserAuthService
             parameters.Add("AccessKey", accessKey, DbType.String, ParameterDirection.Input);
             parameters.Add("OperStatus", dbType: DbType.Int16, direction: ParameterDirection.Output);
 
-            await connection.ExecuteAsync("Proc_Authenticate_User", parameters, commandType: CommandType.StoredProcedure);
+            await _dapperService.ExecuteStoredProcedureAsync("Proc_Authenticate_User", parameters);
 
             var operStatus = parameters.Get<short>("OperStatus");
             if (operStatus == 0)
@@ -51,7 +45,7 @@ INNER JOIN UserProfileRole UPR ON UP.ProfileId = UPR.UserProfileId
 INNER JOIN OrgMaster OM ON UP.OrgId = OM.OrgId
 WHERE UM.LoginId = @LoginId";
 
-            var user = await connection.QuerySingleOrDefaultAsync<UserMaster>(sql, new { LoginId = loginId });
+            var user = await _dapperService.QuerySingleOrDefaultAsync<UserMaster>(sql, new { LoginId = loginId });
             if (user == null)
             {
                 return new ServerResponse { IsSuccess = false, Error = "Record not found" };

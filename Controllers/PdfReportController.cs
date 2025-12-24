@@ -32,6 +32,15 @@ public class PdfReportController : ControllerBase
         return File(result.Content, "application/pdf", result.FileName);
     }
 
+    // GET: api/pdfreport/accountpendingsummary?orgId=1
+    [HttpGet("accountpendingsummary")]
+    public async Task<FileContentResult> GetAccountPendingSummary([FromQuery] decimal orgId)
+    {
+        var result = await _chargePayeeDetailService.GenerateAccountPendingSummaryReportPdfAsync(orgId);
+
+        return File(result.Content, "application/pdf", result.FileName);
+    }
+
     // GET: api/pdfreport/expense-report?orgId=1&accountId=1&fromDate=2024-01-01&toDate=2024-12-31
     [HttpGet("expense-report")]
     public async Task<FileContentResult> GetExpenseReport(

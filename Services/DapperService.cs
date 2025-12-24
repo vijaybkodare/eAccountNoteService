@@ -14,8 +14,10 @@ public class DapperService
     public DapperService(IConfiguration configuration, ILogger<DapperService> logger)
     {
         _logger = logger;
-        _connectionString = configuration.GetConnectionString("DefaultConnection")
-                         ?? throw new ArgumentNullException("Connection string 'DefaultConnection' not found");
+        string appEnv = configuration["AppSettings:appenv"];
+        string connectionStringKey = $"connString-{appEnv}";
+        _connectionString = configuration.GetConnectionString(connectionStringKey)
+                         ?? throw new ArgumentNullException($"Connection string {connectionStringKey}' not found");
     }
 
     public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object? parameters = null, CommandType commandType = CommandType.Text)
