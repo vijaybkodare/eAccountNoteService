@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="07/19/2025 12:00:00" ReportInfo.Modified="12/23/2025 22:32:11" ReportInfo.CreatorVersion="2025.2.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="07/19/2025 12:00:00" ReportInfo.Modified="12/24/2025 20:16:09" ReportInfo.CreatorVersion="2025.2.0.0">
   <ScriptText>
     using System;
     using System.Collections;
@@ -19,7 +19,14 @@
     {
     public class ReportScript
     {
-
+    private void setColor(TableCell cell) 
+    {
+      string colorName = ((string)Report.GetColumnValue(&quot;AccountPendingSummary.ColorCode&quot;));
+      if (!string.IsNullOrEmpty(colorName))
+      {
+        cell.TextColor = Color.FromName(colorName);
+      }
+    }
     private void Picture1_BeforePrint(object sender, EventArgs e)
     {
       PictureObject picture = sender as PictureObject;
@@ -32,15 +39,40 @@
         }
       }
     }
+
+    private void Cell1_BeforePrint(object sender, EventArgs e)
+    {
+      string colorName = ((string)Report.GetColumnValue(&quot;AccountPendingSummary.ColorCode&quot;));
+      if (!string.IsNullOrEmpty(colorName))
+      {
+        Cell1.TextColor = Color.FromName(colorName);
+      }
+    }
+
+    private void Cell2_BeforePrint(object sender, EventArgs e)
+    {
+            setColor(Cell2); 
+    }
+
+    private void Cell3_BeforePrint(object sender, EventArgs e)
+    {
+              setColor(Cell3); 
+    }
+
+    private void Cell5_BeforePrint(object sender, EventArgs e)
+    {
+            setColor(Cell5); 
+    }
     }
     }
   </ScriptText>
   <Dictionary>
-    <TableDataSource Name="AccountPendingSummary" ReferenceName="AccountPendingSummary" DataType="System.Int32" PropName="AccountStatus" Enabled="true">
-      <Column Name="BucketName" DataType="System.String" PropName="AccountName"/>
-      <Column Name="Accounts" DataType="System.String" PropName="Amount"/>
-      <Column Name="TotalAccouts" DataType="System.Decimal" PropName="PaidAmount"/>
+    <TableDataSource Name="AccountPendingSummary" ReferenceName="AccountPendingSummary" DataType="System.Int32" Enabled="true">
+      <Column Name="BucketName" DataType="System.String"/>
+      <Column Name="Accounts" DataType="System.String"/>
+      <Column Name="TotalAccouts" DataType="System.Decimal"/>
       <Column Name="PendingAmount" DataType="System.Decimal"/>
+      <Column Name="ColorCode" DataType="System.String" PropName="Column"/>
     </TableDataSource>
     <Parameter Name="reportTitle" DataType="System.String" AsString=""/>
     <Parameter Name="OrgName" DataType="System.String" AsString=""/>
@@ -56,23 +88,38 @@
       <TextObject Name="Text104" Left="113.4" Top="28.35" Width="567" Height="18.9" Text="[address]" HorzAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text105" Left="113.4" Top="47.25" Width="567" Height="18.9" Text="[reportTitle]" HorzAlign="Center" Font="Arial, 12pt"/>
       <TextObject Name="Text106" Left="113.4" Top="66.15" Width="567" Height="18.9" Text="[reportFilter]" HorzAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text89" Left="453.6" Top="94.5" Width="113.4" Height="28.35" Border.Lines="All" Text="Total Acc" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
-      <TextObject Name="Text86" Left="37.8" Top="94.5" Width="151.2" Height="28.35" Border.Lines="All" Text="Pending Amount Bucket" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
-      <TextObject Name="Text87" Left="189" Top="94.5" Width="264.6" Height="28.35" Border.Lines="All" Text="Accounts" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
-      <TextObject Name="Text90" Left="567" Top="94.5" Width="113.4" Height="28.35" Border.Lines="All" Text="Pending Amount" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
       <TextObject Name="Text111" Left="37.8" Top="66.15" Width="66.15" Height="18.9" Border.Lines="Top" Text="fnaman" HorzAlign="Center" Font="Arial, 11pt, style=Bold"/>
       <TextObject Name="Text112" Left="-9450" Top="-9450" Width="94.5" Height="18.9" Text="AccountPendingSummary" Font="Arial, 10pt"/>
       <TextObject Name="Text113" Left="-9450" Top="-9450" Width="94.5" Height="18.9" Text="AccountPendingSummary" Font="Arial, 10pt"/>
+      <TableObject Name="Table2" Left="18.9" Top="94.5" Width="684.19" Height="28.35" Border.Lines="All" GrowToBottom="true">
+        <TableColumn Name="Column6" Width="201.76"/>
+        <TableColumn Name="Column7" Width="267.91"/>
+        <TableColumn Name="Column8" Width="69.46"/>
+        <TableColumn Name="Column9" Width="145.06"/>
+        <TableRow Name="Row2" Height="28.35" AutoSize="true">
+          <TableCell Name="Cell6" Border.Lines="All" Border.Style="Dot" Text="Pending Amount Bucket" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+          <TableCell Name="Cell7" Border.Lines="All" Border.Style="Dot" Text="Accounts" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+          <TableCell Name="Cell8" Border.Lines="All" Border.Style="Dot" Text="Total Acc" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+          <TableCell Name="Cell9" Border.Lines="All" Border.Style="Dot" Text="Pending Amount" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
     </PageHeaderBand>
-    <DataBand Name="Data1" Top="126.85" Width="718.2" Height="37.8" CanGrow="true" DataSource="AccountPendingSummary">
-      <TextObject Name="Text92" Left="189" Width="264.6" Height="28.35" CanGrow="true" Text="[AccountPendingSummary.Accounts]" Padding="2, 2, 2, 2" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text94" Left="453.6" Width="113.4" Height="28.35" Text="[AccountPendingSummary.TotalAccouts]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text95" Left="567" Width="113.4" Height="28.35" Text="[AccountPendingSummary.PendingAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text110" Left="37.8" Width="151.2" Height="28.35" CanGrow="true" Text="[AccountPendingSummary.BucketName]" Padding="2, 2, 2, 2" VertAlign="Center" Font="Arial, 10pt"/>
-      <LineObject Name="Line1" Left="37.8" Top="37.8" Width="642.6" Border.Style="Dot"/>
-      <DataFooterBand Name="DataFooter1" Top="168.65" Width="718.2" Height="18.9">
-        <TextObject Name="Text108" Left="453.6" Width="113.4" Height="18.9" Border.Lines="All" Text="[TotalAcc]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
-        <TextObject Name="Text109" Left="567" Width="113.4" Height="18.9" Border.Lines="All" Text="[TotalPending]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
+    <DataBand Name="Data1" Top="126.85" Width="718.2" Height="28.35" CanGrow="true" DataSource="AccountPendingSummary">
+      <TableObject Name="Table1" Left="18.9" Width="684.19" Height="28.35" GrowToBottom="true">
+        <TableColumn Name="Column1" Width="201.76"/>
+        <TableColumn Name="Column2" Width="267.91"/>
+        <TableColumn Name="Column3" Width="69.46"/>
+        <TableColumn Name="Column5" Width="145.06"/>
+        <TableRow Name="Row1" Height="28.35" AutoSize="true">
+          <TableCell Name="Cell1" Border.Lines="All" Border.Style="Dot" BeforePrintEvent="Cell1_BeforePrint" Text="[AccountPendingSummary.BucketName]" Font="Arial, 10pt"/>
+          <TableCell Name="Cell2" Border.Lines="All" Border.Style="Dot" BeforePrintEvent="Cell2_BeforePrint" Text="[AccountPendingSummary.Accounts]" Font="Arial, 10pt"/>
+          <TableCell Name="Cell3" Border.Lines="All" Border.Style="Dot" BeforePrintEvent="Cell3_BeforePrint" Text="[AccountPendingSummary.TotalAccouts]" HorzAlign="Right" Font="Arial, 10pt"/>
+          <TableCell Name="Cell5" Border.Lines="All" Border.Style="Dot" BeforePrintEvent="Cell5_BeforePrint" Text="[AccountPendingSummary.PendingAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" Font="Arial, 10pt"/>
+        </TableRow>
+      </TableObject>
+      <DataFooterBand Name="DataFooter1" Top="159.2" Width="718.2" Height="18.9">
+        <TextObject Name="Text108" Left="491.4" Width="66.15" Height="18.9" Border.Lines="Top, Bottom" Text="[TotalAcc]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text109" Left="557.55" Width="141.75" Height="18.9" Border.Lines="Top, Bottom" Text="[TotalPending]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
       </DataFooterBand>
     </DataBand>
   </ReportPage>
