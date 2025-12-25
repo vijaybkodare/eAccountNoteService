@@ -1,6 +1,7 @@
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using Microsoft.AspNetCore.Mvc;
+using eAccountNoteService.Filters;
 
 namespace eAccountNoteService.Controllers;
 
@@ -69,14 +70,14 @@ public class UserController : ControllerBase
         var response = await _userService.CreateUserWithProfileAsync(entity);
         return Ok(response);
     }
-
+    [SkipAuthFilter]
     [HttpGet("AuthorizeMe_Otp")]
     public async Task<ActionResult<ServerResponse>> AuthorizeMeOtp([FromQuery] string mobileNo, [FromQuery] string otp)
     {
         var response = await _userService.AuthorizeMeOtpAsync(mobileNo, otp);
         return Ok(response);
     }
-
+    [SkipAuthFilter]
     [HttpGet("SendOtp")]
     public async Task<ActionResult<ServerResponse>> SendOtp([FromQuery] string mobileNo)
     {

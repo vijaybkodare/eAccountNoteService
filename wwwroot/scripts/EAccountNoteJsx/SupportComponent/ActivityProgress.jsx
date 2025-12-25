@@ -4,7 +4,7 @@ var ActivityProgress = React.createClass({
             <div ref={function(node){this.Progress = node;}.bind(this)} 
                 style={{position:"fixed",display:"none",top:0,left:0,zIndex:100,width:"100%",backgroundColor:"transparent"}}>
                 <img ref={function(node){this.ImgBusy = node;}.bind(this)} 
-                    src="../Content/images/Blocks.gif" width="100" 
+                    src="../content/images/Blocks.gif" width="100" 
                     style={{position:"absolute",zIndex:101,left:"50%",transform:"translateX(-50px)"}} />
                 <div ref={function(node){this.DivBusy = node;}.bind(this)} 
                     style={{opacity:0.5,backgroundColor:"gray"}}>

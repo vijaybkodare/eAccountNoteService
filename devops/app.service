@@ -1,0 +1,19 @@
+﻿[Unit]
+Description=eAccountNote service Application
+# Ensure networking is available before starting the app
+After=network.target
+
+[Service]
+User=www-data
+# The directory where the executable file lives
+WorkingDirectory=/var/www/wcpf.vikani.in/
+
+# [Path to dotnet executable] [Path to application DLL]
+ExecStart=/usr/bin/dotnet /var/www/wcpf.vikani.in/eAccountNoteService.dll
+
+# Restart the service if it stops unexpectedly
+Restart=always
+# Wait 10 seconds before attempting a restart
+RestartSec=10
+# Send the signal to stop the process gracefully
+KillSignal=SIGINT

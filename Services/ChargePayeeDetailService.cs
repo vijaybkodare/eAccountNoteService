@@ -312,7 +312,7 @@ public class ChargePayeeDetailService
             if (!string.IsNullOrEmpty(accountName))
             {
                 sb.Append(accountName);
-                sb.Append(',');
+                sb.Append(", ");
             }
 
             var amount = drv["PendingAmount"] != DBNull.Value ? Convert.ToDecimal(drv["PendingAmount"]) : 0m;

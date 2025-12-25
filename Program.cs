@@ -3,8 +3,8 @@ using eAccountNoteService.Utility;
 using eAccountNoteService.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
-var appEnv = builder.Configuration["AppSettings:env"];
-if (appEnv == "PROD")
+var appEnv = builder.Configuration["AppSettings:appenv"];
+if (appEnv == "prod")
 {
     builder.WebHost.UseUrls("http://0.0.0.0:5040");
 }

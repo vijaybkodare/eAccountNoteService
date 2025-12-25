@@ -1,15 +1,12 @@
 using System.Data;
 using Dapper;
 using eAccountNoteService.Models;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace eAccountNoteService.Services;
 
 public class UserService
 {
-    private readonly string _connectionString;
     private readonly ILogger<UserService> _logger;
     private readonly EmailSenderService _emailSender;
     private readonly Fast2SmsSender _smsSender;
@@ -18,7 +15,6 @@ public class UserService
     private readonly UserProfileService _userProfileService;
 
     public UserService(
-        IConfiguration configuration,
         ILogger<UserService> logger,
         EmailSenderService emailSender,
         Fast2SmsSender smsSender,
@@ -32,8 +28,6 @@ public class UserService
         _dapperService = dapperService;
         _orgMasterService = orgMasterService;
         _userProfileService = userProfileService;
-        _connectionString = configuration.GetConnectionString("DefaultConnection")
-                         ?? throw new ArgumentNullException("Connection string 'DefaultConnection' not found");
     }
 
     public async Task<bool> DeleteUserAsync(decimal userId)
@@ -210,7 +204,7 @@ public class UserService
         return password;
     }
 
-    private async Task<bool> UpdatePasswordWithoutOldAsync(SqlConnection connection, SqlTransaction transaction, string loginId, string newPassword)
+    private async Task<bool> UpdatePasswordWithoutOldAsync(IDbConnection connection, IDbTransaction transaction, string loginId, string newPassword)
     {
         var parameters = new DynamicParameters();
         parameters.Add("LoginId", loginId, DbType.String, ParameterDirection.Input);
@@ -235,7 +229,7 @@ public class UserService
                 }
 
                 var password = GenRandomAlphanumericString(5);
-                await UpdatePasswordWithoutOldAsync((SqlConnection)connection, (SqlTransaction)transaction, loginId, password);
+                await UpdatePasswordWithoutOldAsync(connection, transaction, loginId, password);
 
                 var emailSubject = $"Your eAccountNote password is {password}";
                 var emailBody = "eAccountNote";
