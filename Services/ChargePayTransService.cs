@@ -5,6 +5,7 @@ using System.Text;
 using CsvHelper;
 using Dapper;
 using eAccountNoteService.Models;
+using eAccountNoteService.Utility;
 
 namespace eAccountNoteService.Services;
 
@@ -16,6 +17,7 @@ public class ChargePayTransService
     private readonly AdvChargeService _advChargeService;
     private readonly BankStatementService _bankStatementService;
     private readonly CummulativeChargePayTransService _cummulativeChargePayTransService;
+    private readonly ReportUtility _reportUtility;
 
     public ChargePayTransService(
         DapperService dapperService,
@@ -23,7 +25,8 @@ public class ChargePayTransService
         ChargePayeeDetailService chargePayeeDetailService,
         AdvChargeService advChargeService,
         BankStatementService bankStatementService,
-        CummulativeChargePayTransService cummulativeChargePayTransService)
+        CummulativeChargePayTransService cummulativeChargePayTransService,
+        ReportUtility reportUtility)
     {
         _dapperService = dapperService;
         _transactionService = transactionService;
@@ -31,6 +34,7 @@ public class ChargePayTransService
         _advChargeService = advChargeService;
         _bankStatementService = bankStatementService;
         _cummulativeChargePayTransService = cummulativeChargePayTransService;
+        _reportUtility = reportUtility;
     }
 
     public async Task<IEnumerable<ChargePayTrans>> GetAllRecordsAsync(decimal orgId, decimal accountId, string fromDate, string toDate)
@@ -190,6 +194,51 @@ public class ChargePayTransService
 
         var bytes = memoryStream.ToArray();
         return (bytes, "text/csv", "chargePayTrans.csv");
+    }
+
+    public async Task<(byte[] Content, string FileName)> GenerateChargeTransReportPdfAsync(
+        decimal orgId,
+        decimal accountId,
+        string fromDate,
+        string toDate)
+    {
+        var records = await GetNormalRecordsAsync(orgId, accountId, fromDate, toDate);
+
+        var dataTable = new DataTable();
+        dataTable.Columns.Add("DrAccount", typeof(string));
+        dataTable.Columns.Add("ChargeOrderNo", typeof(string));
+        dataTable.Columns.Add("PaymentDt", typeof(string));
+        dataTable.Columns.Add("ItemName", typeof(string));
+        dataTable.Columns.Add("CrAccount", typeof(string));
+        dataTable.Columns.Add("TransactionId", typeof(string));
+        dataTable.Columns.Add("Amount", typeof(decimal));
+        dataTable.Columns.Add("TransMode", typeof(decimal));
+        dataTable.Columns.Add("Remark", typeof(string));
+
+        foreach (var item in records)
+        {
+            var row = dataTable.NewRow();
+            row["DrAccount"] = item.DrAccount;
+            row["ChargeOrderNo"] = item.ChargeOrderNo;
+            row["PaymentDt"] = item.PaymentDt.ToString("yyyy-MM-dd");
+            row["ItemName"] = item.ItemName;
+            row["CrAccount"] = item.CrAccount;
+            row["TransactionId"] = item.TransactionId;
+            row["Amount"] = item.Amount;
+            row["TransMode"] = item.TransMode;
+            row["Remark"] = item.Remark;
+            dataTable.Rows.Add(row);
+        }
+
+        var filter = await _reportUtility.GetReportFilterAsync(accountId, fromDate, toDate);
+
+        return await _reportUtility.GenerateReportPdfAsync(
+            dataTable,
+            "ChargeTransReport",
+            orgId,
+            "ChargeTransReport.frx",
+            "Charge Transactions Report",
+            filter);
     }
 
     public async Task<bool> UpdateChargePayTransAsync(ChargePayTrans entity)

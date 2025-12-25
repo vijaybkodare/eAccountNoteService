@@ -61,26 +61,59 @@ public class ChargeOrderController : ControllerBase
     }
 
     // POST: api/chargeorder/save
-    // NOTE: Full transactional save with ChargePayeeDetails is not implemented yet.
     [HttpPost("save")]
-    public ActionResult<ServerResponse> Save([FromBody] ChargeOrder entity)
+    public async Task<ActionResult<ServerResponse>> Save([FromBody] ChargeOrder entity)
     {
+        var success = false;
+        var error = string.Empty;
+
+        try
+        {
+            // Mirror legacy behavior: recompute Amount as the sum of detail Amounts
+            entity.Amount = 0;
+            if (entity.ChargePayeeDetails != null)
+            {
+                foreach (var item in entity.ChargePayeeDetails)
+                {
+                    entity.Amount += item.Amount;
+                }
+            }
+
+            success = await _service.SaveAsync(entity);
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+
         return Ok(new ServerResponse
         {
-            IsSuccess = false,
-            Error = "ChargeOrder save with ChargePayeeDetails is not implemented in this API yet.",
+            IsSuccess = success,
+            Error = error,
             Data = null
         });
     }
 
     // POST: api/chargeorder/makeAccountChargeZero/{chargePayeeDetailId}
     [HttpPost("makeAccountChargeZero/{chargePayeeDetailId:decimal}")]
-    public ActionResult<ServerResponse> MakeAccountChargeZero(decimal chargePayeeDetailId)
+    public async Task<ActionResult<ServerResponse>> MakeAccountChargeZero(decimal chargePayeeDetailId)
     {
+        var success = false;
+        var error = string.Empty;
+
+        try
+        {
+            success = await _chargePayeeDetailService.UpdateAmountAsync(chargePayeeDetailId, 0);
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+
         return Ok(new ServerResponse
         {
-            IsSuccess = false,
-            Error = "makeAccountChargeZero is not implemented in this API yet.",
+            IsSuccess = success,
+            Error = error,
             Data = null
         });
     }

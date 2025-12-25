@@ -5,16 +5,19 @@ using System.Text;
 using CsvHelper;
 using Dapper;
 using eAccountNoteService.Models;
+using eAccountNoteService.Utility;
 
 namespace eAccountNoteService.Services;
 
 public class BillOrderService
 {
     private readonly DapperService _dapperService;
+    private readonly ReportUtility _reportUtility;
 
-    public BillOrderService(DapperService dapperService)
+    public BillOrderService(DapperService dapperService, ReportUtility reportUtility)
     {
         _dapperService = dapperService;
+        _reportUtility = reportUtility;
     }
 
     public async Task<BillOrder> GetRecordAsync(decimal billOrderId, decimal orgId)
@@ -170,5 +173,29 @@ public class BillOrderService
 
         var bytes = memoryStream.ToArray();
         return (bytes, "text/csv", "billReport.csv");
+    }
+
+    public async Task<(byte[] Content, string FileName)> GenerateBillReportPdfAsync(decimal orgId)
+    {
+        const string sql = @"SELECT BO.*, AM1.AccountName, AM2.AccountName AS BankAccount, IM.ItemName
+                             FROM BillOrder BO
+                             INNER JOIN AccountMaster AM1 ON AM1.AccountId = BO.AccountId
+                             INNER JOIN AccountMaster AM2 ON AM2.AccountId = BO.BankAccountId
+                             INNER JOIN ItemMaster IM ON IM.ItemId = BO.ItemId
+                             WHERE BO.OrgId = @OrgId
+                             ORDER BY BO.BillOrderId DESC";
+
+        var parameters = new DynamicParameters();
+        parameters.Add("@OrgId", orgId, DbType.Decimal);
+
+        var data = await _dapperService.QueryToDataTableAsync(sql, parameters);
+
+        return await _reportUtility.GenerateReportPdfAsync(
+            data,
+            "Bill",
+            orgId,
+            "BillReport.frx",
+            "Bills Report",
+            _reportUtility.getCurrentDate());
     }
 }

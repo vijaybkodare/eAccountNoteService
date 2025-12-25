@@ -2,16 +2,19 @@ using System.Data;
 using System.Linq;
 using Dapper;
 using eAccountNoteService.Models;
+using eAccountNoteService.Utility;
 
 namespace eAccountNoteService.Services;
 
 public class ChargeOrderService
 {
     private readonly DapperService _dapperService;
+    private readonly ReportUtility _reportUtility;
 
-    public ChargeOrderService(DapperService dapperService)
+    public ChargeOrderService(DapperService dapperService, ReportUtility reportUtility)
     {
         _dapperService = dapperService;
+        _reportUtility = reportUtility;
     }
 
     public async Task<IEnumerable<ChargeOrder>> GetRecordsAsync(int orgId, string? fromDate, string? toDate)
@@ -238,5 +241,42 @@ public class ChargeOrderService
 
         var nextNo = numericPart + 1;
         return $"CH{nextNo:000}";
+    }
+
+    public async Task<(byte[] Content, string FileName)> GenerateChargeOrderReportPdfAsync(
+        decimal orgId,
+        decimal chargeOrderId)
+    {
+        const string sqlHeader = @"SELECT CO.ChargeOrderId, CO.OrgId, CO.ChargeOrderNo, CO.ChargeDt,
+                                          CO.ItemId, CO.AccountId, CO.Charges, CO.Amount, CO.PaidAmount, CO.Remark,
+                                          IM.ItemName, AM.AccountName
+                                   FROM ChargeOrder CO
+                                   INNER JOIN ItemMaster IM ON IM.ItemId = CO.ItemId
+                                   INNER JOIN AccountMaster AM ON AM.AccountId = CO.AccountId
+                                   WHERE CO.ChargeOrderId = @ChargeOrderId";
+
+        const string sqlDetails = @"SELECT CPD.*, AM.AccountName
+                                     FROM ChargePayeeDetail CPD
+                                     INNER JOIN AccountMaster AM ON AM.AccountId = CPD.AccountId
+                                     WHERE CPD.ChargeOrderId = @ChargeOrderId";
+
+        var parameters = new DynamicParameters();
+        parameters.Add("@ChargeOrderId", chargeOrderId, DbType.Decimal);
+
+        var headerTable = await _dapperService.QueryToDataTableAsync(sqlHeader, parameters);
+        var detailsTable = await _dapperService.QueryToDataTableAsync(sqlDetails, parameters);
+
+        var dataSources = new Dictionary<string, DataTable>
+        {
+            { "Header", headerTable },
+            { "Details", detailsTable }
+        };
+
+        return await _reportUtility.GenerateReportPdfAsync(
+            dataSources,
+            orgId,
+            "ChargeOrder.frx",
+            "Charge Order",
+            string.Empty);
     }
 }

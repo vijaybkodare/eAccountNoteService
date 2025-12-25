@@ -1,1 +1,2 @@
 ﻿scp -r ./wwwroot/reports/AccountPendingSummary.frx root@82.112.238.205:/var/www/wcpf.vikani.in/wwwroot/reports
+scp -r ./wwwroot/reports/AccountReport.frx root@82.112.238.205:/var/www/wcpf.vikani.in/wwwroot/reports

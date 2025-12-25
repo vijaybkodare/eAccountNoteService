@@ -329,6 +329,106 @@ public class ChargePayeeDetailService
         targetTable.Rows.Add(row);
     }
 
+    public async Task<(byte[] Content, string FileName)> GenerateAccountChargesReportPdfAsync(
+        decimal orgId,
+        decimal accountId,
+        string fromDate,
+        string toDate)
+    {
+        var records = await GetRecordsAsync(orgId, accountId, fromDate, toDate);
+
+        // Convert IEnumerable<ChargePayeeDetail> to DataTable for FastReport
+        var dataTable = new DataTable();
+        dataTable.Columns.Add("ChargeOrderNo", typeof(string));
+        dataTable.Columns.Add("ChargeDt", typeof(string));
+        dataTable.Columns.Add("ItemAccountId", typeof(decimal));
+        dataTable.Columns.Add("Remark", typeof(string));
+        dataTable.Columns.Add("ChargePayeeDetailId", typeof(decimal));
+        dataTable.Columns.Add("ChargeOrderId", typeof(decimal));
+        dataTable.Columns.Add("AccountId", typeof(decimal));
+        dataTable.Columns.Add("Amount", typeof(decimal));
+        dataTable.Columns.Add("PaidAmount", typeof(decimal));
+        dataTable.Columns.Add("PendingAmount", typeof(decimal));
+        dataTable.Columns.Add("ItemName", typeof(string));
+        dataTable.Columns.Add("AccountName", typeof(string));
+
+        foreach (var item in records)
+        {
+            var row = dataTable.NewRow();
+            row["ChargeOrderNo"] = item.ChargeOrderNo ?? string.Empty;
+            row["ChargeDt"] = item.ChargeDt.ToString("yyyy-MM-dd");
+            row["ItemAccountId"] = item.ItemAccountId;
+            row["Remark"] = item.Remark ?? string.Empty;
+            row["ChargePayeeDetailId"] = item.ChargePayeeDetailId;
+            row["ChargeOrderId"] = item.ChargeOrderId;
+            row["AccountId"] = item.AccountId;
+            row["Amount"] = item.Amount;
+            row["PaidAmount"] = item.PaidAmount;
+            row["PendingAmount"] = item.Amount - item.PaidAmount;
+            row["ItemName"] = item.ItemName ?? string.Empty;
+            row["AccountName"] = item.AccountName ?? string.Empty;
+            dataTable.Rows.Add(row);
+        }
+
+        var filter = await _reportUtility.GetReportFilterAsync(accountId, fromDate, toDate);
+
+        return await _reportUtility.GenerateReportPdfAsync(
+            dataTable,
+            "AccountChargeReport",
+            orgId,
+            "AccountChargeReport.frx",
+            "Account Charges",
+            filter);
+    }
+
+    public async Task<(byte[] Content, string FileName)> GenerateChargeOrdersReportPdfAsync(
+        decimal orgId,
+        string fromDate,
+        string toDate)
+    {
+        var records = await GetRecordsAsync(orgId, -1, fromDate, toDate);
+
+        var dataTable = new DataTable();
+        dataTable.Columns.Add("ChargeOrderNo", typeof(string));
+        dataTable.Columns.Add("ChargeDt", typeof(string));
+        dataTable.Columns.Add("ItemAccountId", typeof(decimal));
+        dataTable.Columns.Add("Remark", typeof(string));
+        dataTable.Columns.Add("ChargePayeeDetailId", typeof(decimal));
+        dataTable.Columns.Add("ChargeOrderId", typeof(decimal));
+        dataTable.Columns.Add("AccountId", typeof(decimal));
+        dataTable.Columns.Add("Amount", typeof(decimal));
+        dataTable.Columns.Add("PaidAmount", typeof(decimal));
+        dataTable.Columns.Add("ItemName", typeof(string));
+        dataTable.Columns.Add("AccountName", typeof(string));
+
+        foreach (var item in records)
+        {
+            var row = dataTable.NewRow();
+            row["ChargeOrderNo"] = item.ChargeOrderNo ?? string.Empty;
+            row["ChargeDt"] = item.ChargeDt.ToString("yyyy-MM-dd");
+            row["ItemAccountId"] = item.ItemAccountId;
+            row["Remark"] = item.Remark ?? string.Empty;
+            row["ChargePayeeDetailId"] = item.ChargePayeeDetailId;
+            row["ChargeOrderId"] = item.ChargeOrderId;
+            row["AccountId"] = item.AccountId;
+            row["Amount"] = item.Amount;
+            row["PaidAmount"] = item.PaidAmount;
+            row["ItemName"] = item.ItemName ?? string.Empty;
+            row["AccountName"] = item.AccountName ?? string.Empty;
+            dataTable.Rows.Add(row);
+        }
+
+        var filter = await _reportUtility.GetReportFilterAsync(-1, fromDate, toDate);
+
+        return await _reportUtility.GenerateReportPdfAsync(
+            dataTable,
+            "ChargeReport",
+            orgId,
+            "ChargeReport.frx",
+            "Charge Orders Report",
+            filter);
+    }
+
     public async Task<IEnumerable<AccountMaster>> GetPayAccountsAsync(decimal profileId)
     {
         // Port of legacy GetPayAccounts: determine role, then return accounts with pending amount
@@ -375,5 +475,15 @@ public class ChargePayeeDetailService
     private bool IsAdminRole(decimal roleId)
     {
         return roleId == 1 || roleId == 100;
+    }
+
+    public async Task<bool> UpdateAmountAsync(decimal chargePayeeDetailId, decimal newAmount)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("ChargePayeeDetailId", chargePayeeDetailId, DbType.Decimal);
+        parameters.Add("NewAmount", newAmount, DbType.Decimal);
+
+        var rows = await _dapperService.ExecuteStoredProcedureAsync("Proc_Update_ChargePayeeDetail", parameters);
+        return rows > 0;
     }
 }

@@ -1,19 +1,19 @@
 using System.Data;
-using System.IO;
 using Dapper;
-using FastReport;
-using FastReport.Export.PdfSimple;
 using eAccountNoteService.Models;
+using eAccountNoteService.Utility;
 
 namespace eAccountNoteService.Services;
 
 public class BillPayTransService
 {
     private readonly DapperService _dapperService;
+    private readonly ReportUtility _reportUtility;
 
-    public BillPayTransService(DapperService dapperService)
+    public BillPayTransService(DapperService dapperService, ReportUtility reportUtility)
     {
         _dapperService = dapperService;
+        _reportUtility = reportUtility;
     }
 
     public async Task<(bool Success, string ErrorMessage)> AddAsync(BillPayTrans entity)
@@ -136,24 +136,18 @@ public class BillPayTransService
         decimal orgId,
         decimal accountId,
         string fromDate,
-        string toDate,
-        string reportPath)
+        string toDate)
     {
         var data = await GetExpenseReportDataAsync(orgId, accountId, fromDate, toDate);
 
-        using var report = new Report();
-        report.Load(reportPath);
+        var filter = await _reportUtility.GetReportFilterAsync(accountId, fromDate, toDate);
 
-        report.RegisterData(data, "MyDS");
-
-        report.Prepare();
-        using var ms = new MemoryStream();
-        using (var pdfExport = new PDFSimpleExport())
-        {
-            pdfExport.Export(report, ms);
-            ms.Position = 0;
-            var fileName = $"ExpenseReport_{DateTime.Now:yyyyMMddHHmmss}.pdf";
-            return (ms.ToArray(), fileName);
-        }
+        return await _reportUtility.GenerateReportPdfAsync(
+            data,
+            "AccountExpense",
+            orgId,
+            "ExpenseReport.frx",
+            "Expense Report",
+            filter);
     }
 }

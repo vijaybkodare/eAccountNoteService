@@ -34,20 +34,23 @@ public class BankStatementController : ControllerBase
     }
 
     // GET: api/bankstatement/report?id=1&orgId=1
-    // Returns the underlying bank statement records for the header.
+    // Returns a PDF report for the specified bank statement header.
     [HttpGet("report")]
-    public async Task<ActionResult<IEnumerable<BankStatement>>> GetReport([FromQuery] decimal id, [FromQuery] decimal orgId)
+    public async Task<FileContentResult> GetReport([FromQuery] decimal id, [FromQuery] decimal orgId)
     {
-        var data = await _statementService.GetRecordsAsync(id, orgId, null, null, -1, null);
-        return Ok(data);
+        var result = await _statementService.GenerateSingleBankStatementReportPdfAsync(id, orgId);
+
+        return File(result.Content, "application/pdf", result.FileName);
     }
 
     // GET: api/bankstatement/bankstatementrep?orgId=1&fromDate=...&toDate=...
+    // Returns a PDF bank statement report for the given date range.
     [HttpGet("bankstatementrep")]
-    public async Task<ActionResult<IEnumerable<BankStatement>>> GetBankStatementRep([FromQuery] decimal orgId, [FromQuery] string? fromDate, [FromQuery] string? toDate)
+    public async Task<FileContentResult> GetBankStatementRep([FromQuery] decimal orgId, [FromQuery] string fromDate, [FromQuery] string toDate)
     {
-        var data = await _statementService.GetRecordsAsync(-1, orgId, fromDate, toDate, -1, null);
-        return Ok(data);
+        var result = await _statementService.GenerateBankStatementReportPdfAsync(orgId, fromDate, toDate);
+
+        return File(result.Content, "application/pdf", result.FileName);
     }
 
     // GET: api/bankstatement/bankstatement?id=1&orgId=1&fromDate=...&toDate=...&remark=...
