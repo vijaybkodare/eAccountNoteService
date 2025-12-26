@@ -3,6 +3,7 @@ var _ProgressBar = {};
 var _Main = {};
 var _UserLogout = {};
 var _TransMapper = {};
+var _BillTransMapper = {};
 var _AppSettings = {
     PageSize: 10,
     PagesBlockSize: 5
@@ -481,6 +482,10 @@ function getChartOptions(title) {
 function goToTrnsMapper() {
     _Main.hideAllComponent();
     _TransMapper.showMe();
+}
+function goToBillTrnsMapper() {
+    _Main.hideAllComponent();
+    _BillTransMapper.showMe();
 }
 function isUser() {
     return _LoginAccount && _LoginAccount.RoleId == 2;

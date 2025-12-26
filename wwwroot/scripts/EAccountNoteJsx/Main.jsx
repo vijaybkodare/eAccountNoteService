@@ -77,3 +77,7 @@ ReactDOM.render(
     <TransMapper ref={function (node) { _TransMapper = node; }.bind(this)} ShowNext={() => _Main.showMe()} />,
     document.getElementById('transMapper')
 );
+ReactDOM.render(
+    <BillTransMapper ref={function (node) { _BillTransMapper = node; }.bind(this)} ShowNext={() => _Main.showMe()} />,
+    document.getElementById('billTransMapper')
+);

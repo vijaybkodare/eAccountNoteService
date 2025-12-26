@@ -44,6 +44,7 @@
                     ShowAutoTransEntry={() => this.AutoTransEntry.showMe()}
                     ShowAccountExpRep={() => this.AccountExpRep.showMe()}
                     ShowTransMapper={() => goToTrnsMapper()}
+                    ShowBillTransMapper={() => goToBillTrnsMapper()}
                     ShowTransTokenAccountList={() => this.TransTokenAccountList.showMe()}
                     ShowBankStatementRep2={() => this.BankStatementRep2.showMe()}
                     ShowOrgList={() => this.OrgList.showMe()}

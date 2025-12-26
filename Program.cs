@@ -53,6 +53,7 @@ builder.Services.AddScoped<UserAuthService>();
 builder.Services.AddScoped<TransNoEvaluator>();
 builder.Services.AddScoped<TransactionService>();
 builder.Services.AddScoped<ReconciliationService>();
+builder.Services.AddScoped<BillTransMapService>();
 
 AppConstants.Initialize(builder.Configuration);
 

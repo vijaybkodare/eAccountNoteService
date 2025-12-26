@@ -48,19 +48,37 @@ public class BillPayTransService
         }
     }
 
-    public async Task<IEnumerable<BillPayTrans>> GetRecordsToRevertAsync(decimal orgId, decimal accountId, string? fromDate, string? toDate)
+    public async Task<IEnumerable<BillPayTrans>> getRecordsAsync(
+        decimal orgId,
+        decimal accountId,
+        string? fromDate,
+        string? toDate,
+        int status,
+        int reconcStatus = -1)
     {
-        var sql = @"SELECT BO.BillNo, BO.Remark AS BillRemark, BO.BillDt, BPT.*,
+        var sql = @"SELECT BO.BillNo, BO.Remark AS BillRemark, BO.BillDt, BO.Amount AS BillAmount, BO.PaidAmount AS BillPaidAmount, BPT.*,
                            AM1.AccountName AS DrAccount, AM2.AccountName AS CrAccount, IM.ItemName
                     FROM BillPayTrans BPT
                     INNER JOIN AccountMaster AM1 ON AM1.AccountId = BPT.DrAccountId
                     INNER JOIN AccountMaster AM2 ON AM2.AccountId = BPT.CrAccountId
                     INNER JOIN BillOrder BO ON BO.BillOrderId = BPT.BillOrderId
                     INNER JOIN ItemMaster IM ON IM.ItemId = BO.ItemId
-                    WHERE BPT.Status = 0 AND BO.OrgId = @OrgId";
+                    WHERE BO.OrgId = @OrgId";
 
         var parameters = new DynamicParameters();
         parameters.Add("@OrgId", orgId, DbType.Decimal);
+
+        if (status != -1)
+        {
+            sql += " AND BPT.Status = @Status";
+            parameters.Add("@Status", status, DbType.Int32);
+        }
+
+        if (reconcStatus != -1)
+        {
+            sql += " AND BPT.ReconcStatus = @ReconcStatus";
+            parameters.Add("@ReconcStatus", reconcStatus, DbType.Int32);
+        }
 
         if (accountId != -1)
         {
@@ -81,6 +99,11 @@ public class BillPayTransService
         sql += " ORDER BY BPT.BillPayTransId DESC";
 
         return await _dapperService.QueryAsync<BillPayTrans>(sql, parameters);
+    }
+
+    public async Task<IEnumerable<BillPayTrans>> GetRecordsToRevertAsync(decimal orgId, decimal accountId, string? fromDate, string? toDate)
+    {
+        return await getRecordsAsync(orgId, accountId, fromDate, toDate, 0);
     }
 
     public async Task<(bool Success, string ErrorMessage)> RevertAsync(decimal id)

@@ -20,7 +20,14 @@ public class BankStatementService
         _reportUtility = reportUtility;
     }
 
-    public async Task<IEnumerable<BankStatement>> GetRecordsAsync(decimal id, decimal orgId, string? fromDate, string? toDate, int status, string? remark = null)
+    public async Task<IEnumerable<BankStatement>> GetRecordsAsync(
+        decimal id,
+        decimal orgId,
+        string? fromDate,
+        string? toDate,
+        int status,
+        string? remark = null,
+        int amountFlag = 0)
     {
         var sql = @"SELECT BSH.BankStatementHeaderId, BSH.OrgId, BSH.BankStatementNo,
                              BSH.BankId, BSH.AddedDt, BSH.FromDt, BSH.ToDt,
@@ -62,6 +69,15 @@ public class BankStatementService
         {
             sql += " AND BS.Remark LIKE @Remark";
             parameters.Add("@Remark", "%" + remark + "%", DbType.String);
+        }
+
+        if (amountFlag == 1)
+        {
+            sql += " AND BS.Amount >= 0";
+        }
+        else if (amountFlag == -1)
+        {
+            sql += " AND BS.Amount < 0";
         }
 
         return await _dapperService.QueryAsync<BankStatement>(sql, parameters);

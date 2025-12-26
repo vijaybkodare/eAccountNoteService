@@ -14,6 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\scripts\EAccountNoteJsx\BillTransMapperComponent\BillTransMapBankRow.jsx" />
+    <Content Remove="wwwroot\scripts\EAccountNoteJsx\BillTransMapperComponent\BillTransMapBillRow.jsx" />
+    <Content Remove="wwwroot\scripts\EAccountNoteJsx\BillTransMapperComponent\BillTransMapper.jsx" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\scripts\bootstrap\bootstrap.js" />
     <None Include="wwwroot\scripts\bootstrap\bootstrap.min.js" />
     <None Include="wwwroot\scripts\Chart.js" />
@@ -40,6 +46,7 @@
     <None Include="wwwroot\scripts\EAccountNoteJsx\BillComponent\AddBill.jsx" />
     <None Include="wwwroot\scripts\EAccountNoteJsx\BillComponent\BillList.jsx" />
     <None Include="wwwroot\scripts\EAccountNoteJsx\BillComponent\BillRow.jsx" />
+    <None Include="wwwroot\scripts\EAccountNoteJsx\BillTransMapperComponent\BillTransMapBillRow.jsx" />
     <None Include="wwwroot\scripts\EAccountNoteJsx\ChargeComponent\AddCharge.jsx" />
     <None Include="wwwroot\scripts\EAccountNoteJsx\ChargeComponent\ChargeAccountRow.jsx" />
     <None Include="wwwroot\scripts\EAccountNoteJsx\ChargeComponent\ChargeList.jsx" />
@@ -122,6 +129,8 @@
     <None Include="wwwroot\scripts\EAccountNoteJsx\SupportComponent\ReportCommand.jsx" />
     <None Include="wwwroot\scripts\EAccountNoteJsx\SupportComponent\RevertTransFooter.jsx" />
     <None Include="wwwroot\scripts\EAccountNoteJsx\SupportComponent\UpdateTransNo.jsx" />
+    <None Include="wwwroot\scripts\EAccountNoteJsx\BillTransMapperComponent\BillTransMapper.jsx" />
+    <None Include="wwwroot\scripts\EAccountNoteJsx\BillTransMapperComponent\BillTransMapBankRow.jsx" />
     <None Include="wwwroot\scripts\EAccountNoteJsx\TransMapperComponent\TransMapAccountChargeRow.jsx" />
     <None Include="wwwroot\scripts\EAccountNoteJsx\TransMapperComponent\TransMapAccountRow.jsx" />
     <None Include="wwwroot\scripts\EAccountNoteJsx\TransMapperComponent\TransMapAccountTokenRow.jsx" />

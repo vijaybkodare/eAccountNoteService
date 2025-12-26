@@ -19,4 +19,6 @@ public class BillPayTrans
     public string ItemName { get; set; } = string.Empty;
     public string BillNo { get; set; } = string.Empty;
     public DateTime BillDt { get; set; }
+    public decimal BillAmount { get; set; }
+    public decimal BillPaidAmount { get; set; }
 }
