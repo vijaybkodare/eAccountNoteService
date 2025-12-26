@@ -68,6 +68,7 @@
       "wwwroot/scripts/eaccountnotejs/ReportComponent/ChargeOrderRep.js",
       "wwwroot/scripts/eaccountnotejs/ReportComponent/ChargePayeeItemRep.js",
       "wwwroot/scripts/eaccountnotejs/ReportComponent/ChargeTransRep.js",
+      "wwwroot/scripts/eaccountnotejs/ReportComponent/BillTransRep.js",
       "wwwroot/scripts/eaccountnotejs/ReportComponent/ReportFilter.js",
       "wwwroot/scripts/eaccountnotejs/ReconciliationComponent/Reconciliation.js",
       "wwwroot/scripts/eaccountnotejs/ReconciliationComponent/ReconciliationRep.js",

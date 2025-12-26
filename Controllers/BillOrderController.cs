@@ -71,4 +71,21 @@ public class BillOrderController : ControllerBase
         // Placeholder: no actual file handling implemented.
         return Ok(new ServerResponse { IsSuccess = false, Error = "File upload not implemented in this API yet.", Data = null });
     }
+    [HttpGet("billtransactions")]
+    public async Task<ActionResult<IEnumerable<BillPayTrans>>> GetBillTransactions(
+            [FromQuery] decimal orgId,
+            [FromQuery] decimal accountId,
+            [FromQuery] string fromDate,
+            [FromQuery] string toDate)
+    {
+        var records = await _billPayTransService.getRecordsAsync(
+            orgId: orgId,
+            accountId: accountId,
+            fromDate: fromDate,
+            toDate: toDate,
+            status: -1,
+            reconcStatus: -1);
+
+        return Ok(records);
+    }
 }

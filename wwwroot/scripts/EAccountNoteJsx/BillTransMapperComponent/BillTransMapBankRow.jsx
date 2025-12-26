@@ -17,7 +17,7 @@
                     <div className="col col-xs-3 textAlignR paddingR5">
                         Amount
                     </div>
-                    <div className="col col-xs-3 paddingL5">
+                    <div className="col col-xs-3 fontWeightB paddingL5">
                         {this.props.Item.Amount}
                     </div>
                 </div>
@@ -25,7 +25,7 @@
                     <div className="col col-xs-3 textAlignR paddingR5">
                         Remark
                     </div>
-                    <div className="col col-xs-9 fontWeightB paddingL5">
+                    <div className="col col-xs-9 paddingL5">
                         {this.props.Item.Remark}
                     </div>
                 </div>

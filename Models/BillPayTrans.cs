@@ -21,4 +21,5 @@ public class BillPayTrans
     public DateTime BillDt { get; set; }
     public decimal BillAmount { get; set; }
     public decimal BillPaidAmount { get; set; }
+    public decimal ReconcStatus { get; set; }
 }

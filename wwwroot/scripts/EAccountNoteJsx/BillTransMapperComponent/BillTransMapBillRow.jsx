@@ -6,53 +6,44 @@ var BillTransMapBillRow = React.createClass({
                     <div className="col col-xs-3 paddingR5 textAlignR">
                         Order No:
                     </div>
-                    <div className="col col-xs-2 paddingL5 fontWeightB">
+                    <div className="col col-xs-2 paddingL5">
                         {this.props.Item.BillNo}
                     </div> 
                     <div className="col col-xs-3 paddingR5 textAlignR">
                         Date:
                     </div>
-                    <div className="col col-xs-4 paddingL5">
+                    <div className="col col-xs-4 paddingL5 fontWeightB" >
                         {getFormattedDate(this.props.Item.BillDt)}
                     </div>
                 </div>
 
                 <div className="row fontSizeSr">
-                    <div className="col col-xs-3  paddingR5 textAlignR fontWeightB">
+                    <div className="col col-xs-3  paddingR5 textAlignR">
                         Item:
                     </div>
-                    <div className="col col-xs-3 paddingL5 fontWeightB">
+                    <div className="col col-xs-3 paddingL5">
                         {this.props.Item.ItemName}
                     </div>
                     <div className="col col-xs-3  paddingR5 textAlignR">
-                        Account:
+                        Remark:
                     </div>
                     <div className="col col-xs-3 paddingL5">
-                        {this.props.Item.CrAccount}
+                        {this.props.Item.BillRemark}
                     </div>
                 </div>
 
                 <div className="row fontSizeSr">
                     <div className="col col-xs-3  paddingR5 textAlignR">
-                        Amount:
+                        Bill Amount:
                     </div>
-                    <div className="col col-xs-3 paddingL5 fontWeightB">
+                    <div className="col col-xs-3 paddingL5">
                         {this.props.Item.BillAmount}
                     </div>
                     <div className="col col-xs-3  paddingR5 textAlignR">
-                        Paid:
+                        Paid Amount:
                     </div>
                     <div className="col col-xs-3 paddingL5 fontWeightB">
-                        {this.props.Item.BillPaidAmount}
-                    </div>
-                </div>
-
-                <div className="row fontSizeSr">
-                    <div className="col col-xs-3  paddingR5 textAlignR">
-                        Remark:
-                    </div>
-                    <div className="col col-xs-9 paddingL5">
-                        {this.props.Item.BillRemark}
+                        {this.props.Item.Amount}
                     </div>
                 </div>
             </div>

@@ -17,6 +17,7 @@
     <Content Remove="wwwroot\scripts\EAccountNoteJsx\BillTransMapperComponent\BillTransMapBankRow.jsx" />
     <Content Remove="wwwroot\scripts\EAccountNoteJsx\BillTransMapperComponent\BillTransMapBillRow.jsx" />
     <Content Remove="wwwroot\scripts\EAccountNoteJsx\BillTransMapperComponent\BillTransMapper.jsx" />
+    <Content Remove="wwwroot\scripts\EAccountNoteJsx\ReportComponent\BillTransRep.jsx" />
   </ItemGroup>
 
   <ItemGroup>
@@ -96,6 +97,7 @@
     <None Include="wwwroot\scripts\EAccountNoteJsx\ReportComponent\BillOrderRep.jsx" />
     <None Include="wwwroot\scripts\EAccountNoteJsx\ReportComponent\ChargeOrderRep.jsx" />
     <None Include="wwwroot\scripts\EAccountNoteJsx\ReportComponent\ChargePayeeItemRep.jsx" />
+    <None Include="wwwroot\scripts\EAccountNoteJsx\ReportComponent\BillTransRep.jsx" />
     <None Include="wwwroot\scripts\EAccountNoteJsx\ReportComponent\ChargeTransRep.jsx" />
     <None Include="wwwroot\scripts\EAccountNoteJsx\ReportComponent\ReportFilter.jsx" />
     <None Include="wwwroot\scripts\EAccountNoteJsx\RevertAdvChargeTransComponent\AddRevertAdvChargeTrans.jsx" />

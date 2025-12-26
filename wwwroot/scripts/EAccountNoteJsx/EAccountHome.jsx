@@ -25,6 +25,7 @@
                     ShowJVList={() => this.JVList.showMe()}
                     ShowPayBillList={() => this.PayBillList.showMe()}
                     ShowChargeTransRep={(filter) => this.ChargeTransRep.showMe(filter)} 
+                    ShowBillTransRep={(filter) => this.BillTransRep.showMe(filter)} 
                     ShowAccountRep={() => this.AccountRep.showMe()}
                     ShowChargeOrderRep={() => this.ChargeOrderRep.showMe()}
                     ShowChargePayeeItemRep={() => this.ChargePayeeItemRep.showMe()}
@@ -138,6 +139,10 @@
                 <ChargeTransRep ref={function(node){this.ChargeTransRep = node; this.addNode(node);}.bind(this)}
                     ShowNextComponent={(item, itemType) => this.Dashboard.showMe(item, itemType)}
                     ShowChargeTransRep={(filter) => this.ChargeTransRep.showMe(filter)}
+                    ShowReportFilter={(item, itemType) => this.ReportFilter.showMe(item, itemType)} />
+                <BillTransRep ref={function (node) { this.BillTransRep = node; this.addNode(node); }.bind(this)}
+                    ShowNextComponent={(item, itemType) => this.Dashboard.showMe(item, itemType)}
+                    ShowBillTransRep={(filter) => this.BillTransRep.showMe(filter)}
                     ShowReportFilter={(item, itemType) => this.ReportFilter.showMe(item, itemType)} />
                 <ReportFilter ref={function(node){this.ReportFilter = node; this.addNode(node);}.bind(this)}
                     ShowAccountList={(itemSelMode, showNextComponent, multiSelect) => this.AccountList.showMe(itemSelMode, showNextComponent, multiSelect)}
