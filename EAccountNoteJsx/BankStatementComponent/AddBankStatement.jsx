@@ -122,7 +122,7 @@
         ajaxGet('api/BankStatement/entity' + urlParams, function (data) {
             _ProgressBar.IMDone();
             this.OrderNo.value = data.BankStatementNo;
-            this.Date.value = getFormattedDate3(data.AddedDt);
+            this.Date.value = getFormattedDate(data.AddedDt);
             this.Remark.value = data.Remark;
             if (entity.BankStatementHeaderId == -1) {
                 this.setState({

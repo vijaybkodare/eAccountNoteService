@@ -42,6 +42,20 @@ public class BillTransMapService
                 throw new InvalidOperationException("Transactions to map are not valid");
             }
 
+            const string existingTransSql = @"SELECT TOP 1 1
+                                               FROM BillPayTrans
+                                               WHERE TransactionId = @TransactionId";
+
+            var existing = await connection.ExecuteScalarAsync<int?>(
+                existingTransSql,
+                new { TransactionId = bankStatement.TransactionId },
+                transaction);
+
+            if (existing.HasValue)
+            {
+                throw new InvalidOperationException("TransactionId is already map");
+            }
+
             if (-bankStatement.Amount != billPayTrans.Amount)
             {
                 throw new InvalidOperationException("Transactions to map are not valid");
@@ -53,7 +67,7 @@ public class BillTransMapService
                                                     WHERE BankStatementId = @BankStatementId";
 
             const string updateBillPayTransSql = @"UPDATE BillPayTrans
-                                                   SET ReconcStatus = 1
+                                                   SET ReconcStatus = 1, TransactionId = @TransactionId
                                                    WHERE BillPayTransId = @BillPayTransId";
 
             await connection.ExecuteAsync(
@@ -67,7 +81,7 @@ public class BillTransMapService
 
             await connection.ExecuteAsync(
                 updateBillPayTransSql,
-                new { BillPayTransId = billPayTransId },
+                new { BillPayTransId = billPayTransId, TransactionId = bankStatement.TransactionId },
                 transaction);
 
             return true;

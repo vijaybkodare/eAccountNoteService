@@ -13,7 +13,7 @@
                         Date:
                     </div>
                     <div className="col col-xs-4 paddingL5">
-                        {getFormattedDate3(this.props.Item.AddedDt)}
+                        {getFormattedDate(this.props.Item.AddedDt)}
                     </div>
                 </div>
 
@@ -22,13 +22,13 @@
                         From Date:
                     </div>
                     <div className="col col-xs-3 paddingL5 fontWeightB">
-                        {getFormattedDate3(this.props.Item.FromDt)}
+                        {getFormattedDate(this.props.Item.FromDt)}
                     </div>
                     <div className="col col-xs-3  paddingR5 textAlignR">
                         To Date:
                     </div>
                     <div className="col col-xs-3 paddingL5 fontWeightB">
-                        {getFormattedDate3(this.props.Item.ToDt)}
+                        {getFormattedDate(this.props.Item.ToDt)}
                     </div>
                 </div>
 

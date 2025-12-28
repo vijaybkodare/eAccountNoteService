@@ -1,5 +1,7 @@
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
+using eAccountNoteService.Utility;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eAccountNoteService.Controllers;
@@ -62,16 +64,41 @@ public class BankStatementController : ControllerBase
     }
 
     // POST: api/bankstatement/save
-    // File upload/import is not implemented yet; this action returns a failure response.
     [HttpPost("save")]
-    public ActionResult<ServerResponse> Save([FromQuery] int id, [FromQuery] int orgId, [FromQuery] string fromDate, [FromQuery] string toDate, [FromQuery] string remark, [FromQuery] string worksheetName)
+    public async Task<bool> Save(
+        [FromQuery] decimal id,
+        [FromQuery] decimal orgId,
+        [FromQuery] string fromDate,
+        [FromQuery] string toDate,
+        [FromQuery] string remark,
+        [FromQuery] string worksheetName,
+        IFormFile file)
     {
-        return Ok(new ServerResponse
+        if (file == null || file.Length == 0)
         {
-            IsSuccess = false,
-            Error = "Bank statement import from Excel is not implemented in this API.",
-            Data = null
-        });
+            throw new InvalidOperationException("No file uploaded.");
+        }
+
+        var header = new BankStatementHeader
+        {
+            BankStatementHeaderId = (int)id,
+            OrgId = (int)orgId,
+            FromDt = DateTime.Parse(fromDate),
+            ToDt = DateTime.Parse(toDate),
+            Remark = remark ?? string.Empty,
+            WorksheetName = worksheetName ?? string.Empty,
+            AddedDt = DateTime.Now
+        };
+
+        using var stream = file.OpenReadStream();
+        var success = await _headerService.UploadBankStatementAsync(header, stream);
+
+        if (!success)
+        {
+            throw new InvalidOperationException("Failed to import bank statement from Excel.");
+        }
+
+        return true;
     }
 
     // GET: api/bankstatement/statements?orgId=1&fromDate=...&toDate=...&status=0&remark=...

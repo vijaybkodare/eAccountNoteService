@@ -77,7 +77,6 @@
     },
     save: function (renderData) {
         let uri = 'ChargeOrder/cummulativeChargePayment';
-        var dataToPost = new FormData();
         var entity = {
             ChargePayeeDetailId: -1,
             OrgId: _LoginAccount.OrgId,
@@ -94,9 +93,8 @@
             ChargePayeeDetailIds: renderData.ChargePayeeDetailIds,
             BankStatementId: this.props.BankStatement.BankStatementId,
         }
-        appendObjectToFormData2(entity, dataToPost, "");
         _ProgressBar.IMBusy();
-        ajaxPost(uri, dataToPost, function (data) {
+        axiosPost(uri, entity, function (data) {
             _ProgressBar.IMDone();
             if (data.IsSuccess) {
                 this.setState({

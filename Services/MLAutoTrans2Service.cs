@@ -74,8 +74,10 @@ public class MLAutoTrans2Service
             {
                 var temp = accountDtos.Where(x => x.Weight > cutOff).ToList();
                 // deep clone via JSON to avoid reference sharing like legacy
-                var json = System.Text.Json.JsonSerializer.Serialize(temp);
-                auto.AccountDtos = System.Text.Json.JsonSerializer.Deserialize<List<AccountDto>>(json) ?? new List<AccountDto>();
+                //var json = System.Text.Json.JsonSerializer.Serialize(temp);
+                //auto.AccountDtos = System.Text.Json.JsonSerializer.Deserialize<List<AccountDto>>(json) ?? new List<AccountDto>();
+                string jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(temp);
+                auto.AccountDtos = Newtonsoft.Json.JsonConvert.DeserializeObject<List<AccountDto>>(jsonString);
             }
 
             if (accountId > 0)

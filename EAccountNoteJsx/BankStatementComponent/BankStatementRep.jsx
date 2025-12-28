@@ -22,7 +22,7 @@ var BankStatementRep = React.createClass({
                             Date:
                         </div>
                         <div className="col col-xs-4 paddingL5">
-                            {getFormattedDate3(this.state.Entity.AddedDt)}
+                            {getFormattedDate(this.state.Entity.AddedDt)}
                         </div>
                     </div>
 
@@ -31,13 +31,13 @@ var BankStatementRep = React.createClass({
                             From Date:
                         </div>
                         <div className="col col-xs-3 paddingL5 fontWeightB">
-                            {getFormattedDate3(this.state.Entity.FromDt)}
+                            {getFormattedDate(this.state.Entity.FromDt)}
                         </div>
                         <div className="col col-xs-3  paddingR5 textAlignR">
                             To Date:
                         </div>
                         <div className="col col-xs-3 paddingL5">
-                            {getFormattedDate3(this.state.Entity.ToDt)}
+                            {getFormattedDate(this.state.Entity.ToDt)}
                         </div>
                     </div>
 

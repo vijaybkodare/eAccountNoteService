@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="07/19/2025 12:00:00" ReportInfo.Modified="12/25/2025 18:06:59" ReportInfo.CreatorVersion="2025.2.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="07/19/2025 12:00:00" ReportInfo.Modified="12/28/2025 11:02:06" ReportInfo.CreatorVersion="2025.2.0.0">
   <ScriptText>
     using System;
     using System.Collections;
@@ -42,6 +42,8 @@
       <Column Name="AccountName" DataType="System.String"/>
       <Column Name="Amount" DataType="System.Decimal"/>
       <Column Name="PaidAmount" DataType="System.Decimal"/>
+      <Column Name="ItemName" DataType="System.String" PropName="Column"/>
+      <Column Name="Remark" DataType="System.String" PropName="Column"/>
     </TableDataSource>
     <Parameter Name="reportTitle" DataType="System.String" AsString=""/>
     <Parameter Name="OrgName" DataType="System.String" AsString=""/>
@@ -64,12 +66,12 @@
       <TextObject Name="Text90" Left="567" Top="94.5" Width="113.4" Height="28.35" Border.Lines="Top, Bottom" Text="Paid Amount" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
       <TextObject Name="Text111" Left="37.8" Top="66.15" Width="66.15" Height="18.9" Border.Lines="Top" Text="fnaman" HorzAlign="Center" Font="Arial, 11pt"/>
     </PageHeaderBand>
-    <DataBand Name="Data1" Top="126.85" Width="718.2" Height="28.35" DataSource="Bill">
-      <TextObject Name="Text92" Left="103.95" Width="103.95" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" Text="[Bill.BillDt]" Format="Custom" Format.Format="dd-MMM-yyyy" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text94" Left="453.6" Width="113.4" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" Text="[Bill.Amount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text95" Left="567" Width="113.4" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" Text="[Bill.PaidAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text93" Left="207.9" Width="245.7" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" Text="[Bill.AccountName]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text110" Left="37.8" Width="66.15" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" Text="[Bill.BillNo]" VertAlign="Center" Font="Arial, 10pt"/>
+    <DataBand Name="Data1" Top="126.85" Width="718.2" Height="28.35" CanGrow="true" DataSource="Bill">
+      <TextObject Name="Text92" Left="103.95" Width="103.95" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" GrowToBottom="true" Text="[Bill.BillDt]" Format="Custom" Format.Format="dd-MMM-yyyy" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text94" Left="453.6" Width="113.4" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" GrowToBottom="true" Text="[Bill.Amount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text95" Left="567" Width="113.4" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" GrowToBottom="true" Text="[Bill.PaidAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text93" Left="207.9" Width="245.7" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" CanGrow="true" GrowToBottom="true" Text="[Bill.AccountName]&#13;&#10;[Bill.ItemName]&#13;&#10;[Bill.Remark]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" VertAlign="Center" Font="Arial, 10pt"/>
+      <TextObject Name="Text110" Left="37.8" Width="66.15" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" GrowToBottom="true" Text="[Bill.BillNo]" VertAlign="Center" Font="Arial, 10pt"/>
       <DataFooterBand Name="DataFooter1" Top="159.2" Width="718.2" Height="18.9">
         <TextObject Name="Text112" Left="453.6" Width="113.4" Height="18.9" Text="[TotalAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" Font="Arial, 10pt"/>
         <TextObject Name="Text113" Left="567" Width="113.4" Height="18.9" Text="[TotalPaid]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" Font="Arial, 10pt"/>

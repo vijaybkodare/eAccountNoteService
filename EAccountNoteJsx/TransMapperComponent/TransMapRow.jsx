@@ -25,12 +25,12 @@
         );
     },
     loadMapAccounts: function () {
-        if (!this.props.Item.accountDtos) {
+        if (!this.props.Item.AccountDtos) {
             return null;
         }
-        return this.props.Item.accountDtos.map(function (item) {
+        return this.props.Item.AccountDtos.map(function (item) {
             return <TransMapAccountRow
-                key={item.AccountMaster.AccountId}
+                key={this.props.Item.BankStatement.BankStatementId + '-' + item.AccountMaster.AccountId}
                 BankStatement={this.props.Item.BankStatement}
                 AccountDto={item}
                 SelCharges={this.props.SelCharges}

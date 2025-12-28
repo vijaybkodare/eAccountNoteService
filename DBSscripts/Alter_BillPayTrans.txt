@@ -1,0 +1,61 @@
+﻿ALTER TABLE [dbo].[BillPayTrans] ADD [TransMode] SMALLINT NULL;
+ALTER TABLE [dbo].[BillPayTrans] ADD [ReconcRemark] VARCHAR(500) NULL;
+ALTER TABLE [dbo].[BillPayTrans] ADD [ReconcStatus] SMALLINT NULL;
+UPDATE BillPayTrans SET ReconcStatus = 0 WHERE ReconcStatus IS NULL
+
+ALTER PROCEDURE [dbo].[Proc_Insert_BillPayTrans] (
+    @BillOrderId numeric(18, 0),
+    @Amount numeric(18, 0),
+    @Remark varchar(500),
+	@TransactionId varchar(50),
+	@DrAccountId numeric(18, 0),
+	@CrAccountId numeric(18, 0),
+	@Status smallint,
+    @RefType smallint,
+    @RefId numeric(18, 0),
+	@RecordId  [NUMERIC] (18,0) OUT
+)
+AS
+BEGIN
+  DECLARE @PaidAmount numeric(18, 0)
+  
+  SELECT @PaidAmount = (Amount - PaidAmount) FROM BillOrder WHERE BillOrderId = @BillOrderId
+  
+  IF @Amount > @PaidAmount
+	RETURN 
+	
+  INSERT INTO BillPayTrans (
+      BillOrderId,
+	  PaymentDt,
+      Amount,
+      Remark,
+	  TransactionId,
+	  DrAccountId,
+	  CrAccountId,
+	  [Status],
+	  RefType,
+	  RefId,
+	  ReconcStatus
+  )
+  VALUES (
+      @BillOrderId,
+	  getDate(),
+      @Amount,
+      @Remark,
+	  @TransactionId,
+	  @DrAccountId,
+	  @CrAccountId,
+	  @Status,
+	  @RefType,
+	  @RefId,
+	  0
+  );
+
+  UPDATE BillOrder SET PaidAmount = PaidAmount + @Amount WHERE BillOrderId = @BillOrderId
+
+  SET @RecordId = IDENT_CURRENT('BillPayTrans')
+
+  EXEC Proc_Insert_Transaction 2, @RecordId, @CrAccountId, @Amount;
+  SET @Amount = -@Amount
+  EXEC Proc_Insert_Transaction 2, @RecordId, @DrAccountId, @Amount;
+END;

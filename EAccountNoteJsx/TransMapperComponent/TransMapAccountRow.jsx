@@ -12,7 +12,7 @@
                             Account:
                         </div>
                         <div className="col col-sm-3 paddingL5 fontWeightB">
-                            {this.props.AccountDto.accountMaster.AccountName}
+                            {this.props.AccountDto.AccountMaster.AccountName}
                         </div>
                         <div className="col col-sm-3 paddingR5 textAlignR">
                             Weight:
@@ -27,10 +27,10 @@
                         </div>
                     <div className="col col-sm-6">
                         <TransMapAccountChargeRow
-                            key={this.props.BankStatement.BankStatementId + '-' + this.props.AccountDto.accountMaster.AccountId}
-                            AccountId={this.props.AccountDto.accountMaster.AccountId}
+                            key={this.props.BankStatement.BankStatementId + '-' + this.props.AccountDto.AccountMaster.AccountId}
+                            AccountId={this.props.AccountDto.AccountMaster.AccountId}
                             BankStatement={this.props.BankStatement}
-                            Items={this.props.AccountDto.chargePayeeDetails}
+                            Items={this.props.AccountDto.ChargePayeeDetails}
                             SelCharges={this.props.SelCharges}
                             ChargeItemSelChange={this.props.ChargeItemSelChange}
                         />
@@ -40,9 +40,9 @@
         );
     },
     loadAccountTransTokens: function () {
-        return this.props.AccountDto.accountTransTokens.map(function (item) {
+        return this.props.AccountDto.AccountTransTokens.map(function (item) {
             return <TransMapAccountTokenRow
-                key={this.props.BankStatement.BankStatementId + '-' + this.props.AccountDto.accountMaster.AccountId + '-' + item.TokenValue}
+                key={this.props.BankStatement.BankStatementId + '-' + this.props.AccountDto.AccountMaster.AccountId + '-' + item.TokenValue}
                 Item={item}
             />
         }.bind(this));
