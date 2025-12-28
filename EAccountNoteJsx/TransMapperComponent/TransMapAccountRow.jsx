@@ -18,7 +18,7 @@
                             Weight:
                         </div>
                         <div className="col col-sm-3 paddingL5 fontWeightB">
-                            {this.props.AccountDto.weight}
+                            {this.props.AccountDto.Weight}
                         </div>
                     </div>
                     <div className="row">

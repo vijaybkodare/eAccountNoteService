@@ -51,15 +51,15 @@ public class AccountTransTokenService
 
     public async Task<IEnumerable<AccountTransToken>> GetTransTokenTypesAsync()
     {
-        const string sql = "SELECT TokenTypeId, TokenName FROM TransTokenMaster";
-        var rows = await _dapperService.QueryAsync<dynamic>(sql);
-        return rows.Select(r => new AccountTransToken
+        const string sql = "SELECT * FROM TransTokenMaster";
+        return await _dapperService.QueryAsync<AccountTransToken>(sql);
+        /*return rows.Select(r => new AccountTransToken
         {
             TokenTypeId = (int)r.TokenTypeId,
             TokenName = (string)r.TokenName,
             TokenValue = string.Empty,
             TokenWeight = 0
-        }).ToList();
+        }).ToList();*/
     }
 
     public async Task<bool> DeleteAsync(decimal accountId, int tokenTypeId)
