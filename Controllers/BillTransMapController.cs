@@ -52,12 +52,13 @@ namespace eAccountNoteService.Controllers
         [HttpGet("billtransactions")]
         public async Task<ActionResult<IEnumerable<BillPayTrans>>> GetBillTransactions(
             [FromQuery] decimal orgId,
+            [FromQuery] decimal accountId,
             [FromQuery] string fromDate,
             [FromQuery] string toDate)
         {
             var records = await _billPayTransService.getRecordsAsync(
                 orgId: orgId,
-                accountId: -1,
+                accountId: accountId,
                 fromDate: fromDate,
                 toDate: toDate,
                 status: -1,

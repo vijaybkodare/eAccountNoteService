@@ -1,6 +1,7 @@
 ﻿var BillTransMapper = React.createClass({
     getInitialState: function () {
         return {
+            MemberAccounts: [],
             BankStatements: [],
             BillTransactions: [],
             SelBill: {},
@@ -14,16 +15,33 @@
                 <AddEditHeader ShowList={this.props.ShowNext} Title="Bill Transaction Mapper" />
                 <div className="panel-body">
                     <div className="row">
-                        <div className="col-sm-4">
+                        <div className="col-sm-3">
                             <DateSelector Label="From Date" ref={function (node) { this.FromDt = node; }.bind(this)} />
                         </div>
-                        <div className="col-sm-4">
+                        <div className="col-sm-3">
                             <DateSelector Label="To Date" ref={function (node) { this.ToDt = node; }.bind(this)} />
                         </div>
-                        <div className="col-sm-4 textAlignC" style={{ paddingRight: "0px", marginTop: "25px" }}>
+                        
+                        <div className="col-sm-3">
+                            <div className="form-group">
+                                <label>Account</label>
+                                <div className="row">
+                                    <div className="col-xs-12">
+                                        <select ref={function (node) { this.selAccount = node; }.bind(this)} className="form-control" onChange={this.actionOnTokenTypeChange}
+                                            style={{ borderTopRightRadius: "0px", borderBottomRightRadius: "0px" }}>
+                                            {
+                                                this.state.MemberAccounts.map((item, index) => <option key={index} value={item.AccountId}>{item.AccountName}</option>)
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-sm-3 textAlignC" style={{ paddingRight: "0px", marginTop: "25px" }}>
                             <button type="button" className="btn btn-primary" onClick={this.getBillTransMapping}>Get Bill Trans Mapping</button>
                         </div>
                     </div>
+                    
                     <div className="row">
                         <div className="col-sm-6 textAlignC" style={{ borderRightStyle: "solid" }}>
                             Bank Statements Transactions
@@ -66,6 +84,18 @@
     showMe: function () {
         _Main.EAccountHome.hideAll();
         this.show();
+        this.loadMemberAccountList();
+    },
+    loadMemberAccountList: function () {
+        var urlParams = "?OrgId=" + _LoginAccount.OrgId;
+        _ProgressBar.IMBusy();
+        ajaxGet('account/list' + urlParams, function (data) {
+            _ProgressBar.IMDone();
+            data.unshift({ AccountId: -1, AccountName: "None" });
+            this.setState({
+                MemberAccounts: data,
+            });
+        }.bind(this));
     },
     searchChange: function () {
         this.setState({ Filter: this.TxtAmount.value });
@@ -84,6 +114,7 @@
     },
     getBillTransactions: function () {
         var urlParams = "?orgId=" + _LoginAccount.OrgId;
+        urlParams += "&accountId=" + this.selAccount.value;
         urlParams += "&fromDate=" + this.FromDt.getValue();
         urlParams += "&toDate=" + this.ToDt.getValue() + " 23:59:59";
         _ProgressBar.IMBusy();

@@ -23,6 +23,9 @@ var Main = React.createClass({
         if (_TransMapper.hide) {
             _TransMapper.hide();
         }
+        if (_BillTransMapper.hide) {
+            _BillTransMapper.hide();
+        }
     },
     goForLogin: function () {
         this.hideAllComponent();
@@ -41,6 +44,7 @@ var Main = React.createClass({
     },
     showMe: function () {
         _TransMapper.hide();
+        _BillTransMapper.hide();
         this.goForEAccountHome();
     },
 });

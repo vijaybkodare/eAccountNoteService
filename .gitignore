@@ -47,3 +47,4 @@ package-lock.json
 *.swp
 *.tmp
 ~$*
+/wwwroot/scripts/eaccountnote.bundle.min.js

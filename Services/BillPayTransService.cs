@@ -82,7 +82,7 @@ public class BillPayTransService
 
         if (accountId != -1)
         {
-            sql += " AND BPT.DrAccountId = @AccountId";
+            sql += " AND BPT.CrAccountId = @AccountId";
             parameters.Add("@AccountId", accountId, DbType.Decimal);
         }
         if (!string.IsNullOrWhiteSpace(fromDate))

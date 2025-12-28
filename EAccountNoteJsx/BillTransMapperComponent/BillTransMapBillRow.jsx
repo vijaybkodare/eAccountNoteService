@@ -19,15 +19,27 @@ var BillTransMapBillRow = React.createClass({
 
                 <div className="row fontSizeSr">
                     <div className="col col-xs-3  paddingR5 textAlignR">
+                        Account:
+                    </div>
+                    <div className="col col-xs-9 paddingL5">
+                        {this.props.Item.CrAccount}
+                    </div>
+                </div>
+
+                <div className="row fontSizeSr">
+                    <div className="col col-xs-3  paddingR5 textAlignR">
                         Item:
                     </div>
-                    <div className="col col-xs-3 paddingL5">
+                    <div className="col col-xs-9 paddingL5">
                         {this.props.Item.ItemName}
                     </div>
+                </div>
+
+                <div className="row fontSizeSr">
                     <div className="col col-xs-3  paddingR5 textAlignR">
                         Remark:
                     </div>
-                    <div className="col col-xs-3 paddingL5">
+                    <div className="col col-xs-9 paddingL5">
                         {this.props.Item.BillRemark}
                     </div>
                 </div>
@@ -40,7 +52,7 @@ var BillTransMapBillRow = React.createClass({
                         {this.props.Item.BillAmount}
                     </div>
                     <div className="col col-xs-3  paddingR5 textAlignR">
-                        Paid Amount:
+                        Paid:
                     </div>
                     <div className="col col-xs-3 paddingL5 fontWeightB">
                         {this.props.Item.Amount}

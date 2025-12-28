@@ -79,7 +79,7 @@ public class BankStatementService
         {
             sql += " AND BS.Amount < 0";
         }
-
+        sql += "ORDER BY BS.BankStatementId DESC";
         return await _dapperService.QueryAsync<BankStatement>(sql, parameters);
     }
 
