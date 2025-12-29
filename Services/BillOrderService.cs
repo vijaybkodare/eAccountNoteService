@@ -6,6 +6,7 @@ using CsvHelper;
 using Dapper;
 using eAccountNoteService.Models;
 using eAccountNoteService.Utility;
+using Microsoft.AspNetCore.Http;
 
 namespace eAccountNoteService.Services;
 
@@ -197,5 +198,55 @@ public class BillOrderService
             "BillReport.frx",
             "Bills Report",
             _reportUtility.getCurrentDate());
+    }
+
+    public async Task<bool> SaveBillFileAsync(decimal orgId, decimal billOrderId, IFormFile file)
+    {
+        const int MaxFileSize = 1048576; // 1 MB
+
+        if (file == null || file.Length == 0)
+        {
+            return false;
+        }
+
+        if (file.Length > MaxFileSize)
+        {
+            return false;
+        }
+
+        const string billNoSql = @"SELECT BillNo
+                                    FROM BillOrder
+                                    WHERE OrgId = @OrgId AND BillOrderId = @BillOrderId";
+
+        var billNo = await _dapperService.QuerySingleOrDefaultAsync<string>(billNoSql, new { OrgId = orgId, BillOrderId = billOrderId });
+        if (string.IsNullOrWhiteSpace(billNo))
+        {
+            return false;
+        }
+
+        var relativeRoot = AppConstants.FILEPATH ?? string.Empty;
+        var rootPath = Path.Combine(Directory.GetCurrentDirectory(), relativeRoot.TrimStart('~', '/', '\\'));
+
+        if (!Directory.Exists(rootPath))
+        {
+            Directory.CreateDirectory(rootPath);
+        }
+
+        var uniqueFileName = $"ORG{orgId}_{billNo}_{DateTime.Now:yyyyMMddHHmmssfff}{Path.GetExtension(file.FileName)}";
+        var physicalPath = Path.Combine(rootPath, uniqueFileName);
+
+        await using (var stream = new FileStream(physicalPath, FileMode.Create, FileAccess.Write, FileShare.None))
+        {
+            await file.CopyToAsync(stream);
+        }
+        relativeRoot = relativeRoot.Replace("wwwroot/", "");
+        var dbFilePath = Path.Combine(relativeRoot, uniqueFileName).TrimStart('~', '/', '\\');
+
+        const string updateSql = @"UPDATE BillOrder
+                                    SET FilePath = @FilePath
+                                    WHERE BillOrderId = @BillOrderId";
+
+        var rows = await _dapperService.ExecuteAsync(updateSql, new { FilePath = dbFilePath, BillOrderId = billOrderId });
+        return rows > 0;
     }
 }

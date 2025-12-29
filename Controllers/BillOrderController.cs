@@ -1,5 +1,6 @@
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eAccountNoteService.Controllers;
@@ -64,12 +65,20 @@ public class BillOrderController : ControllerBase
     }
 
     // POST: api/billorder/saveBillFile
-    // NOTE: File saving is not implemented yet; this is a stub that always returns failure if no file.
     [HttpPost("saveBillFile")]
-    public ActionResult<ServerResponse> SaveBillFile([FromQuery] decimal orgId, [FromQuery] decimal billOrderId)
+    public async Task<ActionResult<ServerResponse>> SaveBillFile(
+        [FromQuery] decimal orgId,
+        [FromQuery] decimal billOrderId,
+        IFormFile file)
     {
-        // Placeholder: no actual file handling implemented.
-        return Ok(new ServerResponse { IsSuccess = false, Error = "File upload not implemented in this API yet.", Data = null });
+        var success = await _billOrderService.SaveBillFileAsync(orgId, billOrderId, file);
+
+        return Ok(new ServerResponse
+        {
+            IsSuccess = success,
+            Error = success ? string.Empty : "Failed to save bill file.",
+            Data = null
+        });
     }
     [HttpGet("billtransactions")]
     public async Task<ActionResult<IEnumerable<BillPayTrans>>> GetBillTransactions(

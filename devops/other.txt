@@ -1,3 +1,5 @@
 ﻿scp -r ./wwwroot/reports/AccountPendingSummary.frx root@82.112.238.205:/var/www/wcpf.vikani.in/wwwroot/reports
 scp -r ./wwwroot/reports/AccountReport.frx root@82.112.238.205:/var/www/wcpf.vikani.in/wwwroot/reports
 scp -r ./wwwroot/reports/BillReport.frx root@82.112.238.205:/var/www/wcpf.vikani.in/wwwroot/reports
+
+scp -r C:/Users/LENOVO/PROJECTS/eaccountnote-web-api-2/release-backup/wcpf.fnaman.in/Files/* root@82.112.238.205:/var/www/wcpf.vikani.in/wwwroot/Files 

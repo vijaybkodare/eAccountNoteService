@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace eAccountNoteService.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class LoadFileController : ControllerBase
 {
     private readonly ImageTextExtractorService _imageService;
