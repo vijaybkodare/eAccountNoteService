@@ -2,6 +2,7 @@ using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace eAccountNoteService.Controllers;
 
@@ -11,11 +12,13 @@ public class BillOrderController : ControllerBase
 {
     private readonly BillOrderService _billOrderService;
     private readonly BillPayTransService _billPayTransService;
+    private readonly ILogger<BillOrderController> _logger;
 
-    public BillOrderController(BillOrderService billOrderService, BillPayTransService billPayTransService)
+    public BillOrderController(BillOrderService billOrderService, BillPayTransService billPayTransService, ILogger<BillOrderController> logger)
     {
         _billOrderService = billOrderService;
         _billPayTransService = billPayTransService;
+        _logger = logger;
     }
 
     // GET: api/billorder/hello
@@ -71,14 +74,37 @@ public class BillOrderController : ControllerBase
         [FromQuery] decimal billOrderId,
         IFormFile file)
     {
-        var success = await _billOrderService.SaveBillFileAsync(orgId, billOrderId, file);
-
-        return Ok(new ServerResponse
+        try
         {
-            IsSuccess = success,
-            Error = success ? string.Empty : "Failed to save bill file.",
-            Data = null
-        });
+            var success = await _billOrderService.SaveBillFileAsync(orgId, billOrderId, file);
+
+            if (!success)
+            {
+                _logger.LogWarning(
+                    "Failed to save bill file for OrgId {OrgId}, BillOrderId {BillOrderId}, FileName {FileName}",
+                    orgId,
+                    billOrderId,
+                    file?.FileName);
+            }
+
+            return Ok(new ServerResponse
+            {
+                IsSuccess = success,
+                Error = success ? string.Empty : "Failed to save bill file.",
+                Data = null
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Unhandled exception in SaveBillFile for OrgId {OrgId}, BillOrderId {BillOrderId}, FileName {FileName}",
+                orgId,
+                billOrderId,
+                file?.FileName);
+
+            throw;
+        }
     }
     [HttpGet("billtransactions")]
     public async Task<ActionResult<IEnumerable<BillPayTrans>>> GetBillTransactions(

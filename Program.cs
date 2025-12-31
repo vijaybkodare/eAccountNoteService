@@ -1,8 +1,18 @@
 using eAccountNoteService.Services;
 using eAccountNoteService.Utility;
 using eAccountNoteService.Filters;
+using eAccountNoteService.Middleware;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog from appsettings.json
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 var appEnv = builder.Configuration["AppSettings:appenv"];
 if (appEnv == "prod")
 {
@@ -58,6 +68,9 @@ builder.Services.AddScoped<BillTransMapService>();
 AppConstants.Initialize(builder.Configuration);
 
 var app = builder.Build();
+
+// Centralized exception logging and standardized error responses
+app.UseMiddleware<ExceptionLoggingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

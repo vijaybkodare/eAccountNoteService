@@ -2,6 +2,7 @@ using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace eAccountNoteService.Controllers;
 
@@ -10,10 +11,12 @@ namespace eAccountNoteService.Controllers;
 public class LoadFileController : ControllerBase
 {
     private readonly ImageTextExtractorService _imageService;
+    private readonly ILogger<LoadFileController> _logger;
 
-    public LoadFileController(ImageTextExtractorService imageService)
+    public LoadFileController(ImageTextExtractorService imageService, ILogger<LoadFileController> logger)
     {
         _imageService = imageService;
+        _logger = logger;
     }
 
     // GET: api/loadfile/hello
@@ -31,30 +34,26 @@ public class LoadFileController : ControllerBase
     {
         if (file == null)
         {
+            _logger.LogWarning("LoadImage called with no file uploaded.");
             return Ok(new ServerResponse { IsSuccess = false, Error = "No file uploaded." });
         }
 
         if (string.IsNullOrEmpty(file.ContentType) || !file.ContentType.Contains("image"))
         {
+            _logger.LogWarning("LoadImage received non-image file. ContentType={ContentType}, FileName={FileName}", file.ContentType, file.FileName);
             return Ok(new ServerResponse { IsSuccess = false, Error = "Uploaded file is not an image." });
         }
 
-        try
+        var transDetail = await _imageService.ExtractTransDetailFromImageViaPythonAsync(file);
+
+        _logger.LogInformation("Successfully extracted transaction details from image. FileName={FileName}, TransactionId={TransactionId}",
+            file.FileName,
+            transDetail.TransactionId);
+
+        return Ok(new ServerResponse
         {
-            var transDetail = await _imageService.ExtractTransDetailFromImageAsync(file);
-            return Ok(new ServerResponse
-            {
-                IsSuccess = true,
-                Data = transDetail
-            });
-        }
-        catch (Exception ex)
-        {
-            return Ok(new ServerResponse
-            {
-                IsSuccess = false,
-                Error = ex.Message
-            });
-        }
+            IsSuccess = true,
+            Data = transDetail
+        });
     }
 }
