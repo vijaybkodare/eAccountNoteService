@@ -133,7 +133,7 @@ public class ChargeOrderController : ControllerBase
     [HttpGet("payCharges")]
     public async Task<ActionResult<IEnumerable<ChargePayeeDetail>>> PayCharges([FromQuery] decimal orgId, [FromQuery] decimal accountId)
     {
-        var list = await _chargePayeeDetailService.GetRecordsAsync(orgId, accountId, string.Empty, string.Empty);
+        var list = await _chargePayeeDetailService.GetMemberPendingChargesAsync(orgId, accountId);
         return Ok(list);
     }
 

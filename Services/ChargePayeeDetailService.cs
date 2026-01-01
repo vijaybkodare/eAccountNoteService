@@ -22,7 +22,7 @@ public class ChargePayeeDetailService
         _reportUtility = reportUtility;
     }
 
-    public async Task<IEnumerable<ChargePayeeDetail>> GetMemberPendingChargesAsync(int orgId, decimal accountId)
+    public async Task<IEnumerable<ChargePayeeDetail>> GetMemberPendingChargesAsync(decimal orgId, decimal accountId)
     {
         var sql = @"SELECT CO.ChargeOrderNo, CO.ChargeDt, CO.AccountId AS ItemAccountId, CO.Remark,
                            CPD.*, IM.ItemName, AM.AccountName
