@@ -103,9 +103,9 @@ public class BankStatementController : ControllerBase
 
     // GET: api/bankstatement/statements?orgId=1&fromDate=...&toDate=...&status=0&remark=...
     [HttpGet("statements")]
-    public async Task<ActionResult<IEnumerable<BankStatement>>> GetStatements([FromQuery] decimal orgId, [FromQuery] string? fromDate, [FromQuery] string? toDate, [FromQuery] int status, [FromQuery] string? remark)
+    public async Task<ActionResult<IEnumerable<BankStatement>>> GetStatements([FromQuery] decimal orgId, [FromQuery] string? fromDate, [FromQuery] string? toDate, [FromQuery] int status, [FromQuery] int transType, [FromQuery] string? remark)
     {
-        var data = await _statementService.GetRecordsAsync(-1, orgId, fromDate, toDate, status, remark);
+        var data = await _statementService.GetRecordsAsync(-1, orgId, fromDate, toDate, status, remark, transType);
         return Ok(data);
     }
 }

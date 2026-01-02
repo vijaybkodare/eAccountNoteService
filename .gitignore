@@ -48,3 +48,4 @@ package-lock.json
 *.tmp
 ~$*
 /wwwroot/scripts/eaccountnote.bundle.min.js
+eaccountnotejs/

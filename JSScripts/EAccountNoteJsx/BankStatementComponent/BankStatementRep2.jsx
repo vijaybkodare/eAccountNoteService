@@ -3,6 +3,7 @@
         return {
             Items: [],
             Status: -1,
+            TransType: 0
         };
     },
     render: function () {
@@ -46,6 +47,35 @@
                             </div>
                         </div>
                     </div>
+                    <div className="form-group">
+                        <label>Transaction Type</label>
+                        <div className="row">
+                            <div className="col-xs-4">
+                                <div className="radio">
+                                    <label>
+                                        <input ref="UserAccount" type="radio" name="transType" value="0" onChange={this.transTypeChange} />
+                                        All
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="col-xs-4">
+                                <div className="radio">
+                                    <label>
+                                        <input ref="UserAccount" type="radio" name="transType" value="1" onChange={this.transTypeChange} />
+                                        Credit(CR)
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="col-xs-4">
+                                <div className="radio">
+                                    <label>
+                                        <input type="radio" name="transType" value="-1" onChange={this.transTypeChange} />
+                                        Debit(DB)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <hr />
                     <div className="text-center">
                         <button className="btn btn-primary marginR5" type="button" onClick={this.getRecord}>
@@ -72,6 +102,9 @@
     statusChange: function (e) {
         this.setState({ Status: e.currentTarget.value });
     },
+    transTypeChange: function (e) {
+        this.setState({ TransType: e.currentTarget.value });
+    },
     getList: function () {
         return this.state.Items.map(function (item) {
             return this.getRow(item);
@@ -81,6 +114,7 @@
         var urlParams = "?orgId=" + _LoginAccount.OrgId;
         urlParams += "&remark=" + this.Remark.value;
         urlParams += "&status=" + this.state.Status;
+        urlParams += "&transType=" + this.state.TransType;
         urlParams += "&fromDate=" + this.FromDt.getValue();
         urlParams += "&toDate=" + this.ToDt.getValue() + " 23:59:59";
         _ProgressBar.IMBusy();
@@ -93,6 +127,7 @@
         var urlParams = "?orgId=" + _LoginAccount.OrgId;
         urlParams += "&remark=" + this.Remark.value;
         urlParams += "&status=" + this.state.Status;
+        urlParams += "&transType=" + this.state.TransType;
         urlParams += "&fromDate=" + this.FromDt.getValue();
         urlParams += "&toDate=" + this.ToDt.getValue() + " 23:59:59";
         _ProgressBar.IMBusy();
