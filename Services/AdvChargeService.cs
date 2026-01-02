@@ -50,6 +50,23 @@ public class AdvChargeService
         return result ?? new AdvCharge();
     }
 
+    public async Task<AdvCharge> GetGroupAccountSummaryAsync(decimal accountId)
+    {
+        string sql = @"SELECT TOP 1 UserProfileId FROM UserAccount WHERE AccountId = @AccountId";
+        var profileId = await _dapperService.QuerySingleOrDefaultAsync<decimal>(sql, new { AccountId = accountId });
+        sql = @"SELECT AccountId FROM UserAccount WHERE UserProfileId = @UserProfileId";
+        IEnumerable<decimal> accountIds = await _dapperService.QueryAsync<decimal>(sql, new { UserProfileId = profileId });
+        foreach (decimal id in accountIds)
+        {
+            AdvCharge result = await GetAccountSummaryAsync(id);
+            if (result.AdvChargeId > 0)
+            {
+                return result;
+            }
+        }
+        return new AdvCharge();
+    }
+
     public async Task<(bool Success, string ErrorMessage)> AddAsync(AdvCharge entity)
     {
         try

@@ -59,7 +59,7 @@ public class AdvChargeController : ControllerBase
     [HttpGet("account_summary")]
     public async Task<ActionResult<AdvCharge>> GetAccountSummary([FromQuery] decimal accountId)
     {
-        var summary = await _service.GetAccountSummaryAsync(accountId);
+        var summary = await _service.GetGroupAccountSummaryAsync(accountId);
         return Ok(summary);
     }
 }

@@ -327,7 +327,7 @@ public class ChargePayTransService
 
         if (entity.TransMode == 2)
         {
-            var advCharge = await _advChargeService.GetAccountSummaryAsync(entity.DrAccountId);
+            var advCharge = await _advChargeService.GetGroupAccountSummaryAsync(entity.DrAccountId);
             if (advCharge.Amount - advCharge.SettleAmount < entity.Amount)
             {
                 throw new Exception("Amount is greater than totalAdvPendingSettles");

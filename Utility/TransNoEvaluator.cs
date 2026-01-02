@@ -53,35 +53,57 @@ public class TransNoEvaluator
     public string ExtractTransNoFromText(string[] words)
     {
         string transNo = string.Empty;
-        string transaction = "transaction";
-        string reference = "reference";
-        string id = "id";
-
+        const string TRANSACTIION = "transaction";
+        const string TRANS = "trans";
+        const string REFERENCE = "reference";
+        const string ID = "id";
+        const string UTR = "utr:";
+        string utrNo = string.Empty;
+        string transactionId = string.Empty;
+        string referenceId = string.Empty;
+        string transId = string.Empty;
         for (int i = 0; i < words.Length; i++)
         {
             var lword = words[i].ToLower();
-            if ((lword == transaction || lword == reference) &&
+            if ((lword == TRANSACTIION) && transactionId == string.Empty &&
                 i + 2 < words.Length &&
-                Regex.Replace(words[i + 1].ToLower(), @"[^a-zA-Z]", string.Empty) == id)
+                Regex.Replace(words[i + 1].ToLower(), @"[^a-zA-Z]", string.Empty) == ID)
             {
-                transNo = words[i + 2];
-                break;
+                transactionId = words[i + 2];
             }
-        }
-
-        for (int i = 0; i < words.Length; i++)
-        {
-            if (words[i].ToLower() == "utr:")
+            if ((lword == REFERENCE) &&
+                i + 2 < words.Length &&
+                Regex.Replace(words[i + 1].ToLower(), @"[^a-zA-Z]", string.Empty) == ID)
+            {
+                referenceId = words[i + 2];
+            }
+            if ((lword == TRANS) &&
+                i + 2 < words.Length &&
+                Regex.Replace(words[i + 1].ToLower(), @"[^a-zA-Z]", string.Empty) == ID)
+            {
+                transId = words[i + 2];
+            }
+            if (words[i].ToLower() == UTR)
             {
                 if (i + 1 < words.Length)
                 {
-                    transNo = words[i + 1];
+                    utrNo = words[i + 1];
                 }
-                break;
             }
         }
-
-        return transNo;
+        if(utrNo != string.Empty)
+        {
+            return utrNo;
+        }
+        if (transactionId != string.Empty)
+        {
+            return transactionId;
+        }
+        if (referenceId != string.Empty)
+        {
+            return referenceId;
+        }
+        return transId;
     }
 
     public string ExtractUtrNoFromText(string text, string existingTransNo)
