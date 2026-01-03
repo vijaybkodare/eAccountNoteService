@@ -1,9 +1,10 @@
-using System.Data;
-using System.Globalization;
-using System.IO;
 using Dapper;
 using eAccountNoteService.Models;
 using eAccountNoteService.Utility;
+using System.Data;
+using System.Globalization;
+using System.IO;
+using static Dapper.SqlMapper;
 
 namespace eAccountNoteService.Services;
 
@@ -93,6 +94,7 @@ public class BankStatementHeaderService
 
     public async Task<bool> UploadBankStatementAsync(BankStatementHeader header, Stream fileStream)
     {
+        const string NOTRANSNOFOUND = "NoTransNoFound";
         var table = ExcelUtility.ReadExcelInDataTable(fileStream, header.WorksheetName);
         if (table == null || table.Rows.Count == 0)
         {
@@ -149,17 +151,26 @@ public class BankStatementHeaderService
                 var transDtText = row["Date"]?.ToString() ?? string.Empty;
                 var amountText = row["Amount"]?.ToString() ?? "0";
                 var balanceText = table.Columns.Contains("Balance") ? row["Balance"]?.ToString() ?? "0" : "0";
+                string transactionId = row["TransactionId"]?.ToString() ?? string.Empty;
+                string remark = row["Remark"]?.ToString() ?? string.Empty;
 
                 var transDt = DateTime.Parse(transDtText, CultureInfo.InvariantCulture);
                 var amount = decimal.Parse(amountText, CultureInfo.InvariantCulture);
                 var balance = decimal.Parse(balanceText, CultureInfo.InvariantCulture);
 
+                if(transactionId == string.Empty || transactionId == NOTRANSNOFOUND)
+                {
+                    Guid guid = Guid.NewGuid();
+                    transactionId = guid.ToString("N");
+                    remark += ":" + transactionId;
+                }
+
                 var detailParameters = new DynamicParameters();
                 detailParameters.Add("BankStatementHeaderId", headerId, DbType.Decimal);
                 detailParameters.Add("TransDt", transDt, DbType.DateTime);
                 detailParameters.Add("Amount", amount, DbType.Decimal);
-                detailParameters.Add("Remark", row["Remark"]?.ToString() ?? string.Empty, DbType.String);
-                detailParameters.Add("TransactionId", row["TransactionId"]?.ToString() ?? string.Empty, DbType.String);
+                detailParameters.Add("Remark", remark, DbType.String);
+                detailParameters.Add("TransactionId", transactionId, DbType.String);
                 detailParameters.Add("Balance", balance, DbType.Decimal);
                 detailParameters.Add("RefType", 0m, DbType.Decimal);
                 detailParameters.Add("RefId", 0m, DbType.Decimal);
