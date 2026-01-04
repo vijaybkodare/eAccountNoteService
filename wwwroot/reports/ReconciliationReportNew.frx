@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="07/19/2025 12:00:00" ReportInfo.Modified="12/25/2025 17:04:46" ReportInfo.CreatorVersion="2025.2.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="07/19/2025 12:00:00" ReportInfo.Modified="01/03/2026 16:49:53" ReportInfo.CreatorVersion="2025.2.0.0">
   <ScriptText>
     using System;
     using System.Collections;
@@ -45,12 +45,15 @@
       <Column Name="Amount" DataType="System.Decimal"/>
       <Column Name="TransMode" DataType="System.Decimal"/>
       <Column Name="ReconcStatus" DataType="System.Decimal"/>
+      <Column Name="TransDt" DataType="System.DateTime" PropName="Column" Calculated="true" Expression=""/>
+      <Column Name="AddedDt" DataType="System.DateTime" PropName="Column"/>
     </TableDataSource>
     <Parameter Name="reportTitle" DataType="System.String" AsString=""/>
     <Parameter Name="OrgName" DataType="System.String" AsString=""/>
     <Parameter Name="address" DataType="System.String" AsString=""/>
     <Parameter Name="reportFilter" DataType="System.String" AsString=""/>
-    <Total Name="TotalAmount" Expression="[Reconciliation.Amount]" Evaluator="Data1" PrintOn="GroupFooter1"/>
+    <Total Name="TotalAmount" Expression="[Reconciliation.Amount]" Evaluator="Data1" PrintOn="DataFooter1"/>
+    <Total Name="RepTotalAmount" Expression="[Reconciliation.Amount]" Evaluator="Data1"/>
   </Dictionary>
   <ReportPage Name="Page1" RawPaperSize="9" Watermark.Font="Arial, 60pt">
     <PageHeaderBand Name="PageHeader1" Width="718.2" Height="122.85">
@@ -59,31 +62,34 @@
       <TextObject Name="Text104" Left="113.4" Top="28.35" Width="567" Height="18.9" Text="[address]" HorzAlign="Center" Font="Arial, 8pt"/>
       <TextObject Name="Text105" Left="113.4" Top="47.25" Width="567" Height="18.9" Text="[reportTitle]" HorzAlign="Center" Font="Arial, 11pt, style=Bold"/>
       <TextObject Name="Text106" Left="113.4" Top="66.15" Width="567" Height="18.9" Text="[reportFilter]" HorzAlign="Center" Font="Arial, 9pt"/>
-      <TextObject Name="Text89" Left="491.4" Top="94.5" Width="94.5" Height="28.35" Border.Lines="Top, Bottom" Text="Amount" HorzAlign="Right" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text89" Left="529.2" Top="94.5" Width="66.15" Height="28.35" Border.Lines="Top, Bottom" Text="Amount" HorzAlign="Right" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
       <TextObject Name="Text87" Left="9.45" Top="94.5" Width="103.95" Height="28.35" Border.Lines="Top, Bottom" Text="Account Name" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
-      <TextObject Name="Text88" Left="378" Top="94.5" Width="113.4" Height="28.35" Border.Lines="Top, Bottom" Text="Transaction Id" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
-      <TextObject Name="Text90" Left="585.9" Top="94.5" Width="94.5" Height="28.35" Border.Lines="Top, Bottom" Text="Reconciliation" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text88" Left="378" Top="94.5" Width="151.2" Height="28.35" Border.Lines="Top, Bottom" Text="Transaction Id" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text90" Left="595.35" Top="94.5" Width="85.05" Height="28.35" Border.Lines="Top, Bottom" Text="Reconc" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
       <TextObject Name="Text111" Left="37.8" Top="66.15" Width="66.15" Height="18.9" Border.Lines="Top" Text="fnaman" HorzAlign="Center" Font="Arial, 11pt"/>
       <TextObject Name="Text112" Left="113.4" Top="94.5" Width="264.6" Height="28.35" Border.Lines="Top, Bottom" Text="Remark" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
     </PageHeaderBand>
     <GroupHeaderBand Name="GroupHeader1" Top="126.85" Width="718.2" Height="28.35" Condition="[Reconciliation.AccountId]">
-      <TextObject Name="Text92" Left="9.45" Width="255.15" Height="28.35" Text="[Reconciliation.AccountName]" VertAlign="Center" Font="Arial, 10pt"/>
-      <DataBand Name="Data1" Top="159.2" Width="718.2" Height="37.8" CanGrow="true" DataSource="Reconciliation">
-        <TextObject Name="Text94" Left="491.4" Top="9.45" Width="94.5" Height="18.9" Text="[Reconciliation.Amount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
-        <TextObject Name="Text93" Left="378" Top="9.45" Width="113.4" Height="18.9" Text="[Reconciliation.TransactionId]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
-        <TextObject Name="Text113" Left="113.4" Top="9.45" Width="264.6" Height="18.9" CanGrow="true" GrowToBottom="true" Text="[Reconciliation.Remark]" Font="Arial, 10pt"/>
-        <TextObject Name="Text114" Left="585.9" Top="9.45" Width="94.5" Height="18.9" Text="[IIf([Reconciliation.TransMode] == 1,&quot;N.A.&quot;,IIf([Reconciliation.ReconcStatus] == 1,&quot;Pass&quot;,&quot;Fail&quot;))]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter">
+      <TextObject Name="Text92" Left="9.45" Width="255.15" Height="28.35" Border.Lines="Bottom" Text="[Reconciliation.AccountName]" VertAlign="Center" Font="Arial, 10pt"/>
+      <DataBand Name="Data1" Top="159.2" Width="718.2" Height="28.35" CanGrow="true" DataSource="Reconciliation">
+        <TextObject Name="Text94" Left="529.2" Width="94.5" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Reconciliation.Amount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text93" Left="378" Width="151.2" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Reconciliation.TransactionId]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text113" Left="151.2" Width="226.8" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Reconciliation.Remark]" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text114" Left="623.7" Width="56.7" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[IIf([Reconciliation.TransMode] == 1,&quot;N.A.&quot;,IIf([Reconciliation.ReconcStatus] == 1,&quot;Pass&quot;,&quot;Fail&quot;))]" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter">
           <Highlight>
-            <Condition Expression="[Reconciliation.TransMode] == 1" TextFill.Color="0, 0, 0" Font="Arial, 10pt"/>
-            <Condition Expression="[Reconciliation.ReconcStatus] == 1" TextFill.Color="0, 0, 255" Font="Arial, 9.75pt, style=Bold" ApplyFont="true"/>
+            <Condition Expression="[Reconciliation.TransMode] == 1" TextFill.Color="Black" Font="Arial, 10pt"/>
+            <Condition Expression="[Reconciliation.ReconcStatus] == 1" TextFill.Color="Blue" Font="Arial, 9.75pt, style=Bold" ApplyFont="true"/>
             <Condition Expression="[Reconciliation.ReconcStatus] != 1" Font="Arial, 9.75pt, style=Bold" ApplyFont="true"/>
           </Highlight>
         </TextObject>
-        <LineObject Name="Line1" Left="113.4" Top="37.8" Width="567" Border.Style="Dot" Border.Width="0.5"/>
-        <DataFooterBand Name="DataFooter1" Top="201" Width="718.2" Height="28.35">
-          <TextObject Name="Text108" Left="491.4" Top="9.45" Width="94.5" Height="18.9" Text="[TotalAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text115" Left="47.25" Width="103.95" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Reconciliation.AddedDt]" Format="Custom" Format.Format="dd-MMM-yyyy" VertAlign="Center" Font="Arial, 10pt"/>
+        <DataFooterBand Name="DataFooter1" Top="191.55" Width="718.2" Height="28.35">
+          <TextObject Name="Text108" Left="529.2" Width="94.5" Height="28.35" Border.Lines="Bottom" Text="[TotalAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
         </DataFooterBand>
       </DataBand>
     </GroupHeaderBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="223.9" Width="718.2" Height="37.8">
+      <TextObject Name="Text116" Left="529.2" Width="94.5" Height="28.35" Border.Lines="Bottom" Border.Width="0.5" Text="[RepTotalAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+    </ReportSummaryBand>
   </ReportPage>
 </Report>

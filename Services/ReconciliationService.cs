@@ -132,7 +132,7 @@ public class ReconciliationService
                              CPT.TransactionId,
                              CPT.Remark,
                              CPT.Status,
-                             BM.Remark AS BMRemark,
+                             BM.Remark AS BMRemark, BM.TransDt,
                              CPT.ReconcRemark,
                              CPT.ReconcStatus
                       FROM ChargePayTrans CPT
@@ -160,7 +160,7 @@ public class ReconciliationService
                              CCPT.TransactionId,
                              CCPT.Remark,
                              CCPT.Status,
-                             BM.Remark AS BMRemark,
+                             BM.Remark AS BMRemark, BM.TransDt,
                              CCPT.ReconcRemark,
                              CCPT.ReconcStatus
                       FROM CummulativeChargePayTrans CCPT
@@ -185,7 +185,7 @@ public class ReconciliationService
                              ADVC.TransactionId,
                              ADVC.Remark,
                              ADVC.Status,
-                             BM.Remark AS BMRemark,
+                             BM.Remark AS BMRemark, BM.TransDt,
                              ADVC.ReconcRemark,
                              ADVC.ReconcStatus
                       FROM AdvCharge ADVC
