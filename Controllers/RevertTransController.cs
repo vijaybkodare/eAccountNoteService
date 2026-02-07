@@ -74,32 +74,32 @@ public class RevertTransController : ControllerBase
     }
 
     // GET: api/reverttrans/revertAdvChargeTrans/{id}
-    [HttpGet("revertAdvChargeTrans/{id:decimal}")]
-    public async Task<ActionResult<ServerResponse>> RevertAdvChargeTrans(decimal id)
+    [HttpGet("revertAdvChargeTrans")]
+    public async Task<ActionResult<ServerResponse>> RevertAdvChargeTrans([FromQuery] decimal id)
     {
         var result = await _advChargeService.RevertAsync(id);
         return Ok(new ServerResponse { IsSuccess = result.Success, Error = result.ErrorMessage });
     }
 
     // GET: api/reverttrans/revertChargeTrans/{id}
-    [HttpGet("revertChargeTrans/{id:decimal}")]
-    public async Task<ActionResult<ServerResponse>> RevertChargeTrans(decimal id)
+    [HttpGet("revertChargeTrans")]
+    public async Task<ActionResult<ServerResponse>> RevertChargeTrans([FromQuery] decimal id)
     {
         var result = await _chargePayTransService.RevertAsync(id);
         return Ok(new ServerResponse { IsSuccess = result.Success, Error = result.ErrorMessage });
     }
 
     // GET: api/reverttrans/revertCummulativeChargeTrans/{id}
-    [HttpGet("revertCummulativeChargeTrans/{id:decimal}")]
-    public async Task<ActionResult<ServerResponse>> RevertCummulativeChargeTrans(decimal id)
+    [HttpGet("revertCummulativeChargeTrans")]
+    public async Task<ActionResult<ServerResponse>> RevertCummulativeChargeTrans([FromQuery] decimal id)
     {
         var result = await _cummulativeChargePayTransService.RevertAsync(id);
         return Ok(new ServerResponse { IsSuccess = result.Success, Error = result.ErrorMessage });
     }
 
-    // GET: api/reverttrans/revertBillTrans/{id}
-    [HttpGet("revertBillTrans/{id:decimal}")]
-    public async Task<ActionResult<ServerResponse>> RevertBillTrans(decimal id)
+    // GET: api/reverttrans/revertBillTrans/?id={id}
+    [HttpGet("revertBillTrans")]
+    public async Task<ActionResult<ServerResponse>> RevertBillTrans([FromQuery] decimal id)
     {
         var result = await _billPayTransService.RevertAsync(id);
         return Ok(new ServerResponse { IsSuccess = result.Success, Error = result.ErrorMessage });

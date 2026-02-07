@@ -61,7 +61,7 @@ namespace eAccountNoteService.Controllers
                 accountId: accountId,
                 fromDate: fromDate,
                 toDate: toDate,
-                status: -1,
+                status: 0,
                 reconcStatus: 0);
 
             return Ok(records);
