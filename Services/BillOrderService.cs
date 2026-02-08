@@ -1,12 +1,13 @@
-using System.Data;
-using System.Globalization;
-using System.IO;
-using System.Text;
 using CsvHelper;
 using Dapper;
 using eAccountNoteService.Models;
 using eAccountNoteService.Utility;
 using Microsoft.AspNetCore.Http;
+using System.Data;
+using System.Globalization;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace eAccountNoteService.Services;
 
@@ -57,16 +58,23 @@ public class BillOrderService
         return await _dapperService.QueryAsync<BillOrder>(sql, new { OrgId = orgId });
     }
 
-    public async Task<bool> AddUpdateAsync(BillOrder entity)
+    public async Task<bool> AddUpdateAsync(BillOrder entity, IFormFile file)
     {
         if (entity.BillOrderId == -1)
         {
             entity.BillNo = await GetOrderNoAsync(entity.OrgId);
-            return await AddAsync(entity);
+            await AddAsync(entity);
+            const string billSql = @"SELECT BillOrderId
+                                    FROM BillOrder
+                                    WHERE OrgId = @OrgId AND BillNo = @BillNo";
+
+            var billOrderId = await _dapperService.QuerySingleOrDefaultAsync<string>(billSql, new { OrgId = entity.OrgId, BillNo = entity.BillNo });
+            return await SaveBillFileAsync(entity.OrgId, Convert.ToDecimal(billOrderId), file);
         }
         else
         {
-            return await UpdateAsync(entity);
+            await UpdateAsync(entity);
+            return await SaveBillFileAsync(entity.OrgId, entity.BillOrderId, file);
         }
     }
 
