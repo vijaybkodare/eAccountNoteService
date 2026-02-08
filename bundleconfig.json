@@ -107,6 +107,7 @@
       "JSScripts/eaccountnotejs/SupportComponent/ReportCommand.js",
       "JSScripts/eaccountnotejs/SupportComponent/RevertTransFooter.js",
       "JSScripts/eaccountnotejs/SupportComponent/UpdateTransNo.js",
+      "JSScripts/eaccountnotejs/SupportComponent/FlatPickrDate.js",
       "JSScripts/eaccountnotejs/DashboardComponent/Dashboard.js",
       "JSScripts/eaccountnotejs/UserComponent/AddUser.js",
       "JSScripts/eaccountnotejs/UserComponent/AssignUserAccount.js",

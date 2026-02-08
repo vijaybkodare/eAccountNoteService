@@ -26,8 +26,20 @@
                             </div>
                         </div>
                     </div>
-                    <DateSelector Label="From Date" ref={function (node) { this.FromDt = node; }.bind(this)} />
-                    <DateSelector Label="To Date" ref={function (node) { this.ToDt = node; }.bind(this)} />
+                    <div className="row">
+                        <div className="col-xs-6">
+                            <div className="form-group">
+                                <label className="mandatory">From Date</label>
+                                <FlatPickrDate ref={function (node) { this.FromDate = node; }.bind(this)} />
+                            </div>
+                        </div>
+                        <div className="col-xs-6">
+                            <div className="form-group">
+                                <label className="mandatory">To Date</label>
+                                <FlatPickrDate ref={function (node) { this.ToDate = node; }.bind(this)} />
+                            </div>
+                        </div>
+                    </div>
                     <div className="form-group">
                         <label className="mandatory">Remark</label>
                         <input ref={function (node) { this.Remark = node; }.bind(this)}
@@ -94,13 +106,13 @@
         var dataToPost = new FormData();
         var urlParams = "?orgId=" + _LoginAccount.OrgId;
         urlParams += "&id=" + this.state.Entity.BankStatementHeaderId;
-        urlParams += "&fromDate=" + this.FromDt.getValue();
-        urlParams += "&toDate=" + this.ToDt.getValue();
+        urlParams += "&fromDate=" + this.FromDate.getValue();
+        urlParams += "&toDate=" + this.ToDate.getValue();
         urlParams += "&remark=" + this.Remark.value;
         urlParams += "&worksheetName=" + this.WorksheetName.value;
         dataToPost.append('file', this.FileInput.files[0]);
         _ProgressBar.IMBusy();
-        ajaxPost('api/BankStatement/save' + urlParams, dataToPost, function (data) {
+        ajaxPost('api/BankStatement/save123' + urlParams, dataToPost, function (data) {
             _ProgressBar.IMDone();
             if (data) {
                 this.props.ShowList();

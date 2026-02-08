@@ -14,10 +14,16 @@
                 <div className="panel-body">
                     <div className="row">
                         <div className="col-sm-4">
-                            <DateSelector Label="From Date" ref={function (node) { this.FromDt = node; }.bind(this)} />
+                            <div className="form-group">
+                                <label className="mandatory">From Date</label>
+                                <FlatPickrDate ref={function (node) { this.FromDt = node; }.bind(this)} />
+                            </div>
                         </div>
                         <div className="col-sm-4">
-                            <DateSelector Label="To Date" ref={function (node) { this.ToDt = node; }.bind(this)} />
+                            <div className="form-group">
+                                <label className="mandatory">To Date</label>
+                                <FlatPickrDate ref={function (node) { this.ToDt = node; }.bind(this)} />
+                            </div>
                         </div>
                         <div className="col-sm-4">
                             <div className="form-group">

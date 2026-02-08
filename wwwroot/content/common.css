@@ -550,6 +550,13 @@ a:hover{
 a.a2 {
     color: #0314fb
 }
+.picker-input {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 250px;
+}
 @media screen and (max-width: 800px) {
     .contentOnMobile {
             padding-right: 5px;

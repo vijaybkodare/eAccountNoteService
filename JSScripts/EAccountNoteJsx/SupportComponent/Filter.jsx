@@ -9,8 +9,20 @@ var Filter = React.createClass({
         let showAccount = typeof (this.props.ShowAccount) == "undefined" ? true : this.props.ShowAccount;
         return (
             <div>
-                <DateSelector Label="From Date" ref={function (node) { this.FromDt = node; }.bind(this)} />
-                <DateSelector Label="To Date" ref={function (node) { this.ToDt = node; }.bind(this)} />
+                <div className="row">
+                    <div className="col-xs-6">
+                        <div className="form-group">
+                            <label className="mandatory">From Date</label>
+                            <FlatPickrDate ref={function (node) { this.FromDt = node; }.bind(this)} />
+                        </div>
+                    </div>
+                    <div className="col-xs-6">
+                        <div className="form-group">
+                            <label className="mandatory">To Date</label>
+                            <FlatPickrDate ref={function (node) { this.ToDt = node; }.bind(this)} />
+                        </div>
+                    </div>
+                </div>
                 {
                     showAccount && <div className="form-group">
                         <label className="mandatory">Account</label>
