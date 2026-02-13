@@ -69,7 +69,13 @@ public class BillOrderService
                                     WHERE OrgId = @OrgId AND BillNo = @BillNo";
 
             var billOrderId = await _dapperService.QuerySingleOrDefaultAsync<string>(billSql, new { OrgId = entity.OrgId, BillNo = entity.BillNo });
-            return await SaveBillFileAsync(entity.OrgId, Convert.ToDecimal(billOrderId), file);
+            if (file == null || file.Length == 0)
+            {
+                return true;
+            } else 
+            {
+                return await SaveBillFileAsync(entity.OrgId, Convert.ToDecimal(billOrderId), file);
+            }
         }
         else
         {

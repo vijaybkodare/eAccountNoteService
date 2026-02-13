@@ -2,6 +2,7 @@ using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 
 namespace eAccountNoteService.Controllers;
@@ -38,7 +39,7 @@ public class BillOrderController : ControllerBase
 
     // POST: api/billorder/save
     [HttpPost("save")]
-    public async Task<ActionResult<ServerResponse>> Save([FromForm] BillOrder entity, IFormFile file)
+    public async Task<ActionResult<ServerResponse>> Save([FromForm] BillOrder entity, IFormFile? file)
     {
         var success = await _billOrderService.AddUpdateAsync(entity, file);
         return Ok(new ServerResponse { IsSuccess = success });
