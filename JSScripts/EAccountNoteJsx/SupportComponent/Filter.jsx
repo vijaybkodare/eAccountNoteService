@@ -9,7 +9,7 @@ var Filter = React.createClass({
         let showAccount = typeof (this.props.ShowAccount) == "undefined" ? true : this.props.ShowAccount;
         return (
             <div>
-                <div className="row">
+                <div className="panel-body">
                     <div className="col-xs-6">
                         <div className="form-group">
                             <label className="mandatory">From Date</label>
