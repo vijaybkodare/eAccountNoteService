@@ -140,7 +140,7 @@ public class UserService
                 await connection.ExecuteAsync("Proc_Insert_UserProfileRole", roleParams, transaction, commandType: CommandType.StoredProcedure);
 
                 // 5) Send email for new user, inside transaction as in legacy code
-                if (newUser && !string.IsNullOrEmpty(password))
+                /*if (newUser && !string.IsNullOrEmpty(password))
                 {
                     var emailSubject = $"Your eAccountNote password is {password}";
                     var emailBody = "eAccountNote";
@@ -149,7 +149,7 @@ public class UserService
                     {
                         throw new Exception("Fail to sent an email.");
                     }
-                }
+                }*/
 
                 return new ServerResponse { IsSuccess = true };
             });

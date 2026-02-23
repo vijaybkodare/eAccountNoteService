@@ -25,6 +25,14 @@ namespace eAccountNoteService.Utility
         {
             return System.DateTime.Now.ToString("dd-MMM-yyyy");
         }
+        public String getEndDate(DateTime endDate)
+        {
+            return endDate.ToString("dd-MMM-yyyy") + " 23:59:59";
+        }
+        public String getStartDate(DateTime endDate)
+        {
+            return endDate.ToString("dd-MMM-yyyy");
+        }
         public async Task<FastReport.Report> setReportParameters(FastReport.Report report, decimal orgId, string reportTitle, string reportFilter)
         {
             var org = await _orgMasterService.GetRecordAsync((int)orgId);

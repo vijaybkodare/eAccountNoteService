@@ -27,16 +27,28 @@
                                 type="text" className="form-control" placeholder="Address" onChange={this.inputChange} />
                         </div>
                         <div className="form-group">
-                            <label>Login Id(Email Id)</label>
+                            <label className="mandatory">Login Id</label>
+                            <input ref={function (node) { this.LoginId = node; }.bind(this)}
+                                type="text" className="form-control" placeholder="Login Id" onChange={this.inputChange} />
+                        </div>
+                        <div className="form-group">
+                            <label className="mandatory">Email Id</label>
                             <input ref={function (node) { this.EmailId = node; }.bind(this)}
-                                type="text" className="form-control" aria-describedby="mobileNoHelp" placeholder="Email Id" onChange={this.inputChange} />
-                            <small id="mobileNoHelp" className="form-text text-muted">
-                                Enter valid EmailId, password will be send on EmailId.
-                            </small>
+                                type="text" className="form-control" placeholder="Email Id" onChange={this.inputChange} />
+                        </div>
+                        <div className="form-group">
+                            <label className="mandatory">Password</label>
+                            <input ref={function (node) { this.Password = node; }.bind(this)}
+                                type="password" className="form-control" placeholder="Password" onChange={this.inputChange} />
+                        </div>
+                        <div className="form-group">
+                            <label className="mandatory">Retype Password</label>
+                            <input ref={function (node) { this.RetypePassword = node; }.bind(this)}
+                                type="password" className="form-control" placeholder="Retype Password" onChange={this.inputChange} />
                         </div>
                         <div className="form-group">
                             <label className="mandatory">Mobile No</label>
-                            <input ref={function (node) { this.MobileNo = node; }.bind(this)} type="number" className="form-control" aria-describedby="mobileNoHelp" placeholder="Mobile No" onChange={this.inputChange} />
+                            <input ref={function (node) { this.MobileNo = node; }.bind(this)} type="number" className="form-control" placeholder="Mobile No" onChange={this.inputChange} />
                         </div>
                     </form>
                 </div>
@@ -58,9 +70,14 @@
     },
     inputChange: function () {
         if (this.UserName.value.length == 0
+            || this.LoginId.value.length == 0
             || this.EmailId.value.length == 0
+            || this.Password.value.length == 0
+            || this.RetypePassword.value.length == 0
             || this.Address.value.length == 0
-            || this.OrgName.value.length == 0)
+            || this.OrgName.value.length == 0
+            || this.MobileNo.value.length == 0
+            || this.Password.value != this.RetypePassword.value)
             this.setState({ NotValidInput: true });
         else
             this.setState({ NotValidInput: false });
@@ -76,8 +93,9 @@
             OrgId: -1,
             RoleId: 1,
             UserId: -1,
-            LoginId: this.EmailId.value,
+            LoginId: this.LoginId.value,
             EmailId: this.EmailId.value,
+            Password: this.Password.value,
             MobileNo: this.MobileNo.value,
             UserName: this.UserName.value,
             OrgName: this.OrgName.value,
@@ -87,7 +105,7 @@
         axiosPost('api/Org/save', entity, function (data) {
             _ProgressBar.IMDone();
             if (data.IsSuccess) {
-                _OkMustReadInfo.show("Congrats!!, You are successfully registered. Password is sent to your Email.", function () {
+                _OkMustReadInfo.show("Congrats!!, You are successfully registered.", function () {
                     this.goForLogin();
                 }.bind(this));
             }
