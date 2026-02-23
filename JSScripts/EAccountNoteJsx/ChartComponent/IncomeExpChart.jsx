@@ -18,7 +18,7 @@ var IncomeExpChart = React.createClass({
     },
     loadChart: function (data, title) {
         var xValues = ["Income", "Expense"];
-        var yValues = [data.TotalIncome, -data.TotalExpense];
+        var yValues = [data.TotalIncome, data.TotalExpense];
         var barColors = [
             "#020236",
             "red",
