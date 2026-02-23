@@ -23,7 +23,7 @@ public class TransactionService
         const string baseSql = @"SELECT ISNULL(SUM(TR.Amount), 0) AS Total
                                  FROM [Transaction] TR
                                  INNER JOIN AccountMaster AM ON AM.AccountId = TR.AccountId
-                                 WHERE AM.OrgId = 8
+                                 WHERE AM.OrgId = @OrgId
                                    AND TR.TransDt >= @FromDate
                                    AND TR.TransDt <= @ToDate";
 
