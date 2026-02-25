@@ -519,6 +519,9 @@ a:hover{
 .fontSizeSr {
     font-size:smaller;
 }
+.fontSizeXSmall {
+    font-size: x-small;
+}
 .fontSizeLr {
     font-size: large;
 }

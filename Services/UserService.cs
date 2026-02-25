@@ -196,6 +196,7 @@ public class UserService
             userParams.Add("EmailId", entity.EmailId, DbType.String);
             userParams.Add("MobileNo", entity.MobileNo, DbType.String);
             userParams.Add("UserName", entity.UserName, DbType.String);
+            userParams.Add("Password", entity.Password, DbType.String);
             userParams.Add("UserId", entity.UserId, DbType.Decimal);
 
             await connection.ExecuteAsync("Proc_Update_UserMaster", userParams, transaction, commandType: CommandType.StoredProcedure);

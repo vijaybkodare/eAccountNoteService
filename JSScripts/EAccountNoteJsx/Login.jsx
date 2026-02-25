@@ -1,12 +1,12 @@
 ﻿var Login = React.createClass({
     ActiveTab: 0,
     getInitialState: function () {
-        return { 
+        return {
             OtpSent: false,
             NotValidInput: true,
             ValidMobileNo: false,
             BlocSendOtp: false,
-            };
+        };
     },
     render: function () {
 
@@ -16,10 +16,10 @@
                     <div className="panel-heading">
                         Login
                     </div>
-                    <div className="panel-body" style={{position:"relative"}}>
+                    <div className="panel-body" style={{ position: "relative" }}>
                         <div className="row">
                             <div className="col col-sm-12 col-sm-offset-0 col-md-8 col-md-offset-2">
-                                
+
                                 <ul className="nav nav-tabs">
                                     <li className={this.ActiveTab == 0 ? "active" : "deactive"}>
                                         <a href="#" onClick={this.activateTab0}>With Password</a></li>
@@ -43,6 +43,9 @@
                                         </span>
                                         <input ref={function (node) { this.Password = node; }.bind(this)}
                                             type="password" className='form-control' placeholder="Password" onChange={this.inputChange} onKeyPress={this.keyPress} />
+                                    </div>
+                                    <div className="fontSizeXSmall text-center" style={{ marginTop: -20, color: 'gray' }}>
+                                        Forgot your password? Please contact your Administrator.
                                     </div>
                                 </div>
                                 <div ref={function (node) { this.Tab1 = node; }.bind(this)} >
@@ -69,7 +72,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         {/* <a className="" onClick={this.confirmResetPassword} style={{position:"absolute", color:"red", right:5, bottom: 5}}>
                             <span className="glyphicon glyphicon-lock" style={{marginRight:5}}/>
                             Reset password
@@ -77,7 +80,7 @@
                     </div>
                     <div className="panel-footer text-center">
                         <button type="button" disabled={this.state.NotValidInput} className="btn btn-primary custBtn" onClick={this.doLogin}>
-                            <span className="glyphicon glyphicon-log-in" style={{marginRight:7}}/>
+                            <span className="glyphicon glyphicon-log-in" style={{ marginRight: 7 }} />
                             Login
                         </button>
                     </div>
@@ -87,7 +90,7 @@
         );
     },
     //value="2925" 
-    componentDidMount: function(){
+    componentDidMount: function () {
         setComponent(this);
         this.MobileNo.value = readCookie("MobileNo");
         this.LoginId.value = readCookie("LoginId");
@@ -99,25 +102,25 @@
         _Main.goForUserReg();
     },
     confirmResetPassword: function () {
-        if(this.MobileNo.value.length==0){
+        if (this.MobileNo.value.length == 0) {
             _Alert.showWarning("Login Id is empty. Can't proceed for reset password.", 2000);
             return;
         }
         _Confirmation.show('Is it confirm that you want reset password for ' + this.MobileNo.value + '?',
             function () {
-                this.ResetPassword();          
+                this.ResetPassword();
             }.bind(this)
         );
     },
     ResetPassword: function () {
         var urlParams = "?LoginId=" + this.LoginId.value;
         _ProgressBar.IMBusy();
-        ajaxGet('user/ResetPassword' + urlParams,function(data){
+        ajaxGet('user/ResetPassword' + urlParams, function (data) {
             _ProgressBar.IMDone();
-            if(data.IsSuccess){
+            if (data.IsSuccess) {
                 _Alert.showWarning("Check your email to new password. Please change it ASAP.", 2000);
             }
-            else{
+            else {
                 _Alert.showWarning(data.Error, 2000);
             }
         }.bind(this));
@@ -125,12 +128,12 @@
     goForEAccountHome: function () {
         _Main.goForEAccountHome();
     },
-    keyPress: function(event){
-         if(event.charCode == 13){
+    keyPress: function (event) {
+        if (event.charCode == 13) {
             this.doLogin();
-         }
+        }
     },
-    inputChange: function(){
+    inputChange: function () {
         this.setState({ NotValidInput: !this.isValidInput(), ValidMobileNo: (this.MobileNo.value.length == 10) });
     },
     mobileNoChange: function () {
@@ -157,7 +160,7 @@
         this.Tab1.style.display = "block";
         this.inputChange();
     },
-    persistLogin: function(){
+    persistLogin: function () {
         var now = new Date();
         now.setFullYear(now.getFullYear() + 1);
         document.cookie = "LoginId=" + this.LoginId.value + ";expires=" + now.toUTCString();
@@ -193,10 +196,10 @@
             this.doLoginWithOtp();
         }
     },
-    doLoginWithPassword: function(){
+    doLoginWithPassword: function () {
         var urlParams = "?LoginId=" + this.LoginId.value + "&Password=" + this.Password.value;
         _ProgressBar.IMBusy();
-        ajaxGet('home/AuthorizeMe' + urlParams,function(data){
+        ajaxGet('home/AuthorizeMe' + urlParams, function (data) {
             _ProgressBar.IMDone();
             if (data.IsSuccess) {
                 _LoginAccount = data.Data;
@@ -204,7 +207,7 @@
                 _UserLogout.updateEntity();
                 this.goForEAccountHome();
             }
-            else{
+            else {
                 _Alert.showWarning("Login Id or Password may be wrong.", 5000);
             }
         }.bind(this));
