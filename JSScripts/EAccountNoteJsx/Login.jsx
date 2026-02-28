@@ -205,6 +205,7 @@
                 _LoginAccount = data.Data;
                 this.persistLogin();
                 _UserLogout.updateEntity();
+                _AppState.ICameFromLogin = true;
                 this.goForEAccountHome();
             }
             else {
@@ -221,6 +222,7 @@
                 _LoginAccount = data.Data;
                 this.persistLogin();
                 _UserLogout.updateEntity();
+                _AppState.ICameFromLogin = true;
                 this.goForEAccountHome();
             }
             else {

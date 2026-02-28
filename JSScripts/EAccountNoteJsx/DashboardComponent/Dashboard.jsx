@@ -1,6 +1,6 @@
 var Dashboard = React.createClass({
     getInitialState: function () {
-        return{
+        return {
             ActiveTab: 0,
         };
     },
@@ -49,19 +49,19 @@ var Dashboard = React.createClass({
                             <span className="label label-primary glyphiconBtn" onClick={this.showChargeItems}>Charge Items</span>
                         </div>
                     </div>
-                    
+
                     <div ref={function (node) { this.Entries = node; }.bind(this)} >
                         <GroupHeader OnlyForAdmin={true} Title="Organization" />
                         <DashboardItem OnlyForAdmin={true} Icon="modal-window" Show={this.props.ShowEditOrg} Title="Org Profile" />
                         <DashboardItem OnlyForSuperAdmin={true} Icon="tree-deciduous" Show={this.props.ShowOrgList} Title="Organization" />
-                        <GroupHeader Title="User"/>
+                        <GroupHeader Title="User" />
                         <DashboardItem Icon="modal-window" Show={this.props.ShowUserProfile} Title="Profile" />
                         <DashboardItem OnlyForAdmin={true} Icon="user" Show={this.props.ShowUserList} Title="Users" />
                         <DashboardItem Icon="asterisk" Show={this.props.ShowChangePassword} Title="Password" />
-                        <GroupHeader OnlyForAdmin={true} Title="Masters"/>
+                        <GroupHeader OnlyForAdmin={true} Title="Masters" />
                         <DashboardItem OnlyForAdmin={true} Icon="king" Show={this.props.ShowAccountList} Title="Accounts" />
                         <DashboardItem OnlyForAdmin={true} Icon="bishop" Show={this.props.ShowItemList} Title="Items" />
-                        <GroupHeader Title="Charges"/>
+                        <GroupHeader Title="Charges" />
                         <DashboardItem OnlyForAdmin={true} Icon="queen" Show={this.props.ShowChargeList} Title="Charge Order" />
                         <DashboardItem Icon="piggy-bank" Show={this.props.ShowPayAccountList} Title="Pay Charges" />
                         <DashboardItem OnlyForAdmin={true} Icon="grain" Show={this.props.ShowAdvChargeList} Title="Advance Pay" />
@@ -70,12 +70,12 @@ var Dashboard = React.createClass({
                         <GroupHeader OnlyForAdmin={true} Title="Bill" />
                         <DashboardItem OnlyForAdmin={true} Icon="knight" Show={this.props.ShowBillList} Title="Bills" />
                         <DashboardItem OnlyForAdmin={true} Icon="star" Show={this.props.ShowPayBillList} Title="Pay Bills" />
-                        <GroupHeader OnlyForAdmin={true} Title="Reject Transactions"/>
+                        <GroupHeader OnlyForAdmin={true} Title="Reject Transactions" />
                         <DashboardItem OnlyForAdmin={true} Icon="remove" Show={this.props.ShowRevertChargeTransList} Title="Reject Charge Pay" />
                         <DashboardItem OnlyForAdmin={true} Icon="remove" Show={this.props.ShowRevertAdvChargeTransList} Title="Reject Advance Pay" />
                         <DashboardItem OnlyForAdmin={true} Icon="remove" Show={this.props.ShowRevertCummChargeTransList} Title="Reject Cummulative Pay" />
                         <DashboardItem OnlyForAdmin={true} Icon="remove" Show={this.props.ShowRevertBillTransList} Title="Reject Bill Pay" />
-                        <GroupHeader OnlyForAdmin={true} Title="Other"/>
+                        <GroupHeader OnlyForAdmin={true} Title="Other" />
                         <DashboardItem OnlyForAdmin={true} Icon="adjust" Show={this.props.ShowJVList} Title="JV" />
                         <DashboardItem OnlyForAdmin={true} Icon="briefcase" Show={this.props.ShowBankStatementList} Title="Bank Statement" />
                         <DashboardItem OnlyForAdmin={true} Icon="cog" Show={this.props.ShowReconciliation} Title="Reconciliation" />
@@ -85,15 +85,15 @@ var Dashboard = React.createClass({
                         <DashboardItem OnlyForAdmin={true} Icon="cog" Show={this.props.ShowBillTransMapper} Title="Bill-Trans Mapper" />
                     </div>
                     <div ref={function (node) { this.Reports = node; }.bind(this)} >
-                        <GroupHeader Title="Account"/>
+                        <GroupHeader Title="Account" />
                         <DashboardItem Icon="asterisk" Show={this.props.ShowAccountRep} Title="Accounts" />
                         <DashboardItem Icon="asterisk" Show={this.props.ShowAccountExpRep} Title="Account Exp." />
-                        <GroupHeader Title="Charges"/>
+                        <GroupHeader Title="Charges" />
                         <DashboardItem Icon="queen" Show={this.props.ShowChargeOrderRep} Title="Charge Orders" />
                         <DashboardItem OnlyForAdmin={true} Icon="queen" Show={this.props.ShowChargeTransRep} Title="Edit Trans #" />
                         <DashboardItem Icon="briefcase" Show={this.props.ShowReconciliationRep} Title="Transactions" />
                         <DashboardItem Icon="queen" Show={this.props.ShowChargePayeeItemRep} Title="Charge Payee Items" />
-                        <GroupHeader Title="Bill"/>
+                        <GroupHeader Title="Bill" />
                         <DashboardItem Icon="knight" Show={this.props.ShowBillOrderRep} Title="Bill Report" />
                         <DashboardItem Icon="knight" Show={this.props.ShowBillTransRep} Title="Bill Trans Report" />
                         <GroupHeader OnlyForAdmin={true} Title="Other" />
@@ -112,21 +112,26 @@ var Dashboard = React.createClass({
         this.activateTab0();
     },
     showMe: function (item, itemType) {
+        if (_AppState.ICameFromLogin) {
+            this.activateTab0();
+            _AppState.ICameFromLogin = false;
+        }
         _Main.EAccountHome.hideAll();
         this.show();
         this.refreshChart(item);
         this.loadPayChargeList();
     },
-    customShow: function(){
+    customShow: function () {
         this.setState({});
     },
-    showReportFilter: function(){
+    showReportFilter: function () {
         this.props.ShowReportFilter(this.props.ShowNextComponent, 1);
     },
-    loadPayChargeList: function(){
+    loadPayChargeList: function () {
+        this.PayChargeList.hide();
         var urlParams = "?profileId=" + _LoginAccount.ProfileId;
         _ProgressBar.IMBusy();
-        ajaxGet('ChargeOrder/PayAccounts' + urlParams,function(data){
+        ajaxGet('ChargeOrder/PayAccounts' + urlParams, function (data) {
             _ProgressBar.IMDone();
             if (data.length == 1) {
                 _LoginAccount.AccountId = data[0].AccountId;
@@ -136,14 +141,14 @@ var Dashboard = React.createClass({
         }.bind(this));
     },
     refreshChart: function (filter) {
-        if(!filter || typeof(filter.FromDate) == "undefined"){
-            filter = {FromDate: get1stDayOfCurrentMonth(), ToDate: getCurrentDateWithEODTime()};
+        if (!filter || typeof (filter.FromDate) == "undefined") {
+            filter = { FromDate: get1stDayOfCurrentMonth(), ToDate: getCurrentDateWithEODTime() };
         }
         var urlParams = "?orgId=" + _LoginAccount.OrgId;
         urlParams += "&fromDate=" + filter.FromDate;
         urlParams += "&toDate=" + filter.ToDate;
         _ProgressBar.IMBusy();
-        ajaxGet('Report/summaryData' + urlParams,function(data){
+        ajaxGet('Report/summaryData' + urlParams, function (data) {
             _ProgressBar.IMDone();
             //this.PieChart.updateEntity(data.Data, filter);
             this.IncomeExpChart.updateEntity(data.Data, filter);
