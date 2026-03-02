@@ -81,7 +81,8 @@ var Dashboard = React.createClass({
                         <DashboardItem OnlyForAdmin={true} Icon="cog" Show={this.props.ShowReconciliation} Title="Reconciliation" />
                         {/*{_LoginAccount.RoleId == 1 && <DashboardItem OnlyForAdmin={true} OnlyForAdmin={true} Icon="briefcase" Show={this.props.ShowAutoTransEntry} Title="ML Trans Entry " />}*/}
                         <DashboardItem OnlyForAdmin={true} Icon="tags" Show={this.props.ShowTransTokenAccountList} Title="Account Token" />
-                        <DashboardItem OnlyForAdmin={true} Icon="cog" Show={this.props.ShowTransMapper} Title="Charge-Trans Mapper" />
+                        <DashboardItem OnlyForAdmin={true} Icon="cog" Show={this.props.ShowTransMapper} Title="Auto Transaction" />
+                        <DashboardItem OnlyForAdmin={true} Icon="cog" Show={this.props.ShowChargeTransMapper} Title="Charge-Trans Mapper" />
                         <DashboardItem OnlyForAdmin={true} Icon="cog" Show={this.props.ShowBillTransMapper} Title="Bill-Trans Mapper" />
                     </div>
                     <div ref={function (node) { this.Reports = node; }.bind(this)} >

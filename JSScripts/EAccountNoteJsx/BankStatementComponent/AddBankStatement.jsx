@@ -112,7 +112,7 @@
         urlParams += "&worksheetName=" + this.WorksheetName.value;
         dataToPost.append('file', this.FileInput.files[0]);
         _ProgressBar.IMBusy();
-        ajaxPost('api/BankStatement/save123' + urlParams, dataToPost, function (data) {
+        ajaxPost('api/BankStatement/save' + urlParams, dataToPost, function (data) {
             _ProgressBar.IMDone();
             if (data) {
                 this.props.ShowList();

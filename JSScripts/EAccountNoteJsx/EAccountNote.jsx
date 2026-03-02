@@ -4,6 +4,7 @@ var _Main = {};
 var _UserLogout = {};
 var _TransMapper = {};
 var _BillTransMapper = {};
+var _ChargeTransMapper = {};
 var _AppSettings = {
     PageSize: 10,
     PagesBlockSize: 5
@@ -489,6 +490,10 @@ function goToTrnsMapper() {
 function goToBillTrnsMapper() {
     _Main.hideAllComponent();
     _BillTransMapper.showMe();
+}
+function goToChargeTrnsMapper() {
+    _Main.hideAllComponent();
+    _ChargeTransMapper.showMe();
 }
 function isUser() {
     return _LoginAccount && _LoginAccount.RoleId == 2;

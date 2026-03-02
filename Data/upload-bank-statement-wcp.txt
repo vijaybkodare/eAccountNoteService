@@ -1,0 +1,12 @@
+1. Download bank statement in xls format
+2. Copy required row-column data in new sheet.
+3. Select all row-columns & unmerge cells.
+4. Remove empty columns
+5. Date & Remark are splited in 2 rows; so extract remark & place it as a next column after Date.
+6. Copy-paste Remark as a  value.
+7. Apply filter to show blank Amount & delete all those columns
+8. In Date column replace month part "/dd/" with "-MMM-" to upload correct date. 30/08/2025: Replace "/08/" with "-Aug-".
+9. In Amount column replace "Dr " with "-" & "Cr " with "".
+10. In Balance column replace "," with "".
+11. Add DR column with formula: =IF(C2<0,C2,0)
+12. Add CR column with formula: =IF(C2>0,C2,0)

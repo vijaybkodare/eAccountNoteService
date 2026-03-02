@@ -1,22 +1,22 @@
 var Main = React.createClass({
     getInitialState: function () {
-        return { 
+        return {
         };
     },
-    render: function() {
+    render: function () {
         return (
             <div>
-                <Login ref={function(node){this.Login = node;}.bind(this)}/>
-                <UserReg ref={function(node){this.UserReg = node;}.bind(this)}/>
-                <EAccountHome ref={function(node){this.EAccountHome = node;}.bind(this)}/>
-            </div>    
+                <Login ref={function (node) { this.Login = node; }.bind(this)} />
+                <UserReg ref={function (node) { this.UserReg = node; }.bind(this)} />
+                <EAccountHome ref={function (node) { this.EAccountHome = node; }.bind(this)} />
+            </div>
         );
     },
     //value="2925"                
-    componentDidMount: function(){
-        this.goForLogin();    
+    componentDidMount: function () {
+        this.goForLogin();
     },
-    hideAllComponent: function(){
+    hideAllComponent: function () {
         this.UserReg.hide();
         this.Login.hide();
         this.EAccountHome.hide();
@@ -26,17 +26,20 @@ var Main = React.createClass({
         if (_BillTransMapper.hide) {
             _BillTransMapper.hide();
         }
+        if (_ChargeTransMapper.hide) {
+            _ChargeTransMapper.hide();
+        }
     },
     goForLogin: function () {
         this.hideAllComponent();
         _LoginAccount = {};
-        if(_UserLogout != null)
+        if (_UserLogout != null)
             _UserLogout.updateEntity();
-        this.Login.show();    
+        this.Login.show();
     },
     goForUserReg: function (agree) {
         this.hideAllComponent();
-        this.UserReg.show(agree);    
+        this.UserReg.show(agree);
     },
     goForEAccountHome: function () {
         this.hideAllComponent();
@@ -45,32 +48,33 @@ var Main = React.createClass({
     showMe: function () {
         _TransMapper.hide();
         _BillTransMapper.hide();
+        _ChargeTransMapper.hide();
         this.goForEAccountHome();
     },
 });
 
 ReactDOM.render(
-    <ActivityProgress ref={function(node){_ProgressBar = node;}.bind(this)}/>,
+    <ActivityProgress ref={function (node) { _ProgressBar = node; }.bind(this)} />,
     document.getElementById('progress')
 );
 ReactDOM.render(
-    <Alert ref={function(node){_Alert = node;}.bind(this)}/>,
+    <Alert ref={function (node) { _Alert = node; }.bind(this)} />,
     document.getElementById('alert')
 );
 ReactDOM.render(
-    <Confirmation ref={function(node){_Confirmation = node;}.bind(this)}/>,
+    <Confirmation ref={function (node) { _Confirmation = node; }.bind(this)} />,
     document.getElementById('confirmation')
 );
 ReactDOM.render(
-    <OkMustReadInfo ref={function(node){_OkMustReadInfo = node;}.bind(this)}/>,
+    <OkMustReadInfo ref={function (node) { _OkMustReadInfo = node; }.bind(this)} />,
     document.getElementById('okMustReadInfo')
 );
 ReactDOM.render(
-    <UserLogout ref={function(node){_UserLogout = node;}.bind(this)}/>,
+    <UserLogout ref={function (node) { _UserLogout = node; }.bind(this)} />,
     document.getElementById('userLogout')
 );
 ReactDOM.render(
-    <Main ref={function(node){_Main = node;}.bind(this)}/>,
+    <Main ref={function (node) { _Main = node; }.bind(this)} />,
     document.getElementById('content')
 );
 ReactDOM.render(
@@ -84,4 +88,8 @@ ReactDOM.render(
 ReactDOM.render(
     <BillTransMapper ref={function (node) { _BillTransMapper = node; }.bind(this)} ShowNext={() => _Main.showMe()} />,
     document.getElementById('billTransMapper')
+);
+ReactDOM.render(
+    <ChargeTransMapper ref={function (node) { _ChargeTransMapper = node; }.bind(this)} ShowNext={() => _Main.showMe()} />,
+    document.getElementById('chargeTransMapper')
 );
