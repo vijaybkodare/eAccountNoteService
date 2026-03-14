@@ -37,18 +37,36 @@ public class UserAuthService
                 return new ServerResponse { IsSuccess = false, Error = "Not Authenticated" };
             }
 
-            // Fetch user details (similar to legacy getUserDetails)
-            const string sql = @"SELECT UM.*, UP.OrgId, UP.ProfileId, OM.OrgName, OM.Address, UPR.RoleId
-FROM UserMaster UM
-INNER JOIN UserProfile UP ON UM.UserId = UP.UserId
-INNER JOIN UserProfileRole UPR ON UP.ProfileId = UPR.UserProfileId
-INNER JOIN OrgMaster OM ON UP.OrgId = OM.OrgId
-WHERE UM.LoginId = @LoginId";
+            // Fetch user details including organization settings
+            const string sql = @"SELECT UM.*, UP.OrgId, UP.ProfileId, OM.OrgName, OM.Address, UPR.RoleId,
+                                       OM.MonthlyMaintItem AS MonthlyMaintItemName, 
+                                       OM.CutOffWeightInTransToken, 
+                                       OM.DefaultBankForBillPay AS DefaultBankName
+            FROM UserMaster UM
+            INNER JOIN UserProfile UP ON UM.UserId = UP.UserId
+            INNER JOIN UserProfileRole UPR ON UP.ProfileId = UPR.UserProfileId
+            INNER JOIN OrgMaster OM ON UP.OrgId = OM.OrgId
+            WHERE UM.LoginId = @LoginId";
 
             var user = await _dapperService.QuerySingleOrDefaultAsync<UserMaster>(sql, new { LoginId = loginId });
+
             if (user == null)
             {
                 return new ServerResponse { IsSuccess = false, Error = "Record not found" };
+            }
+
+            // Fetch ItemMaster for MonthlyMaintItem
+            if (!string.IsNullOrEmpty(user.MonthlyMaintItemName))
+            {
+                const string itemSql = "SELECT * FROM ItemMaster WHERE ItemName = @ItemName AND OrgId = @OrgId";
+                user.MonthlyMaintItem = await _dapperService.QuerySingleOrDefaultAsync<ItemMaster>(itemSql, new { ItemName = user.MonthlyMaintItemName, OrgId = user.OrgId });
+            }
+
+            // Fetch AccountMaster for DefaultBankForBillPay
+            if (!string.IsNullOrEmpty(user.DefaultBankName))
+            {
+                const string accountSql = "SELECT * FROM AccountMaster WHERE AccountName = @AccountName AND OrgId = @OrgId";
+                user.DefaultBankForBillPay = await _dapperService.QuerySingleOrDefaultAsync<AccountMaster>(accountSql, new { AccountName = user.DefaultBankName, OrgId = user.OrgId });
             }
 
             return new ServerResponse

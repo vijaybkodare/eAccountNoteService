@@ -3,15 +3,15 @@ var AddBill = React.createClass({
         return {
             AllowEdit: true,
             NotValidInput: true,
-            Item: {ItemId: -1, ItemName:'', AccountId:-1, AccountName:''},
-            BankAccount: {AccountId: -1, AccountName:''},
-            Entity: {BillOrderId: -1, ItemId:-1, AccountId:-1, BankAccountId:-1, Amount:0, PaidAmount:0},
+            Item: { ItemId: -1, ItemName: '', AccountId: -1, AccountName: '' },
+            BankAccount: { AccountId: -1, AccountName: '' },
+            Entity: { BillOrderId: -1, ItemId: -1, AccountId: -1, BankAccountId: -1, Amount: 0, PaidAmount: 0 },
         };
     },
-    render: function() {
+    render: function () {
         return (
-            <div ref={function(node){this.Component = node;}.bind(this)} className="panel panel-EAccNotePrim">
-                <AddEditHeader ShowList={this.props.ShowList} Title="Add/Edit Bill"/>
+            <div ref={function (node) { this.Component = node; }.bind(this)} className="panel panel-EAccNotePrim">
+                <AddEditHeader ShowList={this.props.ShowList} Title="Add/Edit Bill" />
                 <div className="panel-body">
                     <form>
                         <div className="row">
@@ -30,28 +30,28 @@ var AddBill = React.createClass({
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div className="form-group">
                             <label className="mandatory">Item</label>
-                            <ItemSelect ItemText={this.state.Item.ItemName} ItemChange={this.inputChange} GoForItemSelect={this.goForItemSelect}/>
+                            <ItemSelect ItemText={this.state.Item.ItemName} ItemChange={this.inputChange} GoForItemSelect={this.goForItemSelect} />
                         </div>
                         <div className="form-group">
                             <label className="mandatory">Amount Credit To</label>
                             <input ref={function (node) { this.Account = node; }.bind(this)} readOnly={true}
-                                type="text" value={this.state.Item.AccountName} className="form-control"/>
+                                type="text" value={this.state.Item.AccountName} className="form-control" />
                         </div>
                         <div className="form-group">
                             <label className="mandatory">Amount Debited From</label>
-                            <ItemSelect ItemText={this.state.BankAccount.AccountName} ItemChange={this.inputChange} GoForItemSelect={this.goForBankAccountSelect}/>
+                            <ItemSelect ItemText={this.state.BankAccount.AccountName} ItemChange={this.inputChange} GoForItemSelect={this.goForBankAccountSelect} />
                         </div>
                         <div className="form-group">
                             <label className="mandatory">Remark</label>
-                            <input ref={function(node){this.Remark = node;}.bind(this)} 
+                            <input ref={function (node) { this.Remark = node; }.bind(this)}
                                 type="text" className="form-control" placeholder="Remark" onChange={this.inputChange} />
                         </div>
                         <div className="form-group">
                             <label className="mandatory">Amount</label>
-                            <input ref={function(node){this.Amount = node;}.bind(this)} style={{ textAlign: 'right' }}
+                            <input ref={function (node) { this.Amount = node; }.bind(this)} style={{ textAlign: 'right' }}
                                 type="number" className="form-control" onChange={this.inputChange} />
                         </div>
                         <div className="form-group">
@@ -71,9 +71,9 @@ var AddBill = React.createClass({
                                     }
                                 </span>
                             </div>
-                            
+
                         </div>
-                        
+
                     </form>
                 </div>
                 {this.state.AllowEdit &&
@@ -88,22 +88,22 @@ var AddBill = React.createClass({
     showMe: function (item, itemType) {
         _Main.EAccountHome.hideAll();
         this.show();
-        if(itemType == 0 || itemType == 1) {
+        if (itemType == 0 || itemType == 1) {
             this.updateEntity(item);
         }
-        if(itemType == 22){
+        if (itemType == 22) {
             this.updateItem(item);
         }
-        if(itemType == 12){
+        if (itemType == 12) {
             this.updateBankAccount(item);
-        } 
+        }
     },
-    clear: function(){
-        this.setState({NotValidInput: false, Account: {AccountName:''}});
+    clear: function () {
+        this.setState({ NotValidInput: false, Account: { AccountName: '' } });
         this.ItemName.value = "";
     },
     inputChange: function () {
-        this.setState({ NotValidInput:  this.isValidInput(this.state.Item, this.state.BankAccount)});
+        this.setState({ NotValidInput: this.isValidInput(this.state.Item, this.state.BankAccount) });
     },
     isValidInput: function (item, account) {
         return this.Remark.value == "" || this.Amount.value == 0 || item.ItemName == "" || account.AccountName == "";
@@ -127,8 +127,8 @@ var AddBill = React.createClass({
         });
     },
     updateEntity: function (entity) {
-        if(entity == null || typeof(entity) == "undefined" || typeof(entity.BillOrderId) == "undefined"){
-            entity = {BillOrderId: -1, ItemId:-1, AccountId:-1, BankAccountId:-1, Amount:0, PaidAmount:0};
+        if (entity == null || typeof (entity) == "undefined" || typeof (entity.BillOrderId) == "undefined") {
+            entity = { BillOrderId: -1, ItemId: -1, AccountId: -1, BankAccountId: -1, Amount: 0, PaidAmount: 0 };
         }
         this.getRecord(entity);
     },
@@ -139,7 +139,7 @@ var AddBill = React.createClass({
             OrgId: _LoginAccount.OrgId,
             ItemId: this.state.Item.ItemId,
             AccountId: this.state.Item.AccountId,
-            BankAccountId: this.state.BankAccount.AccountId, 
+            BankAccountId: this.state.BankAccount.AccountId,
             Remark: this.Remark.value,
             Amount: this.Amount.value,
             //AccessKey: _LoginAccount.AccessKey,
@@ -149,10 +149,10 @@ var AddBill = React.createClass({
             dataToPost.append('file', this.FileInput.files[0]);
         }
         _ProgressBar.IMBusy();
-        axiosPost('BillOrder/save', dataToPost, function(data){
+        axiosPost('BillOrder/save', dataToPost, function (data) {
             _ProgressBar.IMDone();
-            if(data.IsSuccess){
-                this.props.ShowList();           
+            if (data.IsSuccess) {
+                this.props.ShowList();
             } else {
                 _Alert.showWarning(data.Error, 2000);
             }
@@ -161,27 +161,28 @@ var AddBill = React.createClass({
     getRecord: function (entity) {
         var urlParams = "?billOrderId=" + entity.BillOrderId + '&orgId=' + _LoginAccount.OrgId;
         _ProgressBar.IMBusy();
-        ajaxGet('BillOrder/entity' + urlParams, function(data){
+        ajaxGet('BillOrder/entity' + urlParams, function (data) {
             _ProgressBar.IMDone();
             this.OrderNo.value = data.Data.BillNo;
             this.Date.value = getFormattedDate(data.Data.BillDt);
             this.Amount.value = data.Data.Amount;
             this.Remark.value = data.Data.Remark;
             if (entity.BillOrderId == -1) {
+                var defaultBank = _LoginAccount.DefaultBankForBillPay || { AccountId: -1, AccountName: '' };
                 this.setState({
                     AllowEdit: true,
                     Entity: data.Data,
-                    NotValidInput: true,
-                    Item: {ItemId: -1, ItemName:''},
-                    BankAccount: {AccountId: -1, AccountName:''},
-                });    
+                    NotValidInput: this.isValidInput({ ItemId: -1, ItemName: '' }, defaultBank),
+                    Item: { ItemId: -1, ItemName: '' },
+                    BankAccount: defaultBank,
+                });
             } else {
                 this.setState({
                     AllowEdit: data.Data.PaidAmount == 0,
                     Entity: data.Data,
                     NotValidInput: false,
-                    Item: {ItemId: data.Data.ItemId, ItemName: data.Data.ItemName, AccountId: data.Data.AccountId, AccountName: data.Data.AccountName},
-                    BankAccount: {AccountId: data.Data.BankAccountId, AccountName: data.Data.BankAccount},
+                    Item: { ItemId: data.Data.ItemId, ItemName: data.Data.ItemName, AccountId: data.Data.AccountId, AccountName: data.Data.AccountName },
+                    BankAccount: { AccountId: data.Data.BankAccountId, AccountName: data.Data.BankAccount },
                     Accounts: data.Data.ChargePayeeDetails,
                 });
             }

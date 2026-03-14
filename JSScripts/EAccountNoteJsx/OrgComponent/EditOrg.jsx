@@ -23,6 +23,21 @@
                             <input ref={function (node) { this.Address = node; }.bind(this)}
                                 type="text" className="form-control" placeholder="Address" onChange={this.inputChange} />
                         </div>
+                        <div className="form-group">
+                            <label>Monthly Maint Item</label>
+                            <input ref={function (node) { this.MonthlyMaintItem = node; }.bind(this)}
+                                type="text" className="form-control" placeholder="Monthly Maint Item" onChange={this.inputChange} />
+                        </div>
+                        <div className="form-group">
+                            <label>Cut Off Weight In Trans Token</label>
+                            <input ref={function (node) { this.CutOffWeightInTransToken = node; }.bind(this)}
+                                type="text" className="form-control" placeholder="Cut Off Weight In Trans Token" onChange={this.inputChange} />
+                        </div>
+                        <div className="form-group">
+                            <label>Default Bank For Bill Pay</label>
+                            <input ref={function (node) { this.DefaultBankForBillPay = node; }.bind(this)}
+                                type="text" className="form-control" placeholder="Default Bank For Bill Pay" onChange={this.inputChange} />
+                        </div>
                     </form>
                 </div>
                 <AddEditFooter AllowDelete={this.state.AllowDelete} Delete={this.delete} Clear={this.clear} Save={this.save} NotValidInput={this.state.NotValidInput} />
@@ -40,7 +55,14 @@
     showMe2: function () {
         _Main.EAccountHome.hideAll();
         this.show();
-        this.updateEntity({ OrgId: _LoginAccount.OrgId, OrgName: _LoginAccount.OrgName, Address: _LoginAccount.Address });
+        this.updateEntity({
+            OrgId: _LoginAccount.OrgId,
+            OrgName: _LoginAccount.OrgName,
+            Address: _LoginAccount.Address,
+            MonthlyMaintItem: _LoginAccount.MonthlyMaintItem,
+            CutOffWeightInTransToken: _LoginAccount.CutOffWeightInTransToken,
+            DefaultBankForBillPay: _LoginAccount.DefaultBankForBillPay
+        });
     },
     inputChange: function () {
         this.setState({
@@ -51,6 +73,9 @@
     updateEntity: function (item) {
         this.OrgName.value = item.OrgName;
         this.Address.value = item.Address;
+        this.MonthlyMaintItem.value = item.MonthlyMaintItem || '';
+        this.CutOffWeightInTransToken.value = item.CutOffWeightInTransToken || '';
+        this.DefaultBankForBillPay.value = item.DefaultBankForBillPay || '';
         this.setState({
             Entity: item,
             NotValidInput: false
@@ -61,6 +86,9 @@
             OrgId: this.state.Entity.OrgId,
             OrgName: this.OrgName.value,
             Address: this.Address.value,
+            MonthlyMaintItem: this.MonthlyMaintItem.value,
+            CutOffWeightInTransToken: this.CutOffWeightInTransToken.value,
+            DefaultBankForBillPay: this.DefaultBankForBillPay.value,
         }
         _ProgressBar.IMBusy();
         axiosPost('api/Org/update', entity, function (data) {

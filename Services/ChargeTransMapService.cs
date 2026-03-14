@@ -85,7 +85,7 @@ public class ChargeTransMapService
             toDate: toDate,
             status: 0);
 
-        return records.Where(x => x.ReconcStatus == 0);
+        return records.Where(x => x.ReconcStatus == 0).OrderByDescending(x => x.AddedDt);
     }
 
     public async Task mapBankStatementToChargeTrans(decimal bankStatementId, decimal chargePayTransId, string source)

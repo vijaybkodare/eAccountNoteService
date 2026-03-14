@@ -20,4 +20,9 @@ public class UserMaster
     public string AccessKey { get; set; } = string.Empty;
     public decimal AccountId { get; set; }
     public string Address { get; set; } = string.Empty;
+    public ItemMaster? MonthlyMaintItem { get; set; }
+    public decimal CutOffWeightInTransToken { get; set; }
+    public AccountMaster? DefaultBankForBillPay { get; set; }
+    public string MonthlyMaintItemName { get; set; } = string.Empty;
+    public string DefaultBankName { get; set; } = string.Empty;
 }
