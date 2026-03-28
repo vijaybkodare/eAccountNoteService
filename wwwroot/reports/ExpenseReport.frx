@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="07/19/2025 12:00:00" ReportInfo.Modified="12/25/2025 13:11:49" ReportInfo.CreatorVersion="2025.2.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="07/19/2025 12:00:00" ReportInfo.Modified="03/28/2026 22:00:36" ReportInfo.CreatorVersion="2025.2.0.0">
   <ScriptText>
     using System;
     using System.Collections;
@@ -67,18 +67,19 @@
     </PageHeaderBand>
     <GroupHeaderBand Name="GroupHeader1" Top="117.4" Width="718.2" Height="18.9" Condition="[AccountExpense.AccountName]">
       <TextObject Name="Text112" Left="18.9" Width="321.3" Height="18.9" Text="[AccountExpense.AccountName]" Font="Arial, 10pt"/>
-      <DataBand Name="Data1" Top="140.3" Width="718.2" Height="18.9" DataSource="AccountExpense">
-        <TextObject Name="Text113" Left="75.6" Width="189" Height="18.9" Border.Lines="Bottom" Border.Style="Dot" Border.Width="0.5" Text="[AccountExpense.ItemName]" Font="Arial, 10pt"/>
-        <TextObject Name="Text116" Left="491.4" Width="113.4" Height="18.9" Border.Lines="Bottom" Border.Style="Dot" Border.Width="0.5" Text="[AccountExpense.PaymentDt]" Format="Custom" Format.Format="dd-MMM-yyyy" Font="Arial, 10pt"/>
-        <TextObject Name="Text117" Left="604.8" Width="94.5" Height="18.9" Border.Lines="Bottom" Border.Style="Dot" Border.Width="0.5" Text="[AccountExpense.Amount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
-        <TextObject Name="Text124" Left="264.6" Width="75.6" Height="18.9" Border.Lines="Bottom" Border.Style="Dot" Border.Width="0.5" Text="[AccountExpense.BillNo]" Font="Arial, 10pt"/>
-        <TextObject Name="Text125" Left="340.2" Width="151.2" Height="18.9" Border.Lines="Bottom" Border.Style="Dot" Border.Width="0.5" Text="[AccountExpense.BORemark]" Font="Arial, 10pt"/>
+      <DataBand Name="Data1" Top="140.3" Width="718.2" Height="30.24" CanGrow="true" DataSource="AccountExpense">
+        <TextObject Name="Text113" Left="75.6" Width="189" Height="18.9" CanGrow="true" Text="[AccountExpense.ItemName]" Font="Arial, 10pt"/>
+        <TextObject Name="Text116" Left="491.4" Width="113.4" Height="18.9" CanGrow="true" Text="[AccountExpense.PaymentDt]" Format="Custom" Format.Format="dd-MMM-yyyy" Font="Arial, 10pt"/>
+        <TextObject Name="Text117" Left="604.8" Width="94.5" Height="18.9" CanGrow="true" Text="[AccountExpense.Amount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
+        <TextObject Name="Text124" Left="264.6" Width="75.6" Height="18.9" CanGrow="true" Text="[AccountExpense.BillNo]" Font="Arial, 10pt"/>
+        <TextObject Name="Text125" Left="340.2" Width="151.2" Height="18.9" CanGrow="true" Text="[AccountExpense.BORemark]" Font="Arial, 10pt"/>
+        <LineObject Name="Line1" Left="75.6" Top="26.46" Width="623.7"/>
       </DataBand>
-      <GroupFooterBand Name="GroupFooter1" Top="163.2" Width="718.2" Height="18.9">
+      <GroupFooterBand Name="GroupFooter1" Top="174.54" Width="718.2" Height="18.9">
         <TextObject Name="Text127" Left="604.8" Width="94.5" Height="18.9" Border.Lines="Bottom" Border.Width="0.5" Text="[TotalAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
       </GroupFooterBand>
     </GroupHeaderBand>
-    <ReportSummaryBand Name="ReportSummary1" Top="186.1" Width="718.2" Height="18.9">
+    <ReportSummaryBand Name="ReportSummary1" Top="197.44" Width="718.2" Height="18.9">
       <TextObject Name="Text126" Left="604.8" Width="94.5" Height="18.9" Border.Lines="Bottom" Border.Width="0.5" Text="[AllTotal]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
     </ReportSummaryBand>
   </ReportPage>
