@@ -1,17 +1,18 @@
 var BillTransRep = React.createClass({
     getInitialState: function () {
-        return { 
-            Filter: {FromDate: get1stDayOfCurrentMonth(), ToDate: getCurrentDateWithEODTime(), AccountId: -1},
+        return {
+            Filter: { FromDate: get1stDayOfCurrentMonth(), ToDate: getCurrentDateWithEODTime(), AccountId: -1 },
             Items: []
         };
     },
-    render: function() {
+    render: function () {
         return (
-            <div ref={function(node){this.Component = node;}.bind(this)} className="panel panel-EAccNotePrim">
-                <ListHeader ShowNextComponent={this.props.ShowNextComponent} Title="Bill Trans Report"/>    
+            <div ref={function (node) { this.Component = node; }.bind(this)} className="panel panel-EAccNotePrim">
+                <ListHeader ShowNextComponent={this.props.ShowNextComponent} Title="Bill Trans Report" />
                 <div className="panel-body">
                     <ReportCommand ShowReportFilter={this.showReportFilter} DownloadReport={this.downloadReport} filterTitle={getFilterTitle(this.state.Filter)} />
-                    {this.getList()}    
+                    {this.getList()}
+                    {this.getSummaryRow()}
                 </div>
             </div>
         );
@@ -19,34 +20,34 @@ var BillTransRep = React.createClass({
     componentDidMount: function () {
         setComponent(this);
     },
-    showMe: function(filter){
+    showMe: function (filter) {
         _Main.EAccountHome.hideAll();
         this.refreshData(filter);
         this.show();
     },
-    getList: function(){
+    getList: function () {
         return this.state.Items.map(function (item) {
             return this.getRow(item);
         }.bind(this));
     },
-    filterChange: function(filter){
+    filterChange: function (filter) {
         this.setState({
             Filter: filter
         });
     },
-    showReportFilter: function(){
+    showReportFilter: function () {
         this.props.ShowReportFilter(this.props.ShowBillTransRep, 1);
     },
-    refreshData: function(filter){
-        if(!filter || typeof(filter.AccountId) == "undefined"){
-            filter = {FromDate: get1stDayOfCurrentMonth(), ToDate: getCurrentDateWithEODTime(), AccountId: -1};
+    refreshData: function (filter) {
+        if (!filter || typeof (filter.AccountId) == "undefined") {
+            filter = { FromDate: get1stDayOfCurrentMonth(), ToDate: getCurrentDateWithEODTime(), AccountId: -1 };
         }
         var urlParams = "?orgId=" + _LoginAccount.OrgId;
         urlParams += "&fromDate=" + filter.FromDate;
         urlParams += "&toDate=" + filter.ToDate;
         urlParams += "&accountId=" + filter.AccountId;
         _ProgressBar.IMBusy();
-        ajaxGet('BillOrder/billtransactions' + urlParams,function(data){
+        ajaxGet('BillOrder/billtransactions' + urlParams, function (data) {
             _ProgressBar.IMDone();
             this.setState({
                 Items: data,
@@ -60,11 +61,39 @@ var BillTransRep = React.createClass({
         urlParams += "&toDate=" + this.state.Filter.ToDate;
         urlParams += "&accountId=" + this.state.Filter.AccountId;
         _ProgressBar.IMBusy();
-        ajaxDownloadPdf('api/PdfReport/chargeTrans' + urlParams, function () {
+        ajaxDownloadPdf('api/PdfReport/expense-report' + urlParams, function () {
             _ProgressBar.IMDone();
-        }.bind(this), 'chargeTrans.pdf');
+        }.bind(this), 'expense-report.pdf');
     },
-    getRow: function(item){
+    getSummaryRow: function () {
+        var totalBillAmount = 0;
+        var totalPaidAmount = 0;
+        this.state.Items.forEach(function (item) {
+            totalBillAmount += item.BillAmount;
+            totalPaidAmount += item.Amount;
+        });
+        return (
+            <div className="listItem1">
+                <div className="row fontSizeSr">
+                    <div className="col col-xs-3 paddingR5 textAlignR">
+                        Total Bill Amount:
+                    </div>
+                    <div className="col col-xs-2 paddingL5">
+                        {numberWithCommas(totalBillAmount)}
+                    </div>
+                    <div className="col col-xs-3 paddingR5 textAlignR">
+                        Total Paid Amount:
+                    </div>
+                    <div className="col col-xs-2 paddingL5 fontWeightB">
+                        {numberWithCommas(totalPaidAmount)}
+                    </div>
+                    <div className="col col-xs-2">
+                    </div>
+                </div>
+            </div>
+        );
+    },
+    getRow: function (item) {
         return (
             <div key={item.BillPayTransId} className="listItem6">
                 <div className="row fontSizeSr">
