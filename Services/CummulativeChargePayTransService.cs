@@ -15,7 +15,7 @@ public class CummulativeChargePayTransService
 
     public async Task<IEnumerable<CummulativeChargePayTrans>> GetRecordsToRevertAsync(decimal orgId, decimal accountId, string? fromDate, string? toDate)
     {
-        var sql = @"SELECT CCPT.*, AM1.AccountName AS DrAccount, AM2.AccountName AS CrAccount
+        var sql = @"SELECT 'CCPT' AS Source, CCPT.*, AM1.AccountName AS DrAccount, AM2.AccountName AS CrAccount
                     FROM CummulativeChargePayTrans CCPT
                     INNER JOIN AccountMaster AM1 ON AM1.AccountId = CCPT.DrAccountId
                     INNER JOIN AccountMaster AM2 ON AM2.AccountId = CCPT.CrAccountId

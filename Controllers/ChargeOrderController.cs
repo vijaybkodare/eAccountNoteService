@@ -14,19 +14,22 @@ public class ChargeOrderController : ControllerBase
     private readonly ChargePayTransService _chargePayTransService;
     private readonly CummulativeChargePayTransService _cummulativeChargePayTransService;
     private readonly TransNoEvaluator _transNoEvaluator;
+    private readonly AdvChargeService _advChargeService;
 
     public ChargeOrderController(
         ChargeOrderService service,
         ChargePayeeDetailService chargePayeeDetailService,
         ChargePayTransService chargePayTransService,
         CummulativeChargePayTransService cummulativeChargePayTransService,
-        TransNoEvaluator transNoEvaluator)
+        TransNoEvaluator transNoEvaluator,
+        AdvChargeService advChargeService)
     {
         _service = service;
         _chargePayeeDetailService = chargePayeeDetailService;
         _chargePayTransService = chargePayTransService;
         _cummulativeChargePayTransService = cummulativeChargePayTransService;
         _transNoEvaluator = transNoEvaluator;
+        _advChargeService = advChargeService;
     }
 
     // GET: api/chargeorder/hello
@@ -199,6 +202,10 @@ public class ChargeOrderController : ControllerBase
             else if (entity.Source == "CCPT")
             {
                 success = await _cummulativeChargePayTransService.UpdateCummulativeChargePayTransAsync(entity);
+            }
+            else if (entity.Source == "ADVC")
+            {
+                success = await _advChargeService.UpdateAdvChargeAsync(entity);
             }
         }
 

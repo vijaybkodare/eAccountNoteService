@@ -35,7 +35,7 @@
                     <div className="form-group">
                         <label>Remark</label>
                         <input ref={function (node) { this.Remark = node; }.bind(this)}
-                            type="text" className="form-control" placeholder="Remark" value={this.state.Remark} onChange={this.remarkChange}/>
+                            type="text" className="form-control" placeholder="Remark" value={this.state.Remark} onChange={this.remarkChange} />
                     </div>
                 </div>
                 <div className="panel-footer" style={{ textAlign: "right" }}>
@@ -45,7 +45,7 @@
             </div>
         );
     },
-   show: function (entity, actionOnSave) {
+    show: function (entity, actionOnSave) {
         this.UpdateTransNo.style.display = "block";
         this.setState({
             NotValidInput: false,
@@ -61,7 +61,7 @@
         this.inputChange();
     },
     remarkChange: function (e) {
-        this.setState({ Remark: e.target.value});
+        this.setState({ Remark: e.target.value });
     },
     transNoChange: function (e) {
         this.setState({ TransactionId: e.target.value });
@@ -99,9 +99,9 @@
             TransMode: this.state.CashPayment ? 1 : 0,
             Remark: this.Remark.value,
         }
-        appendObjectToFormData(entity, dataToPost, "");
+        //appendObjectToFormData(entity, dataToPost, "");
         _ProgressBar.IMBusy();
-        ajaxPost(uri, dataToPost, function (data) {
+        axiosPost(uri, entity, function (data) {
             _ProgressBar.IMDone();
             if (data.IsSuccess) {
                 this.hide();

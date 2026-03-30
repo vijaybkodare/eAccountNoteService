@@ -410,6 +410,8 @@ function getBGColorBySource(source) {
         return '#cedafb';
     } else if (source == 'CPT') {
         return '#f4c9c9';
+    } else if (source == 'ADVC') {
+        return '#c7b5ec';
     }
 }
 function numberWithCommas(x) {

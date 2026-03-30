@@ -19,6 +19,7 @@ public class ReportController : ControllerBase
     private readonly BankStatementService _bankStatementService;
     private readonly TransNoEvaluator _transNoEvaluator;
     private readonly TransactionService _transactionService;
+    private readonly ReconciliationService _reconciliationService;
 
     public ReportController(
         ChargeOrderService chargeOrderService,
@@ -28,7 +29,8 @@ public class ReportController : ControllerBase
         BillOrderService billOrderService,
         BankStatementService bankStatementService,
         TransNoEvaluator transNoEvaluator,
-        TransactionService transactionService)
+        TransactionService transactionService,
+        ReconciliationService reconciliationService)
     {
         _chargeOrderService = chargeOrderService;
         _chargePayTransService = chargePayTransService;
@@ -38,6 +40,7 @@ public class ReportController : ControllerBase
         _bankStatementService = bankStatementService;
         _transNoEvaluator = transNoEvaluator;
         _transactionService = transactionService;
+        _reconciliationService = reconciliationService;
     }
 
     // GET: api/report/chargeOrderSummary?orgId=1&fromDate=...&toDate=...
@@ -99,9 +102,9 @@ public class ReportController : ControllerBase
 
     // GET: api/report/chargePayAndCummTrans?orgId=1&accountId=...&fromDate=...&toDate=...
     [HttpGet("chargePayAndCummTrans")]
-    public async Task<ActionResult<IEnumerable<ChargePayTrans>>> ChargePayAndCummTrans([FromQuery] decimal orgId, [FromQuery] decimal accountId, [FromQuery] string fromDate, [FromQuery] string toDate)
+    public async Task<ActionResult<IEnumerable<ReconciliationItem>>> ChargePayAndCummTrans([FromQuery] decimal orgId, [FromQuery] decimal accountId, [FromQuery] string fromDate, [FromQuery] string toDate)
     {
-        var list = await _chargePayTransService.GetRecordsAsync(orgId, status: -1, refId: -1, accountId, fromDate, toDate);
+        var list = await _reconciliationService.GetRecordsAsync(orgId, accountId, fromDate, toDate);
         return Ok(list);
     }
 

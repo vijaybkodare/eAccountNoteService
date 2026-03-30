@@ -1,15 +1,15 @@
 var AddRevertCummChargeTrans = React.createClass({
     getInitialState: function () {
-        return{
+        return {
             Entity: {},
         };
     },
-    render: function() {
+    render: function () {
         return (
             <div ref={function (node) { this.Component = node; }.bind(this)} className="panel panel-EAccNotePrim">
                 <AddEditHeader ShowList={this.actionOnBack} Title="Revert Charge Pay Trans" />
                 <div className="panel-body">
-                <div className="row fontSizeSr">
+                    <div className="row fontSizeSr">
                         <div className="col col-xs-3 paddingR5 textAlignR">
                             Account
                         </div>
@@ -20,7 +20,7 @@ var AddRevertCummChargeTrans = React.createClass({
                             Date
                         </div>
                         <div className="col col-xs-5 paddingL5">
-                            {getFormattedDate2(this.state.Entity.AddedDt)}
+                            {getFormattedDate(this.state.Entity.AddedDt)}
                         </div>
                     </div>
                     <div className="row fontSizeSr">
@@ -56,14 +56,14 @@ var AddRevertCummChargeTrans = React.createClass({
                         </div>
                     </div>
                 </div>
-                <RevertTransFooter Revert={this.revert}/>
+                <RevertTransFooter Revert={this.revert} />
             </div>
         );
     },
     componentDidMount: function () {
         setComponent(this);
     },
-    showMe: function(item){
+    showMe: function (item) {
         this.props.HideAll();
         this.updateEntity(item);
         this.show();
@@ -73,15 +73,15 @@ var AddRevertCummChargeTrans = React.createClass({
             Entity: entity,
         });
     },
-    actionOnBack: function(){
+    actionOnBack: function () {
         this.props.ShowList();
     },
     revert: function () {
         var urlParams = "?id=" + this.state.Entity.CummulativeChargePayTransId;
         _ProgressBar.IMBusy();
-        ajaxGet('RevertTrans/revertCummulativeChargeTrans' + urlParams, function(data){
+        ajaxGet('RevertTrans/revertCummulativeChargeTrans' + urlParams, function (data) {
             _ProgressBar.IMDone();
-            if(data.IsSuccess){
+            if (data.IsSuccess) {
                 this.props.ShowList();
             } else {
                 _Alert.showWarning(data.Error, 2000);

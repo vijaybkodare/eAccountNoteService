@@ -19,4 +19,5 @@ public class CummulativeChargePayTrans
     public decimal TransMode { get; set; }
     public decimal[] ChargePayeeDetailIds { get; set; } = Array.Empty<decimal>();
     public decimal BankStatementId { get; set; }
+    public decimal ReconcStatus { get; set; }
 }

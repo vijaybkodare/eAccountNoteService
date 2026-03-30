@@ -100,6 +100,17 @@ public class AdvChargeService
         }
     }
 
+    public async Task<bool> UpdateAdvChargeAsync(ChargePayTrans entity)
+    {
+        var parameters = new DynamicParameters();
+        parameters.Add("AdvChargeId", entity.Id, DbType.Decimal);
+        parameters.Add("Remark", entity.Remark ?? string.Empty, DbType.String);
+        parameters.Add("TransactionId", entity.TransactionId ?? string.Empty, DbType.String);
+
+        await _dapperService.ExecuteStoredProcedureAsync("Proc_Update_AdvCharge", parameters);
+        return true;
+    }
+
     public async Task<bool> TransactionIdExistsAsync(decimal orgId, string transactionId)
     {
         const string sql = @"SELECT COUNT(1)

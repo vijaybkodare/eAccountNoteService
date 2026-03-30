@@ -79,7 +79,7 @@
     },
     getRow: function (item) {
         return (
-            <div key={item.Id} className="listItem6">
+            <div key={item.Id} className="listItem6" style={{ backgroundColor: getBGColorBySource(item.Source) }}>
                 <div className="row fontSizeSr">
                     <div className="col col-xs-3 paddingR5 textAlignR">
                         Account
@@ -94,7 +94,7 @@
                         {item.AddedDt.substring(0, 10)}
                     </div>
                 </div>
-                
+
                 <div className="row fontSizeSr">
                     <div className="col col-xs-3 paddingR5 textAlignR">
                         Remark
