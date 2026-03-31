@@ -11,11 +11,23 @@
             <div ref={function (node) { this.Component = node; }.bind(this)} className="panel panel-EAccNotePrim">
                 <ListHeader ShowNextComponent={this.props.ShowNextComponent} Title="Bank Statements" />
                 <div className="panel-body">
-                    <DateSelector Label="From Date" ref={function (node) { this.FromDt = node; }.bind(this)} />
-                    <DateSelector Label="To Date" ref={function (node) { this.ToDt = node; }.bind(this)} />
+                    <div className="row">
+                        <div className="col-xs-6">
+                            <div className="form-group">
+                                <label className="mandatory">From Date</label>
+                                <FlatPickrDate ref={function (node) { this.FromDt = node; }.bind(this)} />
+                            </div>
+                        </div>
+                        <div className="col-xs-6">
+                            <div className="form-group">
+                                <label className="mandatory">To Date</label>
+                                <FlatPickrDate ref={function (node) { this.ToDt = node; }.bind(this)} />
+                            </div>
+                        </div>
+                    </div>
                     <div className="form-group">
                         <label>Remark</label>
-                        <input ref={function (node) { this.Remark= node; }.bind(this)}
+                        <input ref={function (node) { this.Remark = node; }.bind(this)}
                             type="text" className="form-control" placeholder="Remark filter" />
                     </div>
                     <div className="form-group">
@@ -87,6 +99,7 @@
                     </div>
                     <hr />
                     {this.getList()}
+                    {this.getSummaryRow()}
                 </div>
             </div>
         );
@@ -135,44 +148,70 @@
             _ProgressBar.IMDone();
         }.bind(this), 'bankstatement.csv');
     },
+    getSummaryRow: function () {
+        var totalAmount = 0;
+        this.state.Items.forEach(function (item) {
+            totalAmount += item.Amount;
+        });
+
+        return (
+            <div className="listItem1">
+                <div className="row">
+                    <div className="row fontSizeSr">
+                        <div className="col col-xs-3 paddingR5 textAlignR">
+                            Total
+                        </div>
+                        <div className="col col-xs-3 paddingL5">
+                        </div>
+                        <div className="col col-xs-3 paddingR5 textAlignR">
+                            Amount
+                        </div>
+                        <div className="col col-xs-3 paddingL5 fontWeightB">
+                            {numberWithCommas(totalAmount)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    },
     getRow: function (item) {
         return (
             <div key={item.Id} className={item.Status == 1 ? "listItem6" : "listItem0"}>
                 <div className="row">
-                        <div className="row fontSizeSr">
-                            <div className="col col-xs-3 paddingR5 textAlignR">
+                    <div className="row fontSizeSr">
+                        <div className="col col-xs-3 paddingR5 textAlignR">
                             {item.Status == 1 &&
                                 <span className="selIcon glyphicon glyphicon-ok-circle" style={{ fontSize: "15px" }} />
-                                }
-                                Date
-                            </div>
-                            <div className="col col-xs-3 paddingL5">
-                                {item.TransDt.substring(0, 10)}
-                            </div>
-                            <div className="col col-xs-3 paddingR5 textAlignR">
-                                Amount
-                            </div>
-                            <div className="col col-xs-3 paddingL5 fontWeightB">
-                                {item.Amount}
-                            </div>
+                            }
+                            Date
                         </div>
-                        <div className="row fontSizeSr">
-                            <div className="col col-xs-3 paddingR5 textAlignR">
-                                Remark
-                            </div>
-                            <div className="col col-xs-9">
-                                {item.Remark}
-                            </div>
+                        <div className="col col-xs-3 paddingL5">
+                            {item.TransDt.substring(0, 10)}
                         </div>
-                        <div className="row fontSizeSr">
-                            <div className="col col-xs-3 paddingR5 textAlignR">
-                                Trans ID
-                            </div>
-                            <div className="col col-xs-9 paddingL5 fontWeightB">
-                                {item.TransactionId}
-                            </div>
+                        <div className="col col-xs-3 paddingR5 textAlignR">
+                            Amount
+                        </div>
+                        <div className="col col-xs-3 paddingL5 fontWeightB">
+                            {item.Amount}
                         </div>
                     </div>
+                    <div className="row fontSizeSr">
+                        <div className="col col-xs-3 paddingR5 textAlignR">
+                            Remark
+                        </div>
+                        <div className="col col-xs-9">
+                            {item.Remark}
+                        </div>
+                    </div>
+                    <div className="row fontSizeSr">
+                        <div className="col col-xs-3 paddingR5 textAlignR">
+                            Trans ID
+                        </div>
+                        <div className="col col-xs-9 paddingL5 fontWeightB">
+                            {item.TransactionId}
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     },
