@@ -25,4 +25,6 @@ public class UserMaster
     public AccountMaster? DefaultBankForBillPay { get; set; }
     public string MonthlyMaintItemName { get; set; } = string.Empty;
     public string DefaultBankName { get; set; } = string.Empty;
+    public bool AllowChargePayment { get; set; }
+    public bool AllowAdvancePayment { get; set; }
 }

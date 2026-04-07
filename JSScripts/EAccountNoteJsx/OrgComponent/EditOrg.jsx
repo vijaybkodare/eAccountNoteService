@@ -38,6 +38,18 @@
                             <input ref={function (node) { this.DefaultBankForBillPay = node; }.bind(this)}
                                 type="text" className="form-control" placeholder="Default Bank For Bill Pay" onChange={this.inputChange} />
                         </div>
+                        <div className="form-group">
+                            <div className="checkbox">
+                                <label>
+                                    <input type="checkbox" ref={function (node) { this.AllowChargePayment = node; }.bind(this)} /> Allow user to add charge payment
+                                </label>
+                            </div>
+                            <div className="checkbox">
+                                <label>
+                                    <input type="checkbox" ref={function (node) { this.AllowAdvancePayment = node; }.bind(this)} /> Allow user to add advance payment
+                                </label>
+                            </div>
+                        </div>
                     </form>
                 </div>
                 <AddEditFooter AllowDelete={this.state.AllowDelete} Delete={this.delete} Clear={this.clear} Save={this.save} NotValidInput={this.state.NotValidInput} />
@@ -59,9 +71,11 @@
             OrgId: _LoginAccount.OrgId,
             OrgName: _LoginAccount.OrgName,
             Address: _LoginAccount.Address,
-            MonthlyMaintItem: _LoginAccount.MonthlyMaintItem,
+            MonthlyMaintItem: _LoginAccount.MonthlyMaintItemName,
             CutOffWeightInTransToken: _LoginAccount.CutOffWeightInTransToken,
-            DefaultBankForBillPay: _LoginAccount.DefaultBankForBillPay
+            DefaultBankForBillPay: _LoginAccount.DefaultBankName,
+            AllowChargePayment: _LoginAccount.AllowChargePayment,
+            AllowAdvancePayment: _LoginAccount.AllowAdvancePayment
         });
     },
     inputChange: function () {
@@ -76,6 +90,8 @@
         this.MonthlyMaintItem.value = item.MonthlyMaintItem || '';
         this.CutOffWeightInTransToken.value = item.CutOffWeightInTransToken || '';
         this.DefaultBankForBillPay.value = item.DefaultBankForBillPay || '';
+        this.AllowChargePayment.checked = item.AllowChargePayment || false;
+        this.AllowAdvancePayment.checked = item.AllowAdvancePayment || false;
         this.setState({
             Entity: item,
             NotValidInput: false
@@ -89,6 +105,8 @@
             MonthlyMaintItem: this.MonthlyMaintItem.value,
             CutOffWeightInTransToken: this.CutOffWeightInTransToken.value,
             DefaultBankForBillPay: this.DefaultBankForBillPay.value,
+            AllowChargePayment: this.AllowChargePayment.checked,
+            AllowAdvancePayment: this.AllowAdvancePayment.checked,
         }
         _ProgressBar.IMBusy();
         axiosPost('api/Org/update', entity, function (data) {

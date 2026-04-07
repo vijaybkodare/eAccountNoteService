@@ -109,7 +109,7 @@ public class ChargePayTransService
                     INNER JOIN ChargePayeeDetail CPD ON CPD.ChargePayeeDetailId = CPT.ChargePayeeDetailId
                     INNER JOIN ChargeOrder CO ON CO.ChargeOrderId = CPD.ChargeOrderId
                     INNER JOIN ItemMaster IM ON IM.ItemId = CO.ItemId
-                    WHERE CO.OrgId = @OrgId AND CPT.Status = 0";
+                    WHERE CO.OrgId = @OrgId AND CPT.Status = 0 AND CPT.RefId = 0";
 
         var parameters = new DynamicParameters();
         parameters.Add("@OrgId", orgId, DbType.Decimal);

@@ -41,7 +41,9 @@ public class UserAuthService
             const string sql = @"SELECT UM.*, UP.OrgId, UP.ProfileId, OM.OrgName, OM.Address, UPR.RoleId,
                                        OM.MonthlyMaintItem AS MonthlyMaintItemName, 
                                        OM.CutOffWeightInTransToken, 
-                                       OM.DefaultBankForBillPay AS DefaultBankName
+                                       OM.DefaultBankForBillPay AS DefaultBankName,
+                                       OM.AllowChargePayment,
+                                       OM.AllowAdvancePayment
             FROM UserMaster UM
             INNER JOIN UserProfile UP ON UM.UserId = UP.UserId
             INNER JOIN UserProfileRole UPR ON UP.ProfileId = UPR.UserProfileId

@@ -25,4 +25,5 @@ public class ChargePayTrans
     public string Source { get; set; } = string.Empty;
     public string AccountName { get; set; } = string.Empty;
     public DateTime AddedDt { get; set; }
+    public decimal ReconcStatus { get; set; }
 }

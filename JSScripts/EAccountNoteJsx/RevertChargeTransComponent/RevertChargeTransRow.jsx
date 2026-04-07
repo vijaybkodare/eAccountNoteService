@@ -1,5 +1,5 @@
 var RevertChargeTransRow = React.createClass({
-    render: function() {
+    render: function () {
         return (
             <div className="listItem6" onClick={this.actionOnItemSelect}>
                 <div className="row fontSizeSr">
@@ -33,6 +33,7 @@ var RevertChargeTransRow = React.createClass({
                         {this.props.Item.CrAccount}
                     </div>
                 </div>
+
                 <div className="row fontSizeSr">
                     <div className="col col-xs-3 paddingR5 textAlignR">
                         Trans ID
@@ -42,17 +43,20 @@ var RevertChargeTransRow = React.createClass({
                     </div>
                 </div>
                 <div className="row fontSizeSr">
-                    <div className="col col-xs-3 paddingR5 textAlignR">
+                    <div className="col col-xs-4 paddingR5 textAlignR">
                         Amount
                     </div>
-                    <div className="col col-xs-9 paddingL5 fontWeightB">
+                    <div className="col col-xs-4 paddingL5 fontWeightB">
                         {this.props.Item.Amount}
                     </div>
+                    {this.props.Item.ReconcStatus == 1 && <div className="col col-xs-4 textAlignR selIcon colorGreen">
+                        <span className="glyphicon glyphicon-ok-circle" />
+                    </div>}
                 </div>
             </div>
         );
     },
-    actionOnItemSelect: function(){
+    actionOnItemSelect: function () {
         this.props.ActionOnItemSelect(this.props.Item);
     },
 });

@@ -446,7 +446,7 @@ WHERE UA.UserProfileId = @ProfileId";
             return new ServerResponse { IsSuccess = false, Error = "Not Authenticated" };
         }
 
-        const string sql = @"SELECT UM.*, UP.OrgId, UP.ProfileId, OM.OrgName, OM.Address, UPR.RoleId
+        const string sql = @"SELECT UM.*, UP.OrgId, UP.ProfileId, OM.OrgName, OM.Address, UPR.RoleId, OM.AllowChargePayment, OM.AllowAdvancePayment
 FROM UserMaster UM
 INNER JOIN UserProfile UP ON UM.UserId = UP.UserId
 INNER JOIN UserProfileRole UPR ON UP.ProfileId = UPR.UserProfileId

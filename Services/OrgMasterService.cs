@@ -15,7 +15,7 @@ public class OrgMasterService
 
     public async Task<IEnumerable<OrgMaster>> GetRecordsAsync()
     {
-        const string sql = @"SELECT OrgId, OrgName, Address, MonthlyMaintItem, CutOffWeightInTransToken, DefaultBankForBillPay
+        const string sql = @"SELECT OrgId, OrgName, Address, MonthlyMaintItem, CutOffWeightInTransToken, DefaultBankForBillPay, AllowChargePayment, AllowAdvancePayment
                                FROM OrgMaster";
 
         var list = await _dapperService.QueryAsync<OrgMaster>(sql);
@@ -24,7 +24,7 @@ public class OrgMasterService
 
     public async Task<OrgMaster?> GetRecordAsync(int orgId)
     {
-        const string sql = @"SELECT OrgId, OrgName, Address, MonthlyMaintItem, CutOffWeightInTransToken, DefaultBankForBillPay
+        const string sql = @"SELECT OrgId, OrgName, Address, MonthlyMaintItem, CutOffWeightInTransToken, DefaultBankForBillPay, AllowChargePayment, AllowAdvancePayment
                                FROM OrgMaster
                                WHERE OrgId = @OrgId";
 
@@ -84,6 +84,8 @@ public class OrgMasterService
         parameters.Add("@MonthlyMaintItem", entity.MonthlyMaintItem);
         parameters.Add("@CutOffWeightInTransToken", entity.CutOffWeightInTransToken, DbType.Decimal);
         parameters.Add("@DefaultBankForBillPay", entity.DefaultBankForBillPay);
+        parameters.Add("@AllowChargePayment", entity.AllowChargePayment, DbType.Boolean);
+        parameters.Add("@AllowAdvancePayment", entity.AllowAdvancePayment, DbType.Boolean);
 
         await _dapperService.ExecuteStoredProcedureAsync("Proc_Update_OrgMaster", parameters);
     }

@@ -8,4 +8,6 @@ public class OrgMaster
     public string MonthlyMaintItem { get; set; } = string.Empty;
     public decimal CutOffWeightInTransToken { get; set; }
     public string DefaultBankForBillPay { get; set; } = string.Empty;
+    public bool AllowChargePayment { get; set; }
+    public bool AllowAdvancePayment { get; set; }
 }

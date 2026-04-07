@@ -10,17 +10,17 @@ var PayChargeList = React.createClass({
     render: function () {
         let renderData = this.getRenderData(this.state.ToggleSel, this.state.ItemSelect);
         return (
-            <div ref={function(node){this.Component = node;}.bind(this)} 
+            <div ref={function (node) { this.Component = node; }.bind(this)}
                 className={!this.props.HideListHeader ? "panel panel-EAccNotePrim" : ""}>
                 {
                     !this.props.HideListHeader &&
-                    <ListHeader ShowNextComponent={this.props.ShowNextComponent} ItemSelMode={true} Title="Charges"/>    
+                    <ListHeader ShowNextComponent={this.props.ShowNextComponent} ItemSelMode={true} Title="Charges" />
                 }
                 <div className="panel-body">
                     {renderData.List.length > 0 &&
                         <div style={{ textAlign: "center", marginBottom: 3 }}>
-                            <button id="payPendingBtn" className="btn btn-primary" type="button" disabled={renderData.TotalPendingAmount == 0} onClick={function () { this.payCummulative(renderData) }.bind(this)}>
-                                <span className="glyphicon glyphicon-arrow-right"/>&nbsp;Pay:&nbsp; {renderData.TotalPendingAmount}
+                            <button id="payPendingBtn" className="btn btn-primary" type="button" disabled={renderData.TotalPendingAmount == 0 || (!isAdmin() && _LoginAccount.AllowChargePayment !== true)} onClick={function () { this.payCummulative(renderData) }.bind(this)}>
+                                <span className="glyphicon glyphicon-arrow-right" />&nbsp;Pay:&nbsp; {renderData.TotalPendingAmount}
                             </button>
                             <span id="toggleSelBtn" className={this.getCSSClass()}>
                                 <span className="glyphicon glyphicon-ok-circle" onClick={this.actionOnToggle} />
@@ -29,14 +29,14 @@ var PayChargeList = React.createClass({
                                 < div className="alert alert-danger alert1">
                                     Please select Charge Items to Pay
                                 </div>
-                    }
+                            }
                         </div>
                     }
                     {renderData.List.length == 0 &&
                         <div className="alert alert-info textAlignC">
                             No pending charges. Good to Enjoy!!
                         </div>
-                    } 
+                    }
                     {renderData.List}
                 </div>
             </div>
@@ -45,18 +45,18 @@ var PayChargeList = React.createClass({
     componentDidMount: function () {
         setComponent(this);
     },
-    showMe: function(accountId){
-        if(!this.props.HideListHeader) {
+    showMe: function (accountId) {
+        if (!this.props.HideListHeader) {
             _Main.EAccountHome.hideAll();
         }
         this.loadList(accountId);
         this.loadAdvPaySummary(accountId)
         this.show();
     },
-    loadList: function(accountId){
+    loadList: function (accountId) {
         var urlParams = "?orgId=" + _LoginAccount.OrgId + "&accountId=" + accountId;
         _ProgressBar.IMBusy();
-        ajaxGet('ChargeOrder/PayCharges' + urlParams,function(data){
+        ajaxGet('ChargeOrder/PayCharges' + urlParams, function (data) {
             _ProgressBar.IMDone();
             this.setState({
                 Items: data,
@@ -76,7 +76,7 @@ var PayChargeList = React.createClass({
         return this.state.ToggleSel ? "unSelIcon" : "selIcon";
     },
     actionOnToggle: function () {
-        this.setState({ ToggleSel: !this.state.ToggleSel, ItemSelect: false});
+        this.setState({ ToggleSel: !this.state.ToggleSel, ItemSelect: false });
     },
     payCummulative: function (renderData) {
         let chargeItem = this.getTopSelectedChargeItem();
@@ -91,14 +91,14 @@ var PayChargeList = React.createClass({
         }
         this.props.ShowAdd(item, 1);
     },
-    actionOnItemSelect: function(item){
+    actionOnItemSelect: function (item) {
         item.IsCummulative = false;
         item.Selected = !item.Selected;
         this.setState({
             ItemSelect: true
         });
     },
-    getRenderData: function(toggleSel, itemSel){
+    getRenderData: function (toggleSel, itemSel) {
         let totalPendingAmount = 0;
         let chargePayeeDetailIds = [];
         let list = this.state.Items.map(function (item) {
@@ -110,11 +110,11 @@ var PayChargeList = React.createClass({
                 chargePayeeDetailIds.push(item.ChargePayeeDetailId);
             }
             return (
-                    <PayChargeRow
-                        key={item.ChargePayeeDetailId}
-                        Item={item}
-                        ActionOnItemSelect={this.actionOnItemSelect}
-                    />
+                <PayChargeRow
+                    key={item.ChargePayeeDetailId}
+                    Item={item}
+                    ActionOnItemSelect={this.actionOnItemSelect}
+                />
             );
         }.bind(this));
         return {

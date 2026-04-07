@@ -128,7 +128,8 @@ public class Fast2SmsSender
 
         var payload = new
         {
-            route = "q",
+            sender_id = AppConstants.FAST2SMS_SENDER_ID,
+            route = AppConstants.FAST2SMS_ROUTE,
             message,
             numbers = mobileNo
         };

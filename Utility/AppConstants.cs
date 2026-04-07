@@ -30,6 +30,8 @@ public static class AppConstants
     public static string FILEPATH { get; private set; } = string.Empty;
     public static string FAST2SMS_API_URL { get; private set; } = string.Empty;
     public static string FAST2SMS_API_KEY { get; private set; } = string.Empty;
+    public static string FAST2SMS_SENDER_ID { get; private set; } = string.Empty;
+    public static string FAST2SMS_ROUTE { get; private set; } = string.Empty;
 
     public static void Initialize(IConfiguration configuration)
     {
@@ -57,6 +59,8 @@ public static class AppConstants
         TEXTLOCALAPIURL = s["textlocalAPIUrl"] ?? string.Empty;
         FAST2SMS_API_KEY = s["fast2smsAPIKey"] ?? string.Empty;
         FAST2SMS_API_URL = s["fast2smsAPIUrl"] ?? string.Empty;
+        FAST2SMS_SENDER_ID = s["fast2smsSenderId"] ?? string.Empty;
+        FAST2SMS_ROUTE = s["fast2smsRoute"] ?? string.Empty;
         MOBILEMESSAGESENDER = s["mobileMessageSender"] ?? string.Empty;
 
         int otpLength = ParseInt(s["otpLength"], 5);
