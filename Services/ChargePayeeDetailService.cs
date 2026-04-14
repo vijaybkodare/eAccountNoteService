@@ -158,7 +158,7 @@ public class ChargePayeeDetailService
                           SELECT AM.AccountId, AM.AccountName, 0 AS Amount, AC.Amount - AC.SettleAmount AS PaidAmount
                               FROM AdvCharge AC INNER JOIN AccountMaster AM
                                   ON AC.DrAccountId = AM.AccountId
-                              WHERE AM.OrgId = @OrgId AND AM.AccountType = 1 {1}
+                              WHERE AM.OrgId = @OrgId AND AC.Status = 0 AND AM.AccountType = 1 {1}
                       ) AS RESULT
                       GROUP BY AccountId, AccountName
                       ORDER BY AccountName";

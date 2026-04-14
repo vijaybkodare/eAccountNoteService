@@ -171,8 +171,12 @@ public class AdvChargeService
     {
         try
         {
+            var orgId = await _dapperService.QuerySingleOrDefaultAsync<decimal>("SELECT OrgId FROM AdvCharge WHERE AdvChargeId = @Id", new { Id = id });
+            var advChargeNo = await GetOrderNoAsync(orgId);
+
             var parameters = new DynamicParameters();
             parameters.Add("@AdvChargeId", id, DbType.Decimal);
+            parameters.Add("@AdvChargeNo", advChargeNo, DbType.String);
 
             await _dapperService.ExecuteStoredProcedureAsync("Proc_Revert_AdvCharge", parameters);
             return (true, string.Empty);
