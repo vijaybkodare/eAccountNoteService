@@ -111,16 +111,6 @@ public class AdvChargeService
         return true;
     }
 
-    public async Task<bool> TransactionIdExistsAsync(decimal orgId, string transactionId)
-    {
-        const string sql = @"SELECT COUNT(1)
-                             FROM AdvCharge
-                             WHERE OrgId = @OrgId AND TransactionId = @TransactionId";
-
-        var count = await _dapperService.QuerySingleOrDefaultAsync<int>(sql, new { OrgId = orgId, TransactionId = transactionId });
-        return count > 0;
-    }
-
     private async Task<string> GetOrderNoAsync(decimal orgId)
     {
         const string sql = @"SELECT TOP 1 AdvChargeNo

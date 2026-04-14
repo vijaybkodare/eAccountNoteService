@@ -1,6 +1,7 @@
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using Microsoft.AspNetCore.Mvc;
+using eAccountNoteService.Utility;
 
 namespace eAccountNoteService.Controllers;
 
@@ -9,10 +10,12 @@ namespace eAccountNoteService.Controllers;
 public class AdvChargeController : ControllerBase
 {
     private readonly AdvChargeService _service;
+    private readonly TransNoEvaluator _transNoEvaluator;
 
-    public AdvChargeController(AdvChargeService service)
+    public AdvChargeController(AdvChargeService service, TransNoEvaluator transNoEvaluator)
     {
         _service = service;
+        _transNoEvaluator = transNoEvaluator;
     }
 
     // GET: api/advcharge/entity?orgId=1
@@ -43,7 +46,7 @@ public class AdvChargeController : ControllerBase
             return Ok(response);
         }
 
-        if (await _service.TransactionIdExistsAsync(entity.OrgId, entity.TransactionId))
+        if (await _transNoEvaluator.IsTransactionIdExistAsync(entity.OrgId, entity.TransactionId, entity.AdvChargeId, "ADVC"))
         {
             response.Error = "App alreadey contain entry with given Transaction ID. Can't be saved.";
             return Ok(response);
