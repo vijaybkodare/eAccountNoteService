@@ -97,16 +97,21 @@ public class ChargeOrderController : ControllerBase
         });
     }
 
-    // POST: api/chargeorder/makeAccountChargeZero/{chargePayeeDetailId}
-    [HttpPost("makeAccountChargeZero/{chargePayeeDetailId:decimal}")]
-    public async Task<ActionResult<ServerResponse>> MakeAccountChargeZero(decimal chargePayeeDetailId)
+    public class MakeAccountChargeZeroRequest
+    {
+        public decimal ChargePayeeDetailId { get; set; }
+    }
+
+    // POST: api/chargeorder/makeAccountChargeZero
+    [HttpPost("makeAccountChargeZero")]
+    public async Task<ActionResult<ServerResponse>> MakeAccountChargeZero([FromBody] MakeAccountChargeZeroRequest request)
     {
         var success = false;
         var error = string.Empty;
 
         try
         {
-            success = await _chargePayeeDetailService.UpdateAmountAsync(chargePayeeDetailId, 0);
+            success = await _chargePayeeDetailService.UpdateAmountAsync(request.ChargePayeeDetailId, 0);
         }
         catch (Exception ex)
         {
