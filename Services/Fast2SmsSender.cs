@@ -98,14 +98,12 @@ public class Fast2SmsSender
 
     public async Task<Fast2SmsResponse> SendMsgForLoginOtpAsync(string mobileNo, string otp)
     {
-        string msg = string.Format(AppConstants.msgTmpltForLoginOtp, otp);
-        return await SendAsync(mobileNo, msg);
+        return SendAsync(mobileNo, AppConstants.msgTmpltForLoginOtp, otp).Result;
     }
 
     public Fast2SmsResponse SendMsgForLoginOTP(string mobileNo, string otp)
     {
-        string msg = string.Format(AppConstants.msgTmpltForLoginOtp, otp);
-        return SendAsync(mobileNo, msg).Result;
+        return SendAsync(mobileNo, AppConstants.msgTmpltForLoginOtp, otp).Result;
     }
 
     // Wrapper to keep compatibility with legacy naming used in UserService
@@ -113,8 +111,11 @@ public class Fast2SmsSender
     {
         return SendMsgForLoginOtpAsync(mobileNo, otp);
     }
-
-    private async Task<Fast2SmsResponse> SendAsync(string mobileNo, string message)
+    private async Task<Fast2SmsResponse> SendAsync(string mobileNo, string messageId)
+    {
+        return await SendAsync(mobileNo, messageId, "");
+    }
+    private async Task<Fast2SmsResponse> SendAsync(string mobileNo, string message, string vars)
     {
         if (!_isActive)
             return new Fast2SmsResponse { status_code = 200, message = "Message sender inactive." };
@@ -129,6 +130,7 @@ public class Fast2SmsSender
         var payload = new
         {
             sender_id = AppConstants.FAST2SMS_SENDER_ID,
+            variables_values = vars,
             route = AppConstants.FAST2SMS_ROUTE,
             message,
             numbers = mobileNo
