@@ -98,7 +98,7 @@ public class ReconciliationService
                       INNER JOIN AccountMaster AM ON AM.AccountId = ADVC.DrAccountId
                       LEFT OUTER JOIN BankStatement BM ON BM.RefType = 3 AND BM.RefId = ADVC.AdvChargeId
                       WHERE ADVC.OrgId = @OrgId
-                        AND ( (@Status = -1 AND ADVC.Status = 0) OR (@Status <> -1 AND ADVC.Status = @Status) )
+                        AND ( (@Status = -1 AND (ADVC.Status = 0 OR ADVC.Status = 1)) OR (@Status <> -1 AND ADVC.Status = @Status) )
                         AND (@AccountId = -1 OR ADVC.DrAccountId = @AccountId)
                         AND (@FromDate IS NULL OR ADVC.AdvChargeDt >= @FromDate)
                         AND (@ToDate IS NULL OR ADVC.AdvChargeDt <= @ToDate)
@@ -192,7 +192,7 @@ public class ReconciliationService
                       INNER JOIN AccountMaster AM ON AM.AccountId = ADVC.DrAccountId
                       LEFT OUTER JOIN BankStatement BM ON BM.RefType = 3 AND BM.RefId = ADVC.AdvChargeId
                       WHERE ADVC.OrgId = @OrgId
-                        AND ( (@Status = -1 AND ADVC.Status = 0) OR (@Status <> -1 AND ADVC.Status = @Status) )
+                        AND ( (@Status = -1 AND (ADVC.Status = 0 OR ADVC.Status = 1)) OR (@Status <> -1 AND ADVC.Status = @Status) )
                         AND (@AccountId = -1 OR ADVC.DrAccountId = @AccountId)
                         AND (@FromDate IS NULL OR ADVC.AdvChargeDt >= @FromDate)
                         AND (@ToDate IS NULL OR ADVC.AdvChargeDt <= @ToDate)
