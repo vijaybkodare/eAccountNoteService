@@ -77,6 +77,15 @@
             _ProgressBar.IMDone();
         }.bind(this), 'Reconciliation.pdf');
     },
+    downloadChargePayReceipt: function (item) {
+        var urlParams = "?orgId=" + _LoginAccount.OrgId;
+        urlParams += "&id=" + item.Id;
+        urlParams += "&source=" + item.Source;
+        _ProgressBar.IMBusy();
+        ajaxDownloadPdf('/Report/downloadChargePayReceipt' + urlParams, function () {
+            _ProgressBar.IMDone();
+        }.bind(this), 'ChargePayReceipt.pdf');
+    },
     getRow: function (item) {
         return (
             <div key={item.Id} className="listItem6" style={{ backgroundColor: getBGColorBySource(item.Source) }}>
@@ -109,6 +118,9 @@
                     </div>
                     <div className="col col-xs-3 paddingL5 fontWeightB">
                         {item.TransactionId}
+                    </div>
+                    <div className="col col-xs-6 paddingL5 textAlignR selIcon">
+                        <span className="glyphicon glyphicon-download-alt" onClick={this.downloadChargePayReceipt.bind(this, item)} />{this.props.downloadText}
                     </div>
                 </div>
                 <div className="row fontSizeSr">

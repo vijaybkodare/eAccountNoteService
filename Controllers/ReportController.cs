@@ -1,3 +1,4 @@
+using eAccountNoteService.Filters;
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using eAccountNoteService.Utility;
@@ -143,6 +144,14 @@ public class ReportController : ControllerBase
     {
         var result = await _chargePayTransService.GenerateChargePayTransCsvAsync(orgId, accountId, fromDate, toDate);
         return File(result.Content, result.ContentType, result.FileName);
+    }
+
+    // GET: api/report/downloadChargePayReceipt?orgId=1&cummulativeChargePayTransId=...
+    [HttpGet("downloadChargePayReceipt")]
+    public async Task<IActionResult> DownloadChargePayReceipt([FromQuery] decimal orgId, [FromQuery] decimal id, [FromQuery] string source)
+    {
+        var result = await _chargePayTransService.GenerateChargePayReceiptPdfAsync(orgId, id, source);
+        return File(result.Content, "application/pdf", result.FileName);
     }
 
     // GET: api/report/downloadMemberAccountStatus?orgId=1

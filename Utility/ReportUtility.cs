@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using System.IO;
 using FastReport;
 using FastReport.Export.PdfSimple;
@@ -89,7 +89,8 @@ namespace eAccountNoteService.Utility
             decimal orgId,
             string reportFileName,
             string reportTitle,
-            string reportFilter)
+            string reportFilter,
+            Dictionary<string, object>? customParameters = null)
         {
             var reportPath = Path.Combine(_env.ContentRootPath, "wwwroot/reports", reportFileName);
 
@@ -100,7 +101,23 @@ namespace eAccountNoteService.Utility
 
             await setReportParameters(report, orgId, reportTitle, reportFilter);
 
-            report.Prepare();
+            if (customParameters != null)
+            {
+                foreach (var kvp in customParameters)
+                {
+                    report.SetParameterValue(kvp.Key, kvp.Value);
+                }
+            }
+
+            try
+            {
+                report.Prepare();
+            }
+            catch(Exception ex)
+            {
+
+            }
+            
             using var ms = new MemoryStream();
             using (var pdfExport = new PDFSimpleExport())
             {
@@ -116,7 +133,8 @@ namespace eAccountNoteService.Utility
             decimal orgId,
             string reportFileName,
             string reportTitle,
-            string reportFilter)
+            string reportFilter,
+            Dictionary<string, object>? customParameters = null)
         {
             var reportPath = Path.Combine(_env.ContentRootPath, "wwwroot/reports", reportFileName);
 
@@ -129,6 +147,14 @@ namespace eAccountNoteService.Utility
             }
 
             await setReportParameters(report, orgId, reportTitle, reportFilter);
+
+            if (customParameters != null)
+            {
+                foreach (var kvp in customParameters)
+                {
+                    report.SetParameterValue(kvp.Key, kvp.Value);
+                }
+            }
 
             report.Prepare();
             using var ms = new MemoryStream();

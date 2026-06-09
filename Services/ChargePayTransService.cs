@@ -6,6 +6,7 @@ using CsvHelper;
 using Dapper;
 using eAccountNoteService.Models;
 using eAccountNoteService.Utility;
+using Microsoft.Extensions.Configuration;
 
 namespace eAccountNoteService.Services;
 
@@ -18,6 +19,7 @@ public class ChargePayTransService
     private readonly BankStatementService _bankStatementService;
     private readonly CummulativeChargePayTransService _cummulativeChargePayTransService;
     private readonly ReportUtility _reportUtility;
+    private readonly IConfiguration _configuration;
 
     public ChargePayTransService(
         DapperService dapperService,
@@ -26,7 +28,8 @@ public class ChargePayTransService
         AdvChargeService advChargeService,
         BankStatementService bankStatementService,
         CummulativeChargePayTransService cummulativeChargePayTransService,
-        ReportUtility reportUtility)
+        ReportUtility reportUtility,
+        IConfiguration configuration)
     {
         _dapperService = dapperService;
         _transactionService = transactionService;
@@ -35,6 +38,7 @@ public class ChargePayTransService
         _bankStatementService = bankStatementService;
         _cummulativeChargePayTransService = cummulativeChargePayTransService;
         _reportUtility = reportUtility;
+        _configuration = configuration;
     }
 
     public async Task<IEnumerable<ChargePayTrans>> GetAllRecordsAsync(decimal orgId, decimal accountId, string fromDate, string toDate)
@@ -390,6 +394,82 @@ public class ChargePayTransService
 
             return true;
         });
+    }
+
+    public async Task<DataTable> GetChargePayReceiptDataAsync(decimal orgId, decimal id, string source)
+    {
+        string sql = "";
+        if (source == "CPT")
+        {
+            sql = @"SELECT 'CPT' AS Source, CPT.ChargePayTransId AS Id, AM.AccountName, CO.ChargeDt, CO.ChargeOrderNo, CO.Remark, BS.TransDt,
+            BS.Remark AS BSRemark, CPT.TransactionId,  CPT.Amount, CPT.TransMode, CPT.PaymentDt AS AddedDt,
+            CPT.Amount AS SettleAmount, CPT.ReconcStatus, CPT.Status  FROM ChargePayTrans CPT 
+            INNER JOIN AccountMaster AM ON CPT.DrAccountId = AM.AccountId 
+            INNER JOIN ChargePayeeDetail CPD ON CPD.ChargePayeeDetailId = CPT.ChargePayeeDetailId 
+            INNER JOIN ChargeOrder CO ON CO.ChargeOrderId = CPD.ChargeOrderId 
+            LEFT OUTER JOIN BankStatement BS ON BS.RefType = 2 AND BS.RefId = CPT.ChargePayTransId
+            WHERE AM.OrgId = @OrgId AND CPT.RefType = 0
+            AND CPT.ChargePayTransId = @Id";
+        }
+        if (source == "CCPT")
+        {
+            sql = @"SELECT 'CCPT' AS Source, CCPT.CummulativeChargePayTransId AS Id, AM.AccountName, CO.ChargeDt, CO.ChargeOrderNo, CO.Remark, BS.TransDt,
+            BS.Remark AS BSRemark, CCPT.TransactionId,  CCPT.Amount, CCPT.TransMode, CCPT.AddedDt,
+            CPT.Amount AS SettleAmount, CCPT.ReconcStatus, CCPT.Status  FROM CummulativeChargePayTrans CCPT 
+            INNER JOIN AccountMaster AM ON CCPT.AccountId = AM.AccountId 
+            INNER JOIN ChargePayTrans CPT ON CPT.RefType = 1 AND CPT.RefId = CCPT.CummulativeChargePayTransId 
+            INNER JOIN ChargePayeeDetail CPD ON CPD.ChargePayeeDetailId = CPT.ChargePayeeDetailId 
+            INNER JOIN ChargeOrder CO ON CO.ChargeOrderId = CPD.ChargeOrderId 
+            LEFT OUTER JOIN BankStatement BS ON BS.RefType = 1 AND BS.RefId = CCPT.CummulativeChargePayTransId
+            WHERE CCPT.OrgId = @OrgId
+            AND CCPT.CummulativeChargePayTransId = @Id";
+        }
+        if (source == "ADVC")
+        {
+            sql = @"SELECT 'ADVC' AS Source, ADVC.AdvChargeId AS Id, AM.AccountName, CO.ChargeDt, CO.ChargeOrderNo, CO.Remark, BS.TransDt,  
+            BS.Remark AS BSRemark, ADVC.TransactionId,  ADVC.Amount, 0 AS TransMode, ADVC.AdvChargeDt AS AddedDt,
+            CPT.Amount AS SettleAmount, ADVC.ReconcStatus, ADVC.Status  FROM AdvCharge ADVC 
+            INNER JOIN AccountMaster AM ON ADVC.DrAccountId = AM.AccountId 
+            INNER JOIN CummulativeChargePayTrans CCPT ON CCPT.RefType = 2 AND CCPT.RefId = ADVC.AdvChargeId
+            INNER JOIN ChargePayTrans CPT ON CPT.RefType = 1 AND CPT.RefId = CCPT.CummulativeChargePayTransId 
+            INNER JOIN ChargePayeeDetail CPD ON CPD.ChargePayeeDetailId = CPT.ChargePayeeDetailId 
+            INNER JOIN ChargeOrder CO ON CO.ChargeOrderId = CPD.ChargeOrderId 
+            LEFT OUTER JOIN BankStatement BS ON BS.RefType = 3 AND BS.RefId = ADVC.AdvChargeId
+            WHERE ADVC.OrgId = @OrgId
+            AND ADVC.AdvChargeId = @Id";
+        }
+
+        var parameters = new DynamicParameters();
+        parameters.Add("@OrgId", orgId, DbType.Decimal);
+        parameters.Add("@Id", id, DbType.Decimal);
+        
+
+        return await _dapperService.QueryToDataTableAsync(sql, parameters);
+    }
+
+    public async Task<(byte[] Content, string FileName)> GenerateChargePayReceiptPdfAsync(
+        decimal orgId, decimal id, string source)
+    {
+        var data = await GetChargePayReceiptDataAsync(orgId, id, source);
+        var societyChairman = _configuration["AppSettings:societyChairman"] ?? string.Empty;
+
+        var customParameters = new Dictionary<string, object>
+        {
+            { "societyChairman", societyChairman }
+        };
+        string repTitle = "Charge Payment Receipt";
+        if (source == "ADVC")
+        {
+            repTitle = "Advance Charge Payment Receipt";
+        }
+        return await _reportUtility.GenerateReportPdfAsync(
+            data,
+            "ChargePayReceipt",
+            orgId,
+            "ChargePayReceipt.frx",
+            repTitle,
+            "",
+            customParameters);
     }
 
     public static async Task AddAsync(ChargePayTrans entity, IDbConnection connection, IDbTransaction transaction)
