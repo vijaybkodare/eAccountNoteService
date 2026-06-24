@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="07/19/2025 12:00:00" ReportInfo.Modified="06/09/2026 09:48:11" ReportInfo.CreatorVersion="2025.2.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="07/19/2025 12:00:00" ReportInfo.Modified="06/24/2026 23:12:40" ReportInfo.CreatorVersion="2025.2.0.0">
   <ScriptText>
     using System;
     using System.Collections;
@@ -73,7 +73,7 @@
       <LineObject Name="Line1" Left="18.9" Top="88.83" Width="680.4"/>
       <LineObject Name="Line2" Left="18.9" Top="94.5" Width="680.4" Border.Width="3"/>
     </PageHeaderBand>
-    <GroupHeaderBand Name="GroupHeader1" Top="98.5" Width="718.2" Height="179.55" CanGrow="true" Condition="[ChargePayReceipt.Id]">
+    <GroupHeaderBand Name="GroupHeader1" Top="98.5" Width="718.2" Height="113.4" CanGrow="true" Condition="[ChargePayReceipt.Id]">
       <TextObject Name="Text130" Left="302.4" Top="9.45" Width="56.7" Height="18.9" Text="Date" Font="Arial, 10pt, style=Bold"/>
       <TextObject Name="Text131" Left="378" Top="9.45" Width="132.3" Height="18.9" Text=": [ChargePayReceipt.AddedDt]" Format="Custom" Format.Format="dd-MMM-yyyy" Font="Arial, 10pt"/>
       <TextObject Name="Text132" Left="510.3" Top="9.45" Width="113.4" Height="18.9" Text="Reconciliation :" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
@@ -87,33 +87,38 @@
       <TextObject Name="Text135" Left="160.65" Top="37.8" Width="141.75" Height="18.9" Text=": [ChargePayReceipt.AccountName]" Font="Arial, 10pt, style=Bold"/>
       <TextObject Name="Text136" Left="18.9" Top="66.15" Width="141.75" Height="18.9" Text="Amount In Words" Font="Arial, 10pt, style=Bold"/>
       <TextObject Name="Text137" Left="160.65" Top="66.15" Width="538.65" Height="18.9" Text=": [ToWordsIn([ChargePayReceipt.Amount])]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="0" WordWrap="false" Font="Arial, 10pt, style=Bold" Trimming="EllipsisCharacter"/>
-      <TextObject Name="Text138" Left="425.25" Top="122.85" Width="103.95" Height="18.9" Text="Transaction Id" Font="Arial, 10pt, style=Bold"/>
-      <TextObject Name="Text139" Left="529.2" Top="122.85" Width="170.1" Height="18.9" Text=": [ChargePayReceipt.TransactionId]" Font="Arial, 10pt"/>
-      <TextObject Name="Text140" Left="18.9" Top="94.5" Width="141.75" Height="18.9" Text="Transaction Remark" Font="Arial, 10pt, style=Bold"/>
-      <TextObject Name="Text141" Left="160.65" Top="94.5" Width="538.65" Height="18.9" CanGrow="true" Text=": [ChargePayReceipt.TransDt] [ChargePayReceipt.BSRemark]" Font="Arial, 10pt"/>
+      <TextObject Name="Text140" Left="18.9" Top="94.5" Width="141.75" Height="18.9" Text="Trans. Remark" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text141" Left="160.65" Top="94.5" Width="538.65" Height="18.9" CanGrow="true" GrowToBottom="true" Text=": [FormatDateTime([ChargePayReceipt.TransDt],&quot;dd-MMM-yyyy&quot;)] [ChargePayReceipt.BSRemark]" Font="Arial, 10pt"/>
       <TextObject Name="Text148" Left="481.95" Top="37.8" Width="141.75" Height="18.9" Text="Transaction Mode :" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
-      <TextObject Name="Text123" Left="604.8" Top="151.2" Width="94.5" Height="28.35" Border.Lines="Top, Bottom" Text="Amount" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
-      <TextObject Name="Text122" Left="18.9" Top="151.2" Width="113.4" Height="28.35" Border.Lines="Top, Bottom" Text="Charge Date" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
-      <TextObject Name="Text121" Left="245.7" Top="151.2" Width="359.1" Height="28.35" Border.Lines="Top, Bottom" Text="Charges" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
-      <TextObject Name="Text129" Left="18.9" Top="122.85" Width="132.3" Height="18.9" Text="Settled Charges" Font="Arial, 10pt, style=Bold"/>
-      <TextObject Name="Text142" Left="132.3" Top="151.2" Width="113.4" Height="28.35" Border.Lines="Top, Bottom" Text="Charge No." VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
       <TextObject Name="Text151" Left="623.7" Top="37.8" Width="75.6" Height="18.9" Text="[IIf([ChargePayReceipt.TransMode]==0,&quot;Online&quot;,&quot;Cash&quot;)]" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
       <TextObject Name="Text152" Left="18.9" Top="9.45" Width="141.75" Height="18.9" Text="Receipt Number" Font="Arial, 10pt, style=Bold"/>
       <TextObject Name="Text153" Left="160.65" Top="9.45" Width="141.75" Height="18.9" Text=": [ChargePayReceipt.Source]-[ChargePayReceipt.Id]" Font="Arial, 10pt, style=Bold"/>
       <TextObject Name="Text154" Left="302.4" Top="37.8" Width="75.6" Height="18.9" Text="Amount" Font="Arial, 10pt, style=Bold"/>
       <TextObject Name="Text155" Left="378" Top="37.8" Width="94.5" Height="18.9" Text=":[ChargePayReceipt.Amount]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="0" VertAlign="Center" WordWrap="false" Font="Arial, 10pt, style=Bold" Trimming="EllipsisCharacter"/>
-      <DataBand Name="Data1" Top="282.05" Width="718.2" Height="28.35" DataSource="ChargePayReceipt">
+      <ChildBand Name="Child1" Top="215.9" Width="718.2" Height="28.35">
+        <TextObject Name="Text138" Left="406.35" Top="9.45" Width="113.4" Height="18.9" Text="Transaction Id" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
+        <TextObject Name="Text139" Left="519.75" Top="9.45" Width="179.55" Height="18.9" Text=": [ChargePayReceipt.TransactionId]" HorzAlign="Right" Font="Arial, 10pt"/>
+        <TextObject Name="Text129" Left="18.9" Top="9.45" Width="132.3" Height="18.9" Text="Settled Charges" Font="Arial, 10pt, style=Bold"/>
+        <ChildBand Name="Child2" Top="248.25" Width="718.2" Height="37.8">
+          <TextObject Name="Text123" Left="604.8" Top="9.45" Width="94.5" Height="28.35" Border.Lines="Top, Bottom" Text="Set. Amnt" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+          <TextObject Name="Text122" Left="18.9" Top="9.45" Width="113.4" Height="28.35" Border.Lines="Top, Bottom" Text="Charge Date" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+          <TextObject Name="Text121" Left="245.7" Top="9.45" Width="359.1" Height="28.35" Border.Lines="Top, Bottom" Text="Charges" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+          <TextObject Name="Text142" Left="132.3" Top="9.45" Width="113.4" Height="28.35" Border.Lines="Top, Bottom" Text="Charge No." VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        </ChildBand>
+      </ChildBand>
+      <DataBand Name="Data1" Top="290.05" Width="718.2" Height="28.35" DataSource="ChargePayReceipt">
         <TextObject Name="Text124" Left="18.9" Width="113.4" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" CanGrow="true" Text="[ChargePayReceipt.ChargeDt]" Format="Custom" Format.Format="dd-MMM-yyyy" VertAlign="Center" Font="Arial, 10pt"/>
         <TextObject Name="Text116" Left="245.7" Width="359.1" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" CanGrow="true" Text="[ChargePayReceipt.Remark]" Format="Custom" Format.Format="dd-MMM-yyyy" VertAlign="Center" Font="Arial, 10pt"/>
         <TextObject Name="Text117" Left="604.8" Width="94.5" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" CanGrow="true" Text="[ChargePayReceipt.SettleAmount]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="0" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
         <TextObject Name="Text113" Left="132.3" Width="113.4" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" CanGrow="true" Text="[ChargePayReceipt.ChargeOrderNo]" VertAlign="Center" Font="Arial, 10pt"/>
       </DataBand>
-      <GroupFooterBand Name="GroupFooter1" Top="314.4" Width="718.2" Height="28.35">
+      <GroupFooterBand Name="GroupFooter1" Top="322.4" Width="718.2" Height="28.35">
         <TextObject Name="Text149" Left="604.8" Width="94.5" Height="28.35" Text="[TotalAmount]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
         <LineObject Name="Line3" Left="18.9" Top="28.35" Width="680.4"/>
+        <TextObject Name="Text156" Left="18.9" Width="585.9" Height="28.35" Text="[IIf([ChargePayReceipt.Source]==&quot;ADVC&quot;,&quot;Note: Amount &quot; + ([ChargePayReceipt.Amount] - [TotalAmount]) + &quot; is pending for settle.&quot;,&quot;&quot;)]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
       </GroupFooterBand>
     </GroupHeaderBand>
-    <ReportSummaryBand Name="ReportSummary1" Top="346.75" Width="718.2" Height="113.4">
+    <ReportSummaryBand Name="ReportSummary1" Top="354.75" Width="718.2" Height="113.4">
       <TextObject Name="Text143" Left="18.9" Top="9.45" Width="141.75" Height="18.9" Text="Thanks" Font="Arial, 10pt, style=Bold"/>
       <TextObject Name="Text144" Left="557.55" Top="75.6" Width="141.75" Height="18.9" Text="Society Chairman" HorzAlign="Center" Font="Arial, 10pt, style=Bold"/>
       <TextObject Name="Text150" Left="557.55" Top="47.25" Width="141.75" Height="18.9" Text="[societyChairman]" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
