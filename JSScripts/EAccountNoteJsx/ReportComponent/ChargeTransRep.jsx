@@ -42,7 +42,11 @@ var ChargeTransRep = React.createClass({
     },
     refreshData: function (filter) {
         if (!filter || typeof (filter.AccountId) == "undefined") {
-            filter = { FromDate: get1stDayOfCurrentMonth(), ToDate: getCurrentDateWithEODTime(), AccountId: -1 };
+            if (this.state.Filter) {
+                filter = this.state.Filter;
+            } else {
+                filter = { FromDate: get1stDayOfCurrentMonth(), ToDate: getCurrentDateWithEODTime(), AccountId: -1 };
+            }
         }
         var urlParams = "?orgId=" + _LoginAccount.OrgId;
         urlParams += "&fromDate=" + filter.FromDate;

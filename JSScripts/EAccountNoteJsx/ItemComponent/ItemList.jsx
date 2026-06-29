@@ -59,7 +59,7 @@ var ItemList = React.createClass({
         var srNo = 0;
         return this.state.Items.map(function(item){
             if(item.Active){
-                if(item.ItemName.toLowerCase().indexOf(this.state.Filter) > -1 
+                if (item.ItemName.toLowerCase().indexOf(this.state.Filter.toLowerCase()) > -1 
                 || this.state.Filter == ""){
                     srNo += 1;
                     return (

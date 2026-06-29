@@ -38,7 +38,11 @@ var ChargePayeeItemRep = React.createClass({
     },
     refreshData: function (filter) {
         if (!filter || typeof (filter.AccountId) == "undefined") {
-            filter = { FromDate: get1stDayOfCurrentMonth(), ToDate: getCurrentDateWithEODTime(), AccountId: -1 };
+            if (this.state.Filter) {
+                filter = this.state.Filter;
+            } else {
+                filter = { FromDate: get1stDayOfCurrentMonth(), ToDate: getCurrentDateWithEODTime(), AccountId: -1 };
+            }
         }
         if (_LoginAccount.RoleId == 2) {
             filter.AccountId = _LoginAccount.AccountId;
