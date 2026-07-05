@@ -88,5 +88,47 @@ To re-generate bundles, run:
 - Transactional logic uses `DapperService.ExecuteInTransactionAsync` to ensure consistency across related inserts/updates.
 - Many services have been ported to async patterns (`Task<T>` with Dapper) while preserving legacy SQL and stored procedure semantics.
 
-## Build js
+## Build JS (JSX Compilation)
 
+Follow these instructions to compile JSX files into standard JavaScript.
+
+### Environment Version Prerequisites
+- **Node.js:** `6.13.4`
+- **npm:** `8.17.0`
+
+### Setup Babel Compiler
+1. Install `babel-cli` globally:
+   ```bash
+   npm install -g babel-cli
+   ```
+
+2. Switch to the project root:
+   ```bash
+   cd c:\Users\LENOVO\PROJECTS\eAccountNoteService
+   ```
+
+3. Install presets:
+   - **`babel-preset-es2015`** (optional, if your code uses ES6 standards):
+     ```bash
+     npm install babel-preset-es2015
+     ```
+   - **`babel-preset-react`** (required):
+     ```bash
+     npm install babel-preset-react
+     ```
+
+### Compile `.jsx` to `.js`
+1. Switch to the project root:
+   ```bash
+   cd c:\Users\LENOVO\PROJECTS\eAccountNoteService
+   ```
+
+2. Compile source files from the JSX folder to the JavaScript folder:
+   - **Workspace Paths:**
+     ```bash
+     babel JSScripts/EAccountNoteJsx -d JSScripts/eaccountnotejs
+     ```
+   - **Alternative/Legacy Paths:**
+     ```bash
+     babel scripts/eaccountnotejsx -d scripts/eaccountnotejs
+     ```
