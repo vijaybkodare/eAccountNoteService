@@ -1,4 +1,4 @@
-﻿var _LoginAccount = {};
+var _LoginAccount = {};
 var _ProgressBar = {};
 var _Main = {};
 var _UserLogout = {};
@@ -32,6 +32,7 @@ function getDOMNodeVal(id) {
 function ajaxGet(url, actionOnLoad) {
     var xhr = new XMLHttpRequest();
     xhr.open('get', url, true);
+    xhr.setRequestHeader('Authorization', 'Bearer ' + _LoginAccount.AccessKey);
     xhr.setRequestHeader('accesskey', _LoginAccount.AccessKey);
     xhr.setRequestHeader('userid', _LoginAccount.UserId);
     xhr.onload = function () {
@@ -50,6 +51,7 @@ function ajaxDownload(url, actionOnLoad, fileName) {
     }
     var xhr = new XMLHttpRequest();
     xhr.open('get', url, true);
+    xhr.setRequestHeader('Authorization', 'Bearer ' + _LoginAccount.AccessKey);
     xhr.setRequestHeader('accesskey', _LoginAccount.AccessKey);
     xhr.setRequestHeader('userid', _LoginAccount.UserId);
     xhr.onload = function () {
@@ -77,6 +79,7 @@ function ajaxDownloadPdf(url, actionOnLoad, fileName, action, data) {
     }
     var req = new XMLHttpRequest();
     req.open(action, url, true);
+    req.setRequestHeader('Authorization', 'Bearer ' + _LoginAccount.AccessKey);
     req.setRequestHeader('accesskey', _LoginAccount.AccessKey);
     req.setRequestHeader('userid', _LoginAccount.UserId);
     req.responseType = "blob";
@@ -116,6 +119,7 @@ function ajaxDownloadPdfPost(url, actionOnLoad, fileName, data) {
 function ajaxPost(url, data, actionOnLoad) {
     var xhr = new XMLHttpRequest();
     xhr.open('post', url, true);
+    xhr.setRequestHeader('Authorization', 'Bearer ' + _LoginAccount.AccessKey);
     xhr.setRequestHeader('accesskey', _LoginAccount.AccessKey);
     xhr.setRequestHeader('userid', _LoginAccount.UserId);
     xhr.onload = function () {
@@ -132,6 +136,7 @@ function ajaxPostJson(url, data, actionOnLoad) {
     var xhr = new XMLHttpRequest();
     xhr.open('post', url, true);
     xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.setRequestHeader('Authorization', 'Bearer ' + _LoginAccount.AccessKey);
     xhr.setRequestHeader('accesskey', _LoginAccount.AccessKey);
     xhr.setRequestHeader('userid', _LoginAccount.UserId);
     xhr.onload = function () {

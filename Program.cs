@@ -33,6 +33,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Dependency Injection registrations
+builder.Services.AddDataProtection();
+builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<DapperService>();
 builder.Services.AddScoped<AuthActionFilter>();
 builder.Services.AddScoped<OrgMasterService>();

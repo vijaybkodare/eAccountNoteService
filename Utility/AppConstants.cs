@@ -27,6 +27,8 @@ public static class AppConstants
     public static int MAXPSW { get; private set; } = 9999;
     public static int ACCESSKEYLEN { get; private set; } = 10;
     public static bool isMessageSenderActive { get; private set; } = false;
+    public static bool useBearerToken { get; private set; } = false;
+    public static int bearerTokenExpiryMinutes { get; private set; } = 43200;
     public static string FILEPATH { get; private set; } = string.Empty;
     public static string FAST2SMS_API_URL { get; private set; } = string.Empty;
     public static string FAST2SMS_API_KEY { get; private set; } = string.Empty;
@@ -39,6 +41,15 @@ public static class AppConstants
 
         isMessageSenderActive = string.Equals(s["isMessageSenderActive"], "Yes", StringComparison.OrdinalIgnoreCase)
                                 || string.Equals(s["isMessageSenderActive"], "true", StringComparison.OrdinalIgnoreCase);
+
+        useBearerToken = string.Equals(s["useBearerToken"], "Yes", StringComparison.OrdinalIgnoreCase)
+                         || string.Equals(s["useBearerToken"], "true", StringComparison.OrdinalIgnoreCase);
+
+        bearerTokenExpiryMinutes = ParseInt(s["bearerTokenExpiryMinutes"], 43200);
+        if (bearerTokenExpiryMinutes <= 0)
+        {
+            bearerTokenExpiryMinutes = 43200;
+        }
 
         msgTmpltForAccountCrea = s["msgTmpltForAccountCrea"] ?? string.Empty;
         msgTmpltForAccountReg = s["msgTmpltForAccountReg"] ?? string.Empty;

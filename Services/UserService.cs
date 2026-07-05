@@ -13,6 +13,7 @@ public class UserService
     private readonly DapperService _dapperService;
     private readonly OrgMasterService _orgMasterService;
     private readonly UserProfileService _userProfileService;
+    private readonly TokenService _tokenService;
 
     public UserService(
         ILogger<UserService> logger,
@@ -20,7 +21,8 @@ public class UserService
         Fast2SmsSender smsSender,
         DapperService dapperService,
         OrgMasterService orgMasterService,
-        UserProfileService userProfileService)
+        UserProfileService userProfileService,
+        TokenService tokenService)
     {
         _logger = logger;
         _emailSender = emailSender;
@@ -28,6 +30,7 @@ public class UserService
         _dapperService = dapperService;
         _orgMasterService = orgMasterService;
         _userProfileService = userProfileService;
+        _tokenService = tokenService;
     }
 
     public async Task<bool> DeleteUserAsync(decimal userId)
@@ -457,6 +460,11 @@ WHERE UM.MobileNo = @MobileNo";
         if (user == null)
         {
             return new ServerResponse { IsSuccess = false, Error = "Record not found" };
+        }
+
+        if (Utility.AppConstants.useBearerToken)
+        {
+            user.AccessKey = _tokenService.GenerateToken(user.UserId, user.OrgId, user.RoleId);
         }
 
         return new ServerResponse { IsSuccess = true, Data = user };

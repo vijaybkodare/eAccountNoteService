@@ -1,4 +1,4 @@
-﻿var Login = React.createClass({
+var Login = React.createClass({
     ActiveTab: 0,
     getInitialState: function () {
         return {
@@ -168,6 +168,7 @@
         //Comment it in PRDO
         document.cookie = "Password=" + this.Password.value + ";expires=" + now.toUTCString();
         axios.defaults.headers.common['Content-Type'] = "application/json";
+        axios.defaults.headers.common['Authorization'] = "Bearer " + _LoginAccount.AccessKey;
         axios.defaults.headers.common['accesskey'] = _LoginAccount.AccessKey;
         axios.defaults.headers.common['userid'] = _LoginAccount.UserId;
     },

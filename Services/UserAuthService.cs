@@ -8,11 +8,13 @@ namespace eAccountNoteService.Services;
 public class UserAuthService
 {
     private readonly DapperService _dapperService;
+    private readonly TokenService _tokenService;
     private readonly ILogger<UserAuthService> _logger;
 
-    public UserAuthService(DapperService dapperService, ILogger<UserAuthService> logger)
+    public UserAuthService(DapperService dapperService, TokenService tokenService, ILogger<UserAuthService> logger)
     {
         _dapperService = dapperService;
+        _tokenService = tokenService;
         _logger = logger;
     }
 
@@ -55,6 +57,11 @@ public class UserAuthService
             if (user == null)
             {
                 return new ServerResponse { IsSuccess = false, Error = "Record not found" };
+            }
+
+            if (Utility.AppConstants.useBearerToken)
+            {
+                user.AccessKey = _tokenService.GenerateToken(user.UserId, user.OrgId, user.RoleId);
             }
 
             // Fetch ItemMaster for MonthlyMaintItem
