@@ -93,8 +93,8 @@ To re-generate bundles, run:
 Follow these instructions to compile JSX files into standard JavaScript.
 
 ### Environment Version Prerequisites
-- **Node.js:** `6.13.4`
-- **npm:** `8.17.0`
+- **Node.js:** `8.17.0`
+- **npm:** `6.13.4`
 
 ### Setup Babel Compiler
 1. Install `babel-cli` globally:

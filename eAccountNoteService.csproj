@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -173,7 +173,6 @@
     <None Include="wwwroot\scripts\eaccountnotejs\AutoTransEntryComponent\AutoTransEntry.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\AutoTransEntryComponent\AutoTransEntryRep.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\BankStatementComponent\AddBankStatement.js" />
-    <None Include="wwwroot\scripts\eaccountnotejs\BankStatementComponent\BankStatement.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\BankStatementComponent\BankStatementList.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\BankStatementComponent\BankStatementRep.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\BankStatementComponent\BankStatementRep2.js" />
@@ -185,7 +184,6 @@
     <None Include="wwwroot\scripts\eaccountnotejs\ChargeComponent\ChargeAccountRow.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\ChargeComponent\ChargeList.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\ChargeComponent\ChargeRow.js" />
-    <None Include="wwwroot\scripts\eaccountnotejs\ChartComponent\BarChart.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\ChartComponent\IncomeExpChart.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\ChartComponent\MonthwiseIncExpChart.js" />
     <None Include="wwwroot\scripts\eaccountnotejs\ChartComponent\PieChart.js" />

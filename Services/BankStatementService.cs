@@ -31,11 +31,24 @@ public class BankStatementService
     {
         var sql = @"SELECT BSH.BankStatementHeaderId, BSH.OrgId, BSH.BankStatementNo,
                              BSH.BankId, BSH.AddedDt, BSH.FromDt, BSH.ToDt,
-                            BS.TransDt, BS.BankStatementId,
+                             BS.TransDt, BS.BankStatementId,
                              BS.Amount, BS.Remark, BS.TransactionId, BS.Balance,
-                             BS.RefType, BS.RefId, BS.Status
+                             BS.RefType, BS.RefId, BS.Status,
+                             COALESCE(am_ccpt.AccountName, am_cpt.AccountName, am_ac.AccountName) AS DR_Account,
+                             COALESCE(am_ccpt_cr.AccountName, am_cpt_cr.AccountName, am_ac_cr.AccountName, am_bp_cr.AccountName) AS CR_Account
                       FROM BankStatement BS
                       INNER JOIN BankStatementHeader BSH ON BSH.BankStatementHeaderId = BS.BankStatementHeaderId
+                      LEFT OUTER JOIN CummulativeChargePayTrans ccpt ON BS.RefType = 2 AND ccpt.CummulativeChargePayTransId = BS.RefId 
+                      LEFT OUTER JOIN ChargePayTrans cpt ON BS.RefType = 1 AND cpt.ChargePayTransId = BS.RefId
+                      LEFT OUTER JOIN AdvCharge ac ON BS.RefType = 3 AND ac.AdvChargeId = BS.RefId
+                      LEFT OUTER JOIN BillPayTrans bpt ON BS.RefType = 0 AND bpt.BillPayTransId = BS.RefId 
+                      LEFT OUTER JOIN AccountMaster am_ccpt ON ccpt.DrAccountId = am_ccpt.AccountId 
+                      LEFT OUTER JOIN AccountMaster am_cpt ON cpt.DrAccountId = am_cpt.AccountId
+                      LEFT OUTER JOIN AccountMaster am_ac ON ac.DrAccountId = am_ac.AccountId
+                      LEFT OUTER JOIN AccountMaster am_ccpt_cr ON ccpt.CrAccountId = am_ccpt_cr.AccountId 
+                      LEFT OUTER JOIN AccountMaster am_cpt_cr ON cpt.CrAccountId = am_cpt_cr.AccountId
+                      LEFT OUTER JOIN AccountMaster am_ac_cr ON ac.CrAccountId = am_ac_cr.AccountId
+                      LEFT OUTER JOIN AccountMaster am_bp_cr ON bpt.CrAccountId = am_bp_cr.AccountId
                       WHERE 1=1";
 
         var parameters = new DynamicParameters();

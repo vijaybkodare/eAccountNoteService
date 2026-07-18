@@ -15,4 +15,6 @@ public class BankStatement
     public int RefType { get; set; }
     public decimal RefId { get; set; }
     public int Status { get; set; }
+    public string? DR_Account { get; set; }
+    public string? CR_Account { get; set; }
 }

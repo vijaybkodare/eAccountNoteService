@@ -1,4 +1,4 @@
-﻿var BankStatementRep2 = React.createClass({
+var BankStatementRep2 = React.createClass({
     getInitialState: function () {
         return {
             Items: [],
@@ -203,6 +203,16 @@
                             {item.Remark}
                         </div>
                     </div>
+                    {(item.DR_Account || item.CR_Account) &&
+                        <div className="row fontSizeSr">
+                            <div className="col col-xs-3 paddingR5 textAlignR">
+                                DR:CR
+                            </div>
+                            <div className="col col-xs-9 paddingL5">
+                                {item.DR_Account || "-"} : {item.CR_Account || "-"}
+                            </div>
+                        </div>
+                    }
                     <div className="row fontSizeSr">
                         <div className="col col-xs-3 paddingR5 textAlignR">
                             Trans ID

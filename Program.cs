@@ -19,6 +19,22 @@ if (appEnv == "prod")
     builder.WebHost.UseUrls("http://0.0.0.0:5040");
 }
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        var allowedOriginsSetting = builder.Configuration["AppSettings:allowedOrigins"];
+        if (!string.IsNullOrEmpty(allowedOriginsSetting))
+        {
+            var allowedOrigins = allowedOriginsSetting.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            policy.WithOrigins(allowedOrigins);
+        }
+
+        policy.AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 // Add services to the container.
 builder.Services.AddControllers(options =>
     {
@@ -71,6 +87,8 @@ builder.Services.AddScoped<ChargeTransMapService>();
 AppConstants.Initialize(builder.Configuration);
 
 var app = builder.Build();
+
+app.UseCors("AllowAll");
 
 // Centralized exception logging and standardized error responses
 app.UseMiddleware<ExceptionLoggingMiddleware>();
