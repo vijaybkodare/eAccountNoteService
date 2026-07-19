@@ -113,14 +113,37 @@ public class BankStatementService
         return rows > 0;
     }
 
-    public async Task<(byte[] Content, string ContentType, string FileName)> GenerateStatementCsvAsync(
-        decimal orgId,
-        string fromDate,
-        string toDate,
-        int status,
-        string? remark = null)
+    private DataTable ConvertToDataTable(IEnumerable<BankStatement> items)
     {
-        var records = await GetRecordsAsync(id: -1, orgId: orgId, fromDate: fromDate, toDate: toDate, status: status, remark: remark);
+        var dt = new DataTable("BankStatement");
+        dt.Columns.Add("TransDt", typeof(DateTime));
+        dt.Columns.Add("Remark", typeof(string));
+        dt.Columns.Add("TransactionId", typeof(string));
+        dt.Columns.Add("Amount", typeof(decimal));
+        dt.Columns.Add("Balance", typeof(decimal));
+        dt.Columns.Add("DR_Account", typeof(string));
+        dt.Columns.Add("CR_Account", typeof(string));
+        dt.Columns.Add("Status", typeof(decimal));
+
+        foreach (var item in items)
+        {
+            dt.Rows.Add(
+                item.TransDt,
+                item.Remark ?? string.Empty,
+                item.TransactionId ?? string.Empty,
+                item.Amount,
+                item.Balance,
+                item.DR_Account ?? string.Empty,
+                item.CR_Account ?? string.Empty,
+                item.Status
+            );
+        }
+        return dt;
+    }
+
+    public Task<(byte[] Content, string ContentType, string FileName)> GenerateStatementCsvAsync(
+        IEnumerable<BankStatement> records)
+    {
         var list = records.ToList();
 
         using var memoryStream = new MemoryStream();
@@ -132,6 +155,8 @@ public class BankStatementService
             csv.WriteField("Amount");
             csv.WriteField("TransactionId");
             csv.WriteField("Status");
+            csv.WriteField("DR Account");
+            csv.WriteField("CR Account");
             csv.NextRecord();
 
             decimal totalCredit = 0;
@@ -144,6 +169,8 @@ public class BankStatementService
                 csv.WriteField(item.Amount);
                 csv.WriteField(item.TransactionId);
                 csv.WriteField(item.Status == 1 ? "Mapped" : "Not Mapped");
+                csv.WriteField(item.DR_Account ?? string.Empty);
+                csv.WriteField(item.CR_Account ?? string.Empty);
                 csv.NextRecord();
 
                 if (item.Amount < 0)
@@ -161,11 +188,15 @@ public class BankStatementService
             csv.WriteField(totalCredit);
             csv.WriteField(string.Empty);
             csv.WriteField(string.Empty);
+            csv.WriteField(string.Empty);
+            csv.WriteField(string.Empty);
             csv.NextRecord();
 
             csv.WriteField(string.Empty);
             csv.WriteField("Total Debit");
             csv.WriteField(totalDebit);
+            csv.WriteField(string.Empty);
+            csv.WriteField(string.Empty);
             csv.WriteField(string.Empty);
             csv.WriteField(string.Empty);
             csv.NextRecord();
@@ -175,13 +206,15 @@ public class BankStatementService
             csv.WriteField(totalCredit - totalDebit);
             csv.WriteField(string.Empty);
             csv.WriteField(string.Empty);
+            csv.WriteField(string.Empty);
+            csv.WriteField(string.Empty);
             csv.NextRecord();
 
             writer.Flush();
         }
 
         var bytes = memoryStream.ToArray();
-        return (bytes, "text/csv", "bankStatement.csv");
+        return Task.FromResult((bytes, "text/csv", "bankStatement.csv"));
     }
 
     public static async Task UpdateReconciliationStatusAsync(
@@ -205,75 +238,50 @@ public class BankStatementService
             commandType: CommandType.StoredProcedure);
     }
 
-    // Core generator used by both range and single-header reports. Mirrors legacy GetRecords: data
-    // query remains the same; only the reportFilter string differs.
-    private async Task<(byte[] Content, string FileName)> GenerateBankStatementReportPdfCoreAsync(
-        decimal id,
+    public async Task<(byte[] Content, string FileName)> GenerateBankStatementReportPdfAsync(
+        IEnumerable<BankStatement> records,
         decimal orgId,
-        string? fromDate,
-        string? toDate,
-        string filter)
+        string fromDate,
+        string toDate,
+        int status = -1,
+        string? remark = null,
+        int transType = 0,
+        string reportFile = "BankStatementMapping.frx")
     {
-        var sql = @"SELECT BSH.BankStatementHeaderId, BSH.OrgId, BSH.BankStatementNo,
-                             BSH.BankId, BSH.AddedDt, BSH.FromDt, BSH.ToDt,
-                             BS.TransDt, BS.BankStatementId,
-                             BS.Amount, BS.Remark, BS.TransactionId, BS.Balance,
-                             BS.RefType, BS.RefId, BS.Status
-                      FROM BankStatement BS
-                      INNER JOIN BankStatementHeader BSH ON BSH.BankStatementHeaderId = BS.BankStatementHeaderId
-                      WHERE 1 = 1";
+        var filter = await _reportUtility.GetReportFilterAsync(-1, fromDate, toDate);
 
-        var parameters = new DynamicParameters();
+        var extraFilters = new List<string>();
 
-        if (orgId != -1)
+        if (status == 1)
+            extraFilters.Add("Mapped");
+        else if (status == 0)
+            extraFilters.Add("Not Mapped");
+
+        if (transType == 1)
+            extraFilters.Add("Credit(CR)");
+        else if (transType == -1)
+            extraFilters.Add("Debit(DR)");
+
+        if (!string.IsNullOrWhiteSpace(remark))
+            extraFilters.Add($"Remark: {remark}");
+
+        if (extraFilters.Count > 0)
         {
-            sql += " AND BSH.OrgId = @OrgId";
-            parameters.Add("@OrgId", orgId, DbType.Decimal);
+            if (string.IsNullOrEmpty(filter))
+                filter = string.Join(", ", extraFilters);
+            else
+                filter += ", " + string.Join(", ", extraFilters);
         }
 
-        if (id != -1)
-        {
-            sql += " AND BSH.BankStatementHeaderId = @HeaderId";
-            parameters.Add("@HeaderId", id, DbType.Decimal);
-        }
-        else
-        {
-            if (!string.IsNullOrWhiteSpace(fromDate))
-            {
-                sql += " AND BS.TransDt >= @FromDate";
-                parameters.Add("@FromDate", fromDate, DbType.String);
-            }
-            if (!string.IsNullOrWhiteSpace(toDate))
-            {
-                sql += " AND BS.TransDt <= @ToDate";
-                parameters.Add("@ToDate", toDate, DbType.String);
-            }
-        }
-
-        var data = await _dapperService.QueryToDataTableAsync(sql, parameters);
+        var data = ConvertToDataTable(records);
 
         return await _reportUtility.GenerateReportPdfAsync(
             data,
             "BankStatement",
             orgId,
-            "BankStatement.frx",
+            reportFile,
             "Bank Statement Report",
             filter);
-    }
-
-    public async Task<(byte[] Content, string FileName)> GenerateBankStatementReportPdfAsync(
-        decimal orgId,
-        string fromDate,
-        string toDate)
-    {
-        var filter = await _reportUtility.GetReportFilterAsync(-1, fromDate, toDate);
-
-        return await GenerateBankStatementReportPdfCoreAsync(
-            id: -1,
-            orgId: orgId,
-            fromDate: fromDate,
-            toDate: toDate,
-            filter: filter);
     }
 
     public async Task<(byte[] Content, string FileName)> GenerateSingleBankStatementReportPdfAsync(
@@ -292,11 +300,39 @@ public class BankStatementService
             ? string.Empty
             : "Bank Statement: " + bankStatementNo;
 
-        return await GenerateBankStatementReportPdfCoreAsync(
-            id: id,
-            orgId: orgId,
-            fromDate: null,
-            toDate: null,
-            filter: filter);
+        var records = await GetRecordsAsync(id: id, orgId: orgId, fromDate: null, toDate: null, status: -1, remark: null, amountFlag: 0);
+
+        var data = ConvertToDataTable(records);
+
+        return await _reportUtility.GenerateReportPdfAsync(
+            data,
+            "BankStatement",
+            orgId,
+            "BankStatement.frx",
+            "Bank Statement Report",
+            filter);
+    }
+
+    public async Task<(byte[] Content, string ContentType, string FileName)> DownloadBankStatMapRepAsync(
+        decimal orgId,
+        string fromDate,
+        string toDate,
+        int status,
+        int transType,
+        string? remark,
+        string repType)
+    {
+        var records = await GetRecordsAsync(id: -1, orgId: orgId, fromDate: fromDate, toDate: toDate, status: status, remark: remark, amountFlag: transType);
+
+        if (repType.Equals("csv", StringComparison.OrdinalIgnoreCase))
+        {
+            var csvResult = await GenerateStatementCsvAsync(records);
+            return csvResult;
+        }
+        else
+        {
+            var pdfResult = await GenerateBankStatementReportPdfAsync(records, orgId, fromDate, toDate, status, remark, transType, "BankStatementMapping.frx");
+            return (pdfResult.Content, "application/pdf", pdfResult.FileName);
+        }
     }
 }

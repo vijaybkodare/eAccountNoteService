@@ -45,14 +45,20 @@ public class BankStatementController : ControllerBase
         return File(result.Content, "application/pdf", result.FileName);
     }
 
-    // GET: api/bankstatement/bankstatementrep?orgId=1&fromDate=...&toDate=...
-    // Returns a PDF bank statement report for the given date range.
+    // GET: api/bankstatement/bankstatementrep?orgId=1&fromDate=...&toDate=...&status=-1&transType=0&remark=...&repType=pdf
+    // Returns a PDF or CSV bank statement report for the given date range depending on repType.
     [HttpGet("bankstatementrep")]
-    public async Task<FileContentResult> GetBankStatementRep([FromQuery] decimal orgId, [FromQuery] string fromDate, [FromQuery] string toDate)
+    public async Task<IActionResult> GetBankStatementRep(
+        [FromQuery] decimal orgId,
+        [FromQuery] string fromDate,
+        [FromQuery] string toDate,
+        [FromQuery] int status = -1,
+        [FromQuery] int transType = 0,
+        [FromQuery] string? remark = null,
+        [FromQuery] string repType = "pdf")
     {
-        var result = await _statementService.GenerateBankStatementReportPdfAsync(orgId, fromDate, toDate);
-
-        return File(result.Content, "application/pdf", result.FileName);
+        var result = await _statementService.DownloadBankStatMapRepAsync(orgId, fromDate, toDate, status, transType, remark, repType);
+        return File(result.Content, result.ContentType, result.FileName);
     }
 
     // GET: api/bankstatement/bankstatement?id=1&orgId=1&fromDate=...&toDate=...&remark=...

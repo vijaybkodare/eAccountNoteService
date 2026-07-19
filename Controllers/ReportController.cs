@@ -170,18 +170,6 @@ public class ReportController : ControllerBase
         return File(result.Content, result.ContentType, result.FileName);
     }
 
-    // GET: api/report/getStatementInCsv?orgId=1&fromDate=...&toDate=...&status=0&remark=...
-    [HttpGet("getStatementInCsv")]
-    public async Task<IActionResult> GetStatementInCsv(
-        [FromQuery] decimal orgId,
-        [FromQuery] string fromDate,
-        [FromQuery] string toDate,
-        [FromQuery] int status,
-        [FromQuery] string? remark = null)
-    {
-        var result = await _bankStatementService.GenerateStatementCsvAsync(orgId, fromDate, toDate, status, remark);
-        return File(result.Content, result.ContentType, result.FileName);
-    }
 
     // GET: api/report/evaluateUtrNoAsTransNo?orgId=1&accountId=...&fromDate=...&toDate=...
     [HttpGet("evaluateUtrNoAsTransNo")]

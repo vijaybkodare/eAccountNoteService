@@ -3,8 +3,12 @@ var BankStatementRep2 = React.createClass({
         return {
             Items: [],
             Status: -1,
-            TransType: 0
+            TransType: 0,
+            DropdownOpen: false
         };
+    },
+    toggleDropdown: function () {
+        this.setState({ DropdownOpen: !this.state.DropdownOpen });
     },
     render: function () {
         return (
@@ -32,70 +36,58 @@ var BankStatementRep2 = React.createClass({
                     </div>
                     <div className="form-group">
                         <label>Mapped status</label>
-                        <div className="row">
-                            <div className="col-xs-4">
-                                <div className="radio">
-                                    <label>
-                                        <input ref="UserAccount" type="radio" name="Role" value="-1" onChange={this.statusChange} />
-                                        All
-                                    </label>
-                                </div>
+                        <div className="btn-group btn-group-justified" role="group">
+                            <div className="btn-group" role="group">
+                                <button type="button" className={this.state.Status == -1 ? "btn btn-primary" : "btn btn-default"} onClick={this.statusChange.bind(this, -1)}>All</button>
                             </div>
-                            <div className="col-xs-4">
-                                <div className="radio">
-                                    <label>
-                                        <input ref="UserAccount" type="radio" name="Role" value="1" onChange={this.statusChange} />
-                                        Mapped
-                                    </label>
-                                </div>
+                            <div className="btn-group" role="group">
+                                <button type="button" className={this.state.Status == 1 ? "btn btn-primary" : "btn btn-default"} onClick={this.statusChange.bind(this, 1)}>Mapped</button>
                             </div>
-                            <div className="col-xs-4">
-                                <div className="radio">
-                                    <label>
-                                        <input type="radio" name="Role" value="0" onChange={this.statusChange} />
-                                        Not Mapped
-                                    </label>
-                                </div>
+                            <div className="btn-group" role="group">
+                                <button type="button" className={this.state.Status == 0 ? "btn btn-primary" : "btn btn-default"} onClick={this.statusChange.bind(this, 0)}>Not Mapped</button>
                             </div>
                         </div>
                     </div>
                     <div className="form-group">
                         <label>Transaction Type</label>
-                        <div className="row">
-                            <div className="col-xs-4">
-                                <div className="radio">
-                                    <label>
-                                        <input ref="UserAccount" type="radio" name="transType" value="0" onChange={this.transTypeChange} />
-                                        All
-                                    </label>
-                                </div>
+                        <div className="btn-group btn-group-justified" role="group">
+                            <div className="btn-group" role="group">
+                                <button type="button" className={this.state.TransType == 0 ? "btn btn-primary" : "btn btn-default"} onClick={this.transTypeChange.bind(this, 0)}>All</button>
                             </div>
-                            <div className="col-xs-4">
-                                <div className="radio">
-                                    <label>
-                                        <input ref="UserAccount" type="radio" name="transType" value="1" onChange={this.transTypeChange} />
-                                        Credit(CR)
-                                    </label>
-                                </div>
+                            <div className="btn-group" role="group">
+                                <button type="button" className={this.state.TransType == 1 ? "btn btn-primary" : "btn btn-default"} onClick={this.transTypeChange.bind(this, 1)}>Credit(CR)</button>
                             </div>
-                            <div className="col-xs-4">
-                                <div className="radio">
-                                    <label>
-                                        <input type="radio" name="transType" value="-1" onChange={this.transTypeChange} />
-                                        Debit(DB)
-                                    </label>
-                                </div>
+                            <div className="btn-group" role="group">
+                                <button type="button" className={this.state.TransType == -1 ? "btn btn-primary" : "btn btn-default"} onClick={this.transTypeChange.bind(this, -1)}>Debit(DB)</button>
                             </div>
                         </div>
                     </div>
                     <hr />
                     <div className="text-center">
                         <button className="btn btn-primary marginR5" type="button" onClick={this.getRecord}>
-                            <span className="glyphicon glyphicon-search" />
+                            <span className="glyphicon glyphicon-search" /> Search
                         </button>
-                        <button className="btn btn-primary" type="button" onClick={this.downloadCsv}>
-                            <span className="glyphicon glyphicon-download-alt" />
-                        </button>
+                        <div className={this.state.DropdownOpen ? "btn-group open" : "btn-group"}>
+                            <button type="button" className="btn btn-success dropdown-toggle" onClick={this.toggleDropdown}>
+                                <span className="glyphicon glyphicon-download-alt" /> Download <span className="caret"></span>
+                            </button>
+                            <ul className="dropdown-menu">
+                                <li>
+                                    <a href="#" onClick={function (e) {
+                                        e.preventDefault();
+                                        this.setState({ DropdownOpen: false });
+                                        this.downloadCsv();
+                                    }.bind(this)}>CSV Report</a>
+                                </li>
+                                <li>
+                                    <a href="#" onClick={function (e) {
+                                        e.preventDefault();
+                                        this.setState({ DropdownOpen: false });
+                                        this.downloadPdf();
+                                    }.bind(this)}>PDF Report</a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                     <hr />
                     {this.getList()}
@@ -112,11 +104,13 @@ var BankStatementRep2 = React.createClass({
         this.getRecord(id);
         this.show();
     },
-    statusChange: function (e) {
-        this.setState({ Status: e.currentTarget.value });
+    statusChange: function (val) {
+        var value = (val && val.currentTarget) ? val.currentTarget.value : val;
+        this.setState({ Status: value });
     },
-    transTypeChange: function (e) {
-        this.setState({ TransType: e.currentTarget.value });
+    transTypeChange: function (val) {
+        var value = (val && val.currentTarget) ? val.currentTarget.value : val;
+        this.setState({ TransType: value });
     },
     getList: function () {
         return this.state.Items.map(function (item) {
@@ -144,9 +138,21 @@ var BankStatementRep2 = React.createClass({
         urlParams += "&fromDate=" + this.FromDt.getValue();
         urlParams += "&toDate=" + this.ToDt.getValue() + " 23:59:59";
         _ProgressBar.IMBusy();
-        ajaxDownload('report/getStatementInCsv' + urlParams, function () {
+        ajaxDownload('api/BankStatement/bankstatementrep' + urlParams + '&repType=csv', function () {
             _ProgressBar.IMDone();
         }.bind(this), 'bankstatement.csv');
+    },
+    downloadPdf: function () {
+        var urlParams = "?orgId=" + _LoginAccount.OrgId;
+        urlParams += "&remark=" + this.Remark.value;
+        urlParams += "&status=" + this.state.Status;
+        urlParams += "&transType=" + this.state.TransType;
+        urlParams += "&fromDate=" + this.FromDt.getValue();
+        urlParams += "&toDate=" + this.ToDt.getValue() + " 23:59:59";
+        _ProgressBar.IMBusy();
+        ajaxDownloadPdf('api/BankStatement/bankstatementrep' + urlParams + '&repType=pdf', function () {
+            _ProgressBar.IMDone();
+        }.bind(this), 'bankstatement.pdf');
     },
     getSummaryRow: function () {
         var totalAmount = 0;
