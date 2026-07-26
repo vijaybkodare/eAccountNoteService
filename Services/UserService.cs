@@ -66,18 +66,23 @@ public class UserService
     {
         try
         {
-            await _dapperService.ExecuteInTransactionAsync<int>(async (connection, transaction) =>
+            var response = await _dapperService.ExecuteInTransactionAsync<ServerResponse>(async (connection, transaction) =>
             {
                 var parameters = new DynamicParameters();
                 parameters.Add("LoginId", loginId, DbType.String, ParameterDirection.Input);
                 parameters.Add("NewPassword", newPassword, DbType.String, ParameterDirection.Input);
                 parameters.Add("OldPassword", oldPassword, DbType.String, ParameterDirection.Input);
 
-                await connection.ExecuteAsync("Proc_Update_Password", parameters, transaction, commandType: CommandType.StoredProcedure);
-                return 0;
+                var affectedRows = await connection.ExecuteAsync("Proc_Update_Password", parameters, transaction, commandType: CommandType.StoredProcedure);
+                if (affectedRows == 0)
+                {
+                    return new ServerResponse { IsSuccess = false, Error = "Wrong old password." };
+                }
+
+                return new ServerResponse { IsSuccess = true };
             });
 
-            return new ServerResponse { IsSuccess = true };
+            return response;
         }
         catch (Exception ex)
         {
