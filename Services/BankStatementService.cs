@@ -38,8 +38,8 @@ public class BankStatementService
                              COALESCE(am_ccpt_cr.AccountName, am_cpt_cr.AccountName, am_ac_cr.AccountName, am_bp_cr.AccountName) AS CR_Account
                       FROM BankStatement BS
                       INNER JOIN BankStatementHeader BSH ON BSH.BankStatementHeaderId = BS.BankStatementHeaderId
-                      LEFT OUTER JOIN CummulativeChargePayTrans ccpt ON BS.RefType = 2 AND ccpt.CummulativeChargePayTransId = BS.RefId 
-                      LEFT OUTER JOIN ChargePayTrans cpt ON BS.RefType = 1 AND cpt.ChargePayTransId = BS.RefId
+                      LEFT OUTER JOIN CummulativeChargePayTrans ccpt ON BS.RefType = 1 AND ccpt.CummulativeChargePayTransId = BS.RefId 
+                      LEFT OUTER JOIN ChargePayTrans cpt ON BS.RefType = 2 AND cpt.ChargePayTransId = BS.RefId
                       LEFT OUTER JOIN AdvCharge ac ON BS.RefType = 3 AND ac.AdvChargeId = BS.RefId
                       LEFT OUTER JOIN BillPayTrans bpt ON BS.RefType = 0 AND bpt.BillPayTransId = BS.RefId 
                       LEFT OUTER JOIN AccountMaster am_ccpt ON ccpt.DrAccountId = am_ccpt.AccountId 
