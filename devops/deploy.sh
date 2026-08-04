@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 COLOR_RED="\033[31m"
 COLOR_GREEN="\033[32m"
 COLOR_BLUE="\033[34m"
@@ -17,6 +17,8 @@ echo -e "$COLOR_RED Starting deployment $COLOR_END"
 REMOTE_PATH="/var/www/$APP_NAME"   
 
 echo -e "$COLOR_GREEN 1. Build started. $COLOR_END"
+echo -e "$COLOR_BLUE Clearing publish directory: $BUILD_DIR $COLOR_END"
+rm -rf "$BUILD_DIR"
 dotnet publish -c Release -o $BUILD_DIR
 echo -e "$COLOR_BLUE Build completed successfully. $COLOR_END"
 
