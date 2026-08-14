@@ -62,12 +62,12 @@ public class AccountTransTokenService
         }).ToList();*/
     }
 
-    public async Task<bool> DeleteAsync(decimal accountId, int tokenTypeId)
+    public async Task<bool> DeleteAsync(decimal accountId, int tokenTypeId, string tokenValue)
     {
         const string sql = @"DELETE FROM AccountTransToken
-                             WHERE AccountId = @AccountId AND TokenTypeId = @TokenTypeId";
+                             WHERE AccountId = @AccountId AND TokenTypeId = @TokenTypeId AND TokenValue = @TokenValue";
 
-        var affected = await _dapperService.ExecuteAsync(sql, new { AccountId = accountId, TokenTypeId = tokenTypeId });
+        var affected = await _dapperService.ExecuteAsync(sql, new { AccountId = accountId, TokenTypeId = tokenTypeId, TokenValue = tokenValue });
         return affected > 0;
     }
 }

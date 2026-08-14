@@ -44,6 +44,7 @@ public class AdvChargeService
                              FROM AdvCharge
                              WHERE DrAccountId = @AccountId
                                AND SettleAmount < Amount
+                               AND status = 0
                              ORDER BY AdvChargeNo";
 
         var result = await _dapperService.QuerySingleOrDefaultAsync<AdvCharge>(sql, new { AccountId = accountId });

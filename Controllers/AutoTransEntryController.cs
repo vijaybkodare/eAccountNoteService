@@ -102,9 +102,10 @@ public class AutoTransEntryController : ControllerBase
     [HttpPost("delTransToken")]
     public async Task<ActionResult<ServerResponse>> DelTransToken([
         FromQuery] decimal accountId,
-        [FromQuery] int tokenTypeId)
+        [FromQuery] int tokenTypeId,
+        [FromQuery] string tokenValue)
     {
-        var success = await _accountTransTokenService.DeleteAsync(accountId, tokenTypeId);
+        var success = await _accountTransTokenService.DeleteAsync(accountId, tokenTypeId, tokenValue);
         return Ok(new ServerResponse { IsSuccess = success });
     }
 

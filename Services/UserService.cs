@@ -159,7 +159,7 @@ public class UserService
                     }
                 }*/
 
-                return new ServerResponse { IsSuccess = true };
+                return new ServerResponse { IsSuccess = true, Data = entity };
             });
         }
         catch (Exception ex)
