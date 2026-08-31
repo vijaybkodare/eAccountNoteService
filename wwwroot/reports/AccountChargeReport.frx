@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Report ScriptLanguage="CSharp" ReportInfo.Created="07/19/2025 12:00:00" ReportInfo.Modified="12/25/2025 22:50:54" ReportInfo.CreatorVersion="2025.2.0.0">
   <ScriptText>
     using System;
@@ -38,19 +38,25 @@
   <Dictionary>
     <TableDataSource Name="AccountChargeReport" ReferenceName="AccountChargeReport" DataType="System.Int32" Enabled="true">
       <Column Name="ChargeOrderNo" DataType="System.String"/>
-      <Column Name="ItemName" DataType="System.String"/>
+      <Column Name="ChargeDt" DataType="System.String"/>
       <Column Name="Remark" DataType="System.String"/>
+      <Column Name="AccountId" DataType="System.Decimal"/>
       <Column Name="Amount" DataType="System.Decimal"/>
       <Column Name="PaidAmount" DataType="System.Decimal"/>
       <Column Name="PendingAmount" DataType="System.Decimal"/>
+      <Column Name="ItemName" DataType="System.String"/>
+      <Column Name="AccountName" DataType="System.String"/>
     </TableDataSource>
     <Parameter Name="reportTitle" DataType="System.String" AsString=""/>
     <Parameter Name="OrgName" DataType="System.String" AsString=""/>
     <Parameter Name="address" DataType="System.String" AsString=""/>
     <Parameter Name="reportFilter" DataType="System.String" AsString=""/>
-    <Total Name="TotalAmount" Expression="[AccountChargeReport.Amount]" Evaluator="Data1"/>
-    <Total Name="TotalPaid" Expression="[AccountChargeReport.PaidAmount]" Evaluator="Data1"/>
-    <Total Name="TotalPending" Expression="[AccountChargeReport.PendingAmount]" Evaluator="Data1"/>
+    <Total Name="TotalAmount" Expression="[AccountChargeReport.Amount]" Evaluator="Data1" PrintOn="DataFooter1"/>
+    <Total Name="TotalPaid" Expression="[AccountChargeReport.PaidAmount]" Evaluator="Data1" PrintOn="DataFooter1"/>
+    <Total Name="TotalPending" Expression="[AccountChargeReport.PendingAmount]" Evaluator="Data1" PrintOn="DataFooter1"/>
+    <Total Name="RepTotalAmount" Expression="[AccountChargeReport.Amount]" Evaluator="Data1"/>
+    <Total Name="RepTotalPaid" Expression="[AccountChargeReport.PaidAmount]" Evaluator="Data1"/>
+    <Total Name="RepTotalPending" Expression="[AccountChargeReport.PendingAmount]" Evaluator="Data1"/>
   </Dictionary>
   <ReportPage Name="Page1" Watermark.Font="Arial, 60pt">
     <PageHeaderBand Name="PageHeader1" Width="718.2" Height="122.85">
@@ -60,23 +66,35 @@
       <TextObject Name="Text105" Left="113.4" Top="47.25" Width="567" Height="18.9" Text="[reportTitle]" HorzAlign="Center" Font="Arial, 11pt, style=Bold"/>
       <TextObject Name="Text106" Left="113.4" Top="66.15" Width="567" Height="18.9" Text="[reportFilter]" HorzAlign="Center" Font="Arial, 9pt"/>
       <TextObject Name="Text89" Left="415.8" Top="94.5" Width="94.5" Height="28.35" Border.Lines="Top, Bottom" Text="Amount" HorzAlign="Right" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
-      <TextObject Name="Text86" Left="18.9" Top="94.5" Width="85.05" Height="28.35" Border.Lines="Top, Bottom" Text="Charge No." VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text86" Left="103.95" Top="94.5" Width="85.05" Height="28.35" Border.Lines="Top, Bottom" Text="Charge No." VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
       <TextObject Name="Text87" Left="604.8" Top="94.5" Width="94.5" Height="28.35" Border.Lines="Top, Bottom" Text="Pend. Amount" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
-      <TextObject Name="Text88" Left="103.95" Top="94.5" Width="311.85" Height="28.35" Border.Lines="Top, Bottom" Text="Item" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text88" Left="189" Top="94.5" Width="226.8" Height="28.35" Border.Lines="Top, Bottom" Text="Item / Remark" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
       <TextObject Name="Text90" Left="510.3" Top="94.5" Width="94.5" Height="28.35" Border.Lines="Top, Bottom" Text="Paid Amount" HorzAlign="Right" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
       <TextObject Name="Text111" Left="18.9" Top="66.15" Width="66.15" Height="18.9" Border.Lines="Top" Text="fnaman" HorzAlign="Center" Font="Arial, 11pt"/>
+      <TextObject Name="TextDateHeader" Left="18.9" Top="94.5" Width="85.05" Height="28.35" Border.Lines="Top, Bottom" Text="Date" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
     </PageHeaderBand>
-    <DataBand Name="Data1" Top="126.85" Width="718.2" Height="28.35" CanGrow="true" DataSource="AccountChargeReport">
-      <TextObject Name="Text94" Left="415.8" Width="94.5" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" GrowToBottom="true" Text="[AccountChargeReport.Amount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text95" Left="510.3" Width="94.5" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" GrowToBottom="true" Text="[AccountChargeReport.PaidAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text93" Left="103.95" Width="311.85" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" CanGrow="true" Text="[AccountChargeReport.ItemName]: [AccountChargeReport.Remark]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text110" Left="18.9" Width="85.05" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" GrowToBottom="true" Text="[AccountChargeReport.ChargeOrderNo]" VertAlign="Center" Font="Arial, 10pt"/>
-      <TextObject Name="Text114" Left="604.8" Width="94.5" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" Border.Width="0.5" GrowToBottom="true" Text="[AccountChargeReport.PendingAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
-      <DataFooterBand Name="DataFooter1" Top="159.2" Width="718.2" Height="18.9">
-        <TextObject Name="Text112" Left="415.8" Width="94.5" Height="18.9" Text="[TotalAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
-        <TextObject Name="Text113" Left="510.3" Width="94.5" Height="18.9" Text="[TotalPaid]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
-        <TextObject Name="Text115" Left="604.8" Width="94.5" Height="18.9" Text="[TotalPending]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
-      </DataFooterBand>
-    </DataBand>
+    <GroupHeaderBand Name="GroupHeader1" Top="126.85" Width="718.2" Height="28.35" Condition="[AccountChargeReport.AccountName]" KeepWithData="true">
+      <TextObject Name="TextGroup" Left="18.9" Width="680.4" Height="28.35" Text="[AccountChargeReport.AccountName]" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <DataBand Name="Data1" Top="159.2" Width="718.2" Height="28.35" CanGrow="true" DataSource="AccountChargeReport">
+        <TextObject Name="Text94" Left="415.8" Width="94.5" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" GrowToBottom="true" Text="[AccountChargeReport.Amount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text95" Left="510.3" Width="94.5" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" GrowToBottom="true" Text="[AccountChargeReport.PaidAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text93" Left="189" Width="226.8" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" CanGrow="true" Text="[AccountChargeReport.ItemName]: [AccountChargeReport.Remark]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text110" Left="103.95" Width="85.05" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" GrowToBottom="true" Text="[AccountChargeReport.ChargeOrderNo]" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text114" Left="604.8" Width="94.5" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" Border.Width="0.5" GrowToBottom="true" Text="[AccountChargeReport.PendingAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" WordWrap="false" Font="Arial, 10pt" Trimming="EllipsisCharacter"/>
+        <TextObject Name="TextDate" Left="18.9" Width="85.05" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" GrowToBottom="true" Text="[AccountChargeReport.ChargeDt]" VertAlign="Center" Font="Arial, 10pt"/>
+        <DataFooterBand Name="DataFooter1" Top="191.55" Width="718.2" Height="28.35">
+          <TextObject Name="Text112" Left="415.8" Width="94.5" Height="18.9" Text="[TotalAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
+          <TextObject Name="Text113" Left="510.3" Width="94.5" Height="18.9" Text="[TotalPaid]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
+          <TextObject Name="Text115" Left="604.8" Width="94.5" Height="18.9" Text="[TotalPending]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
+          <TextObject Name="TextGroupTotalLabel" Left="189" Width="226.8" Height="18.9" Text="Account Total:" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+        </DataFooterBand>
+      </DataBand>
+    </GroupHeaderBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="223.9" Width="718.2" Height="37.8">
+      <TextObject Name="TextReportTotalAmount" Left="415.8" Width="94.5" Height="28.35" Border.Lines="Bottom" Border.Width="0.5" Text="[RepTotalAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="TextReportTotalPaid" Left="510.3" Width="94.5" Height="28.35" Border.Lines="Bottom" Border.Width="0.5" Text="[RepTotalPaid]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="TextReportTotalPending" Left="604.8" Width="94.5" Height="28.35" Border.Lines="Bottom" Border.Width="0.5" Text="[RepTotalPending]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="TextReportTotalLabel" Left="189" Width="226.8" Height="28.35" Text="Report Total:" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+    </ReportSummaryBand>
   </ReportPage>
 </Report>

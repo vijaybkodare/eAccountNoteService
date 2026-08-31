@@ -93,6 +93,23 @@ public class PdfReportController : ControllerBase
         return File(result.Content, "application/pdf", result.FileName);
     }
 
+    // GET: api/pdfreport/accountTrans?orgId=1&accountId=1&fromDate=2024-01-01&toDate=2024-12-31
+    [HttpGet("accountTrans")]
+    public async Task<FileContentResult> GetAccountTrans(
+        [FromQuery] decimal orgId,
+        [FromQuery] decimal accountId,
+        [FromQuery] string fromDate,
+        [FromQuery] string toDate)
+    {
+        var result = await _chargePayTransService.GenerateAccountTransReportPdfAsync(
+            orgId,
+            accountId,
+            fromDate,
+            toDate);
+
+        return File(result.Content, "application/pdf", result.FileName);
+    }
+
     // GET: api/pdfreport/chargeTrans?orgId=1&accountId=1&fromDate=2024-01-01&toDate=2024-12-31
     [HttpGet("chargeTrans")]
     public async Task<FileContentResult> GetChargeTrans(
@@ -101,7 +118,7 @@ public class PdfReportController : ControllerBase
         [FromQuery] string fromDate,
         [FromQuery] string toDate)
     {
-        var result = await _chargePayTransService.GenerateChargeTransReportPdfAsync(
+        var result = await _chargePayTransService.GenerateAccountTransReportPdfAsync(
             orgId,
             accountId,
             fromDate,

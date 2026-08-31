@@ -200,7 +200,7 @@ public class ChargePayTransService
         return (bytes, "text/csv", "chargePayTrans.csv");
     }
 
-    public async Task<(byte[] Content, string FileName)> GenerateChargeTransReportPdfAsync(
+    public async Task<(byte[] Content, string FileName)> GenerateAccountTransReportPdfAsync(
         decimal orgId,
         decimal accountId,
         string fromDate,
@@ -238,10 +238,10 @@ public class ChargePayTransService
 
         return await _reportUtility.GenerateReportPdfAsync(
             dataTable,
-            "ChargeTransReport",
+            "AccountTransReport",
             orgId,
-            "ChargeTransReport.frx",
-            "Charge Transactions Report",
+            "AccountTransReport.frx",
+            "Account Transactions Report",
             filter);
     }
 
