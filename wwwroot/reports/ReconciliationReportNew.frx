@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="07/19/2025 12:00:00" ReportInfo.Modified="01/03/2026 16:49:53" ReportInfo.CreatorVersion="2025.2.0.0">
+<Report ScriptLanguage="CSharp" ReportInfo.Created="07/19/2025 12:00:00" ReportInfo.Modified="09/14/2026 21:16:25" ReportInfo.CreatorVersion="2026.2.0.0">
   <ScriptText>
     using System;
     using System.Collections;
@@ -45,7 +45,7 @@
       <Column Name="Amount" DataType="System.Decimal"/>
       <Column Name="TransMode" DataType="System.Decimal"/>
       <Column Name="ReconcStatus" DataType="System.Decimal"/>
-      <Column Name="TransDt" DataType="System.DateTime" PropName="Column" Calculated="true" Expression=""/>
+      <Column Name="TransDt" DataType="System.DateTime" PropName="Column"/>
       <Column Name="AddedDt" DataType="System.DateTime" PropName="Column"/>
     </TableDataSource>
     <Parameter Name="reportTitle" DataType="System.String" AsString=""/>
@@ -82,10 +82,13 @@
             <Condition Expression="[Reconciliation.ReconcStatus] != 1" Font="Arial, 9.75pt, style=Bold" ApplyFont="true"/>
           </Highlight>
         </TextObject>
-        <TextObject Name="Text115" Left="47.25" Width="103.95" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Reconciliation.AddedDt]" Format="Custom" Format.Format="dd-MMM-yyyy" VertAlign="Center" Font="Arial, 10pt"/>
+        <TextObject Name="Text115" Left="47.25" Width="103.95" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" Border.Width="0.5" CanGrow="true" GrowToBottom="true" Text="[Reconciliation.TransDt]" Format="Custom" Format.Format="dd-MMM-yyyy" VertAlign="Center" Font="Arial, 10pt"/>
         <DataFooterBand Name="DataFooter1" Top="191.55" Width="718.2" Height="28.35">
           <TextObject Name="Text108" Left="529.2" Width="94.5" Height="28.35" Border.Lines="Bottom" Text="[TotalAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
         </DataFooterBand>
+        <Sort>
+          <Sort Expression="[Reconciliation.TransDt]"/>
+        </Sort>
       </DataBand>
     </GroupHeaderBand>
     <ReportSummaryBand Name="ReportSummary1" Top="223.9" Width="718.2" Height="37.8">

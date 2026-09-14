@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Report ScriptLanguage="CSharp" ReportInfo.Created="07/19/2025 12:00:00" ReportInfo.Modified="12/25/2025 22:50:54" ReportInfo.CreatorVersion="2025.2.0.0">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="07/19/2025 12:00:00" ReportInfo.Modified="09/14/2026 21:27:56" ReportInfo.CreatorVersion="2026.2.0.0">
   <ScriptText>
     using System;
     using System.Collections;
@@ -73,7 +73,7 @@
       <TextObject Name="Text111" Left="18.9" Top="66.15" Width="66.15" Height="18.9" Border.Lines="Top" Text="fnaman" HorzAlign="Center" Font="Arial, 11pt"/>
       <TextObject Name="TextDateHeader" Left="18.9" Top="94.5" Width="85.05" Height="28.35" Border.Lines="Top, Bottom" Text="Date" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
     </PageHeaderBand>
-    <GroupHeaderBand Name="GroupHeader1" Top="126.85" Width="718.2" Height="28.35" Condition="[AccountChargeReport.AccountName]" KeepWithData="true">
+    <GroupHeaderBand Name="GroupHeader1" Top="126.85" Width="718.2" Height="28.35" KeepWithData="true" Condition="[AccountChargeReport.AccountName]">
       <TextObject Name="TextGroup" Left="18.9" Width="680.4" Height="28.35" Text="[AccountChargeReport.AccountName]" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
       <DataBand Name="Data1" Top="159.2" Width="718.2" Height="28.35" CanGrow="true" DataSource="AccountChargeReport">
         <TextObject Name="Text94" Left="415.8" Width="94.5" Height="28.35" Border.Lines="Bottom" Border.Style="Dot" GrowToBottom="true" Text="[AccountChargeReport.Amount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
@@ -88,6 +88,9 @@
           <TextObject Name="Text115" Left="604.8" Width="94.5" Height="18.9" Text="[TotalPending]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" Font="Arial, 10pt, style=Bold"/>
           <TextObject Name="TextGroupTotalLabel" Left="189" Width="226.8" Height="18.9" Text="Account Total:" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
         </DataFooterBand>
+        <Sort>
+          <Sort Expression="[AccountChargeReport.ChargeDt]"/>
+        </Sort>
       </DataBand>
     </GroupHeaderBand>
     <ReportSummaryBand Name="ReportSummary1" Top="223.9" Width="718.2" Height="37.8">
