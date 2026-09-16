@@ -164,10 +164,9 @@ public class ChargeTransMapService
                 transaction: transaction);
 
             // Update App Transaction table (ChargePayTrans, CCPT, or ADVC)
-            // SET Status = 1 and TransactionId. 
             // Note: ReconcStatus = 1 is already handled by the Proc_Update_ReconciliationStatus called via UpdateReconciliationStatusAsync.
             string updateAppSql = $@"UPDATE {tableName}
-                                    SET Status = 1, TransactionId = @TransactionId
+                                    SET TransactionId = @TransactionId
                                     WHERE {idColumn} = @Id";
 
             await connection.ExecuteAsync(
