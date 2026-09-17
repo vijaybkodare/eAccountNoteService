@@ -84,6 +84,7 @@ builder.Services.AddScoped<TransactionService>();
 builder.Services.AddScoped<ReconciliationService>();
 builder.Services.AddScoped<BillTransMapService>();
 builder.Services.AddScoped<ChargeTransMapService>();
+builder.Services.AddScoped<AppInitService>();
 
 AppConstants.Initialize(builder.Configuration);
 
