@@ -100,7 +100,7 @@ public class ChargeOrderService
     {
         var entity = new SummaryData();
 
-        var sql = @"SELECT SUM(Amount) AS Amount, SUM(PaidAmount) AS PaidAmount
+        var sql = @"SELECT ISNULL(SUM(Amount), 0) AS Amount, ISNULL(SUM(PaidAmount), 0) AS PaidAmount
                      FROM ChargeOrder CO
                      WHERE CO.OrgId = @OrgId";
 

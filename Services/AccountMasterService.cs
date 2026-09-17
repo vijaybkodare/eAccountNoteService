@@ -36,20 +36,20 @@ public class AccountMasterService
     {
         var summary = new AccountSummary();
 
-        const string pendingChargesSql = @"SELECT SUM(Amount - PaidAmount) AS TotalPending FROM ChargeOrder WHERE OrgId = @OrgId";
-        const string pendingBillsSql = @"SELECT SUM(Amount - PaidAmount) AS TotalPending FROM BillOrder WHERE OrgId = @OrgId";
-        const string balanceSql = @"SELECT SUM(Amount) AS Total FROM AccountMaster WHERE (AccountType = 2 OR AccountType = 3) AND OrgId = @OrgId";
+        const string pendingChargesSql = @"SELECT ISNULL(SUM(Amount - PaidAmount), 0) AS TotalPending FROM ChargeOrder WHERE OrgId = @OrgId";
+        const string pendingBillsSql = @"SELECT ISNULL(SUM(Amount - PaidAmount), 0) AS TotalPending FROM BillOrder WHERE OrgId = @OrgId";
+        const string balanceSql = @"SELECT ISNULL(SUM(Amount), 0) AS Total FROM AccountMaster WHERE (AccountType = 2 OR AccountType = 3) AND OrgId = @OrgId";
 
-        summary.PendingCharges = await _dapperService.QuerySingleOrDefaultAsync<decimal>(pendingChargesSql, new { OrgId = orgId });
-        summary.PendingBills = await _dapperService.QuerySingleOrDefaultAsync<decimal>(pendingBillsSql, new { OrgId = orgId });
-        summary.Balance = await _dapperService.QuerySingleOrDefaultAsync<decimal>(balanceSql, new { OrgId = orgId });
+        summary.PendingCharges = await _dapperService.QuerySingleOrDefaultAsync<decimal?>(pendingChargesSql, new { OrgId = orgId }) ?? 0m;
+        summary.PendingBills = await _dapperService.QuerySingleOrDefaultAsync<decimal?>(pendingBillsSql, new { OrgId = orgId }) ?? 0m;
+        summary.Balance = await _dapperService.QuerySingleOrDefaultAsync<decimal?>(balanceSql, new { OrgId = orgId }) ?? 0m;
 
         return summary;
     }
 
     public async Task<bool> AddUpdateAsync(AccountMaster entity)
     {
-        if (entity.AccountId == -1)
+        if (entity.AccountId <= 0)
         {
             return await AddRecAsync(entity);
         }

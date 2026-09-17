@@ -74,7 +74,7 @@ public class DonationService
 
     public async Task<bool> AddOrUpdateAsync(DonationHeader entity)
     {
-        if (entity.DonationHeaderId == -1)
+        if (entity.DonationHeaderId <= 0)
         {
             return await AddDonationHeaderAsync(entity);
         }
