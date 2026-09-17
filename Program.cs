@@ -78,6 +78,7 @@ builder.Services.AddScoped<EmailSenderService>();
 builder.Services.AddScoped<UserProfileService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<UserAuthService>();
+builder.Services.AddScoped<IUserOrgService, UserOrgService>();
 builder.Services.AddScoped<TransNoEvaluator>();
 builder.Services.AddScoped<TransactionService>();
 builder.Services.AddScoped<ReconciliationService>();

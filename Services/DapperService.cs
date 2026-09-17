@@ -50,6 +50,21 @@ public class DapperService
         }
     }
 
+    public async Task<T?> QueryFirstOrDefaultAsync<T>(string sql, object? parameters = null, CommandType commandType = CommandType.Text)
+    {
+        try
+        {
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+            return await connection.QueryFirstOrDefaultAsync<T>(sql, parameters, commandType: commandType);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error executing QueryFirstOrDefaultAsync: {Sql}", sql);
+            throw;
+        }
+    }
+
     public async Task<int> ExecuteAsync(string sql, object? parameters = null, CommandType commandType = CommandType.Text)
     {
         try

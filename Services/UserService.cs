@@ -454,22 +454,32 @@ WHERE UA.UserProfileId = @ProfileId";
             return new ServerResponse { IsSuccess = false, Error = "Not Authenticated" };
         }
 
-        const string sql = @"SELECT UM.*, UP.OrgId, UP.ProfileId, OM.OrgName, OM.Address, UPR.RoleId, OM.AllowChargePayment, OM.AllowAdvancePayment
-FROM UserMaster UM
-INNER JOIN UserProfile UP ON UM.UserId = UP.UserId
-INNER JOIN UserProfileRole UPR ON UP.ProfileId = UPR.UserProfileId
-INNER JOIN OrgMaster OM ON UP.OrgId = OM.OrgId
-WHERE UM.MobileNo = @MobileNo";
+        const string sql = @"
+            SELECT UserId, LoginId, EmailId, MobileNo, UserName, AddedDt, AccessKey
+            FROM UserMaster
+            WHERE MobileNo = @MobileNo";
 
-        var user = await _dapperService.QuerySingleOrDefaultAsync<UserMaster>(sql, new { MobileNo = mobileNo });
+        var user = await _dapperService.QueryFirstOrDefaultAsync<UserMaster>(sql, new { MobileNo = mobileNo });
         if (user == null)
         {
             return new ServerResponse { IsSuccess = false, Error = "Record not found" };
         }
 
+        const string roleSql = @"
+            SELECT TOP 1 UPR.RoleId
+            FROM UserProfile UP
+            INNER JOIN UserProfileRole UPR ON UP.ProfileId = UPR.UserProfileId
+            WHERE UP.UserId = @UserId AND UPR.RoleId = 100";
+
+        var superAdminRoleId = await _dapperService.QuerySingleOrDefaultAsync<decimal?>(roleSql, new { UserId = user.UserId });
+        if (superAdminRoleId.HasValue && superAdminRoleId.Value == 100)
+        {
+            user.RoleId = 100;
+        }
+
         if (Utility.AppConstants.useBearerToken)
         {
-            user.AccessKey = _tokenService.GenerateToken(user.UserId, user.OrgId, user.RoleId);
+            user.AccessKey = _tokenService.GenerateToken(user.UserId, 0, user.RoleId);
         }
 
         return new ServerResponse { IsSuccess = true, Data = user };
