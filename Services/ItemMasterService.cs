@@ -70,8 +70,17 @@ public class ItemMasterService
 
     public async Task<bool> DeleteRecAsync(decimal recId)
     {
+        var item = await GetRecordByIdAsync((int)recId);
+        if (item == null)
+        {
+            return false;
+        }
+
+        var itemIdStr = recId.ToString();
+        var itemName = item.ItemName ?? string.Empty;
+
         // Ensure item is not used in ChargeOrder
-        const string checkChargeSql = "SELECT COUNT(ItemId) FROM ChargeOrder WHERE ItemId = @ItemId";
+        const string checkChargeSql = "SELECT COUNT(1) FROM ChargeOrder WHERE ItemId = @ItemId";
         var chargeCount = await _dapperService.QuerySingleOrDefaultAsync<int>(checkChargeSql, new { ItemId = recId });
         if (chargeCount > 0)
         {
@@ -79,9 +88,45 @@ public class ItemMasterService
         }
 
         // Ensure item is not used in BillOrder
-        const string checkBillSql = "SELECT COUNT(ItemId) FROM BillOrder WHERE ItemId = @ItemId";
+        const string checkBillSql = "SELECT COUNT(1) FROM BillOrder WHERE ItemId = @ItemId";
         var billCount = await _dapperService.QuerySingleOrDefaultAsync<int>(checkBillSql, new { ItemId = recId });
         if (billCount > 0)
+        {
+            return false;
+        }
+
+        // Ensure item is not used in AdvCharge
+        const string checkAdvChargeSql = "SELECT COUNT(1) FROM AdvCharge WHERE ItemId = @ItemId";
+        var advChargeCount = await _dapperService.QuerySingleOrDefaultAsync<int>(checkAdvChargeSql, new { ItemId = recId });
+        if (advChargeCount > 0)
+        {
+            return false;
+        }
+
+        // Ensure item is not used in DonationHeader
+        const string checkDonationSql = "SELECT COUNT(1) FROM DonationHeader WHERE ItemId = @ItemId";
+        var donationCount = await _dapperService.QuerySingleOrDefaultAsync<int>(checkDonationSql, new { ItemId = recId });
+        if (donationCount > 0)
+        {
+            return false;
+        }
+
+        // Ensure item is not used in OrgMaster (MonthlyMaintItem)
+        const string checkOrgSql = @"SELECT COUNT(1) FROM OrgMaster 
+                                     WHERE MonthlyMaintItem = @ItemIdStr 
+                                        OR (@ItemName <> '' AND MonthlyMaintItem = @ItemName)";
+        var orgCount = await _dapperService.QuerySingleOrDefaultAsync<int>(checkOrgSql, new { ItemIdStr = itemIdStr, ItemName = itemName });
+        if (orgCount > 0)
+        {
+            return false;
+        }
+
+        // Ensure item is not used in AppSetting (MonthlyMaintainanceItem)
+        const string checkAppSettingSql = @"SELECT COUNT(1) FROM AppSetting 
+                                            WHERE AppSettingCode = 'MonthlyMaintainanceItem' 
+                                              AND AppSettingVal = @ItemIdStr";
+        var appSettingCount = await _dapperService.QuerySingleOrDefaultAsync<int>(checkAppSettingSql, new { ItemIdStr = itemIdStr });
+        if (appSettingCount > 0)
         {
             return false;
         }

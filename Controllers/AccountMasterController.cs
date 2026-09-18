@@ -77,13 +77,22 @@ public class AccountMasterController : ControllerBase
         }
     }
 
-    // DELETE: api/accountmaster/delete/5
+    // DELETE: account/delete/5 or account/5
     [HttpDelete("delete/{id:decimal}")]
+    [HttpDelete("{id:decimal}")]
     public async Task<ActionResult<ServerResponse>> Delete(decimal id)
     {
         _logger.LogInformation("Delete endpoint called for Id {Id}", id);
         var success = await _service.DeleteRecAsync(id);
         _logger.LogInformation("Delete completed for Id {Id}, success: {Success}", id, success);
-        return Ok(new ServerResponse { IsSuccess = success });
+        if (!success)
+        {
+            return Ok(new ServerResponse
+            {
+                IsSuccess = false,
+                Error = "Account cannot be deleted because it is used in other places."
+            });
+        }
+        return Ok(new ServerResponse { IsSuccess = true });
     }
 }
