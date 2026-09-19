@@ -1,3 +1,4 @@
+using eAccountNoteService.Filters;
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using Microsoft.AspNetCore.Http;
@@ -31,6 +32,7 @@ public class BillOrderController : ControllerBase
 
     // GET: api/billorder/entity?billOrderId=0&orgId=1
     [HttpGet("entity")]
+    [RequiresPermission("bill_order.view")]
     public async Task<ActionResult<ServerResponse>> GetEntity([FromQuery] decimal billOrderId, [FromQuery] decimal orgId)
     {
         var entity = await _billOrderService.GetRecordAsync(billOrderId, orgId);
@@ -39,6 +41,7 @@ public class BillOrderController : ControllerBase
 
     // POST: api/billorder/save
     [HttpPost("save")]
+    [RequiresPermission("bill_order.create")]
     public async Task<ActionResult<ServerResponse>> Save([FromForm] BillOrder entity, IFormFile? file)
     {
         var success = await _billOrderService.AddUpdateAsync(entity, file);
@@ -47,6 +50,7 @@ public class BillOrderController : ControllerBase
 
     // GET: api/billorder/list?orgId=1
     [HttpGet("list")]
+    [RequiresPermission("bill_order.view")]
     public async Task<ActionResult<IEnumerable<BillOrder>>> GetList([FromQuery] decimal orgId)
     {
         var list = await _billOrderService.GetRecordsAsync(orgId);
@@ -55,6 +59,7 @@ public class BillOrderController : ControllerBase
 
     // POST: api/billorder/billPayment
     [HttpPost("billPayment")]
+    [RequiresPermission("bill_order.pay")]
     public async Task<ActionResult<ServerResponse>> BillPayment([FromBody] BillPayTrans entity)
     {
         if (entity.Remark == null) entity.Remark = string.Empty;
@@ -70,6 +75,7 @@ public class BillOrderController : ControllerBase
 
     // POST: api/billorder/saveBillFile
     [HttpPost("saveBillFile")]
+    [RequiresPermission("bill_order.create")]
     public async Task<ActionResult<ServerResponse>> SaveBillFile(
         [FromQuery] decimal orgId,
         [FromQuery] decimal billOrderId,
@@ -108,6 +114,9 @@ public class BillOrderController : ControllerBase
         }
     }
     [HttpGet("billtransactions")]
+    [HttpGet("/report/bill-trans")]
+    [HttpGet("/report/billtransactions")]
+    [RequiresPermission("bill_order.view", "report.view", "report.bill_trans")]
     public async Task<ActionResult<IEnumerable<BillPayTrans>>> GetBillTransactions(
             [FromQuery] decimal orgId,
             [FromQuery] decimal accountId,

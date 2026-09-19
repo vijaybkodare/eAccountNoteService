@@ -12,12 +12,18 @@ public class AuthActionFilter : IAsyncActionFilter
 {
     private readonly TokenService _tokenService;
     private readonly DapperService _dapperService;
+    private readonly IPermissionService _permissionService;
     private readonly ILogger<AuthActionFilter> _logger;
 
-    public AuthActionFilter(TokenService tokenService, DapperService dapperService, ILogger<AuthActionFilter> logger)
+    public AuthActionFilter(
+        TokenService tokenService, 
+        DapperService dapperService, 
+        IPermissionService permissionService,
+        ILogger<AuthActionFilter> logger)
     {
         _tokenService = tokenService;
         _dapperService = dapperService;
+        _permissionService = permissionService;
         _logger = logger;
     }
 
@@ -50,6 +56,33 @@ public class AuthActionFilter : IAsyncActionFilter
         {
             if (!await ValidateAccessKeyAsync(context))
             {
+                return;
+            }
+        }
+
+        // Evaluate endpoint permission if required
+        var permissionAttr = context.ActionDescriptor.EndpointMetadata.OfType<RequiresPermissionAttribute>().FirstOrDefault();
+        if (permissionAttr != null && permissionAttr.Permissions != null && permissionAttr.Permissions.Length > 0)
+        {
+            decimal roleId = 0;
+            if (context.HttpContext.Items.TryGetValue("RoleId", out var roleIdObj) && roleIdObj is decimal rid)
+            {
+                roleId = rid;
+            }
+
+            if (!_permissionService.HasPermission(roleId, permissionAttr.Permissions))
+            {
+                _logger.LogWarning("Forbidden: Role {RoleId} lacks permissions [{Permissions}] for path {Path}",
+                    roleId, string.Join(", ", permissionAttr.Permissions), request.Path);
+
+                context.Result = new ObjectResult(new Models.ServerResponse
+                {
+                    IsSuccess = false,
+                    Error = "Access denied: insufficient permissions for this operation."
+                })
+                {
+                    StatusCode = StatusCodes.Status403Forbidden
+                };
                 return;
             }
         }
@@ -110,6 +143,12 @@ public class AuthActionFilter : IAsyncActionFilter
                 context.Result = new UnauthorizedResult();
                 return false;
             }
+
+            // Store claims in HttpContext for downstream usage
+            context.HttpContext.Items["TokenClaims"] = claims;
+            context.HttpContext.Items["UserId"] = claims.UserId;
+            context.HttpContext.Items["OrgId"] = claims.OrgId;
+            context.HttpContext.Items["RoleId"] = claims.RoleId;
         }
         catch (Exception ex)
         {
@@ -149,6 +188,16 @@ public class AuthActionFilter : IAsyncActionFilter
                 context.Result = new UnauthorizedResult();
                 return false;
             }
+
+            const string roleSql = @"
+                SELECT TOP 1 UPR.RoleId
+                FROM UserProfile UP
+                INNER JOIN UserProfileRole UPR ON UP.ProfileId = UPR.UserProfileId
+                WHERE UP.UserId = @UserId
+                ORDER BY UPR.RoleId DESC";
+            var roleId = await _dapperService.QuerySingleOrDefaultAsync<decimal?>(roleSql, new { UserId = userId }) ?? 2;
+            context.HttpContext.Items["UserId"] = userId;
+            context.HttpContext.Items["RoleId"] = roleId;
         }
         catch (Exception ex)
         {

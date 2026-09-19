@@ -51,18 +51,23 @@ public class UserAuthService
                 return new ServerResponse { IsSuccess = false, Error = "Record not found" };
             }
 
-            // Check if user is Super Admin across any profile
+            // Resolve highest role for the user across profiles (100: SuperAdmin, 1: Admin, 3: Auditor, 2: NormalUser)
             const string roleSql = @"
                 SELECT TOP 1 UPR.RoleId
                 FROM UserProfile UP
                 INNER JOIN UserProfileRole UPR ON UP.ProfileId = UPR.UserProfileId
-                WHERE UP.UserId = @UserId AND UPR.RoleId = 100";
+                WHERE UP.UserId = @UserId
+                ORDER BY 
+                    CASE 
+                        WHEN UPR.RoleId = 100 THEN 1
+                        WHEN UPR.RoleId = 1 THEN 2
+                        WHEN UPR.RoleId = 3 THEN 3
+                        WHEN UPR.RoleId = 2 THEN 4
+                        ELSE 5 
+                    END ASC";
 
-            var superAdminRoleId = await _dapperService.QuerySingleOrDefaultAsync<decimal?>(roleSql, new { UserId = user.UserId });
-            if (superAdminRoleId.HasValue && superAdminRoleId.Value == 100)
-            {
-                user.RoleId = 100;
-            }
+            var userRoleId = await _dapperService.QuerySingleOrDefaultAsync<decimal?>(roleSql, new { UserId = user.UserId });
+            user.RoleId = userRoleId ?? 2;
 
             if (Utility.AppConstants.useBearerToken)
             {
@@ -153,7 +158,14 @@ public class UserAuthService
                 INNER JOIN OrgMaster OM ON UP.OrgId = OM.OrgId
                 LEFT JOIN UserProfileRole UPR ON UP.ProfileId = UPR.UserProfileId
                 WHERE UM.UserId = @UserId AND UP.OrgId = @OrgId
-                ORDER BY UPR.RoleId DESC";
+                ORDER BY 
+                    CASE 
+                        WHEN UPR.RoleId = 100 THEN 1
+                        WHEN UPR.RoleId = 1 THEN 2
+                        WHEN UPR.RoleId = 3 THEN 3
+                        WHEN UPR.RoleId = 2 THEN 4
+                        ELSE 5 
+                    END ASC";
 
             var user = await _dapperService.QueryFirstOrDefaultAsync<UserMaster>(sql, new { 
                 UserId = userId, 

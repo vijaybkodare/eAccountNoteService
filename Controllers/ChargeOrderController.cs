@@ -1,3 +1,4 @@
+using eAccountNoteService.Filters;
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using eAccountNoteService.Utility;
@@ -41,6 +42,7 @@ public class ChargeOrderController : ControllerBase
 
     // GET: api/chargeorder/latestEntity?orgId=1
     [HttpGet("latestEntity")]
+    [RequiresPermission("charge_order.view")]
     public async Task<ActionResult<ServerResponse>> LatestEntity([FromQuery] decimal orgId)
     {
         var entity = await _service.GetLatestRecordAsync(orgId);
@@ -49,6 +51,7 @@ public class ChargeOrderController : ControllerBase
 
     // GET: api/chargeorder/entity?chargeOrderId=0&orgId=1
     [HttpGet("entity")]
+    [RequiresPermission("charge_order.view")]
     public async Task<ActionResult<ServerResponse>> GetEntity([FromQuery] decimal chargeOrderId, [FromQuery] decimal orgId)
     {
         var entity = await _service.GetRecordAsync(chargeOrderId, orgId);
@@ -57,6 +60,7 @@ public class ChargeOrderController : ControllerBase
 
     // GET: api/chargeorder/list?orgId=1&fromDate=2024-01-01&toDate=2024-12-31
     [HttpGet("list")]
+    [RequiresPermission("charge_order.view")]
     public async Task<ActionResult<IEnumerable<ChargeOrder>>> GetList([FromQuery] int orgId, [FromQuery] string? fromDate, [FromQuery] string? toDate)
     {
         var list = await _service.GetRecordsAsync(orgId, fromDate, toDate);
@@ -65,6 +69,7 @@ public class ChargeOrderController : ControllerBase
 
     // POST: api/chargeorder/save
     [HttpPost("save")]
+    [RequiresPermission("charge_order.create")]
     public async Task<ActionResult<ServerResponse>> Save([FromBody] ChargeOrder entity)
     {
         var success = false;
@@ -104,6 +109,7 @@ public class ChargeOrderController : ControllerBase
 
     // POST: api/chargeorder/makeAccountChargeZero
     [HttpPost("makeAccountChargeZero")]
+    [RequiresPermission("charge_order.update")]
     public async Task<ActionResult<ServerResponse>> MakeAccountChargeZero([FromBody] MakeAccountChargeZeroRequest request)
     {
         var success = false;
@@ -131,6 +137,7 @@ public class ChargeOrderController : ControllerBase
 
     // GET: api/chargeorder/payAccounts?profileId=1
     [HttpGet("payAccounts")]
+    [RequiresPermission("charge_order.view", "charge_order.pay_view")]
     public async Task<ActionResult<IEnumerable<AccountMaster>>> PayAccounts([FromQuery] decimal profileId)
     {
         var list = await _chargePayeeDetailService.GetPayAccountsAsync(profileId);
@@ -139,6 +146,7 @@ public class ChargeOrderController : ControllerBase
 
     // GET: api/chargeorder/payCharges?orgId=1&accountId=1
     [HttpGet("payCharges")]
+    [RequiresPermission("charge_order.view", "charge_order.pay_view")]
     public async Task<ActionResult<IEnumerable<ChargePayeeDetail>>> PayCharges([FromQuery] decimal orgId, [FromQuery] decimal accountId)
     {
         var list = await _chargePayeeDetailService.GetMemberPendingChargesAsync(orgId, accountId);
@@ -147,6 +155,7 @@ public class ChargeOrderController : ControllerBase
 
     // POST: api/chargeorder/chargePayment
     [HttpPost("chargePayment")]
+    [RequiresPermission("charge_order.create", "charge_order.pay")]
     public async Task<ActionResult<ServerResponse>> ChargePayment([FromBody] ChargePayTrans entity)
     {
         var error = string.Empty;
@@ -181,6 +190,7 @@ public class ChargeOrderController : ControllerBase
 
     // POST: api/chargeorder/updateChargePayTrans
     [HttpPost("updateChargePayTrans")]
+    [RequiresPermission("charge_order.update")]
     public async Task<ActionResult<ServerResponse>> UpdateChargePayTrans([FromBody] ChargePayTrans entity)
     {
         var error = string.Empty;
@@ -219,6 +229,7 @@ public class ChargeOrderController : ControllerBase
 
     // POST: api/chargeorder/cummulativeChargePayment
     [HttpPost("cummulativeChargePayment")]
+    [RequiresPermission("charge_order.create", "charge_order.pay")]
     public async Task<ActionResult<ServerResponse>> CummulativeChargePayment([FromBody] CummulativeChargePayTrans entity)
     {
         var error = string.Empty;

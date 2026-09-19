@@ -1,3 +1,4 @@
+using eAccountNoteService.Filters;
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ public class JVOrderController : ControllerBase
 
     // GET: api/jvorder/entity?orgId=1
     [HttpGet("entity")]
+    [RequiresPermission("jv_order.view")]
     public async Task<ActionResult<ServerResponse>> GetEntity([FromQuery] decimal orgId)
     {
         var entity = await _service.GetRecordAsync(orgId);
@@ -32,6 +34,7 @@ public class JVOrderController : ControllerBase
 
     // GET: api/jvorder/list?orgId=1
     [HttpGet("list")]
+    [RequiresPermission("jv_order.view")]
     public async Task<ActionResult<IEnumerable<JVOrder>>> GetList([FromQuery] decimal orgId)
     {
         var list = await _service.GetRecordsAsync(orgId);
@@ -42,6 +45,7 @@ public class JVOrderController : ControllerBase
     // NOTE: In the legacy code this also creates Transaction rows in a DB transaction.
     // Here we only save the JVOrder itself; transaction posting is not implemented yet.
     [HttpPost("save")]
+    [RequiresPermission("jv_order.create")]
     public async Task<ActionResult<ServerResponse>> Save([FromBody] JVOrder entity)
     {
         var result = await _service.AddAsync(entity);

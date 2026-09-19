@@ -1,4 +1,5 @@
 using System.IO;
+using eAccountNoteService.Filters;
 using eAccountNoteService.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ namespace eAccountNoteService.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[RequiresPermission("report.download_pdf")]
 public class PdfReportController : ControllerBase
 {
     private readonly BillPayTransService _billPayTransService;

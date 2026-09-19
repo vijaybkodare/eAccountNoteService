@@ -27,15 +27,32 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("delete")]
+    [RequiresPermission("user.delete")]
     public async Task<ActionResult<ServerResponse>> Delete([FromForm] decimal id)
     {
         _logger.LogInformation("Delete endpoint called with Id {Id}", id);
+
+        // Guard: Only Super Admin can delete a Super Admin user
+        if (await _userService.IsSuperAdminAsync(id))
+        {
+            var callerRoleId = HttpContext.Items["RoleId"] as decimal? ?? 0;
+            if (callerRoleId != 100)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new ServerResponse
+                {
+                    IsSuccess = false,
+                    Error = "Only Super Admin can delete a Super Admin user."
+                });
+            }
+        }
+
         var success = await _userService.DeleteUserAsync(id);
         _logger.LogInformation("Delete user status for Id {Id}: {Success}", id, success);
         return Ok(new ServerResponse { IsSuccess = success });
     }
 
     [HttpGet("UpdatePassword")]
+    [RequiresPermission("user.change_password")]
     public async Task<ActionResult<ServerResponse>> UpdatePassword([FromQuery] string LoginId, [FromQuery] string OldPassword, [FromQuery] string NewPassword)
     {
         _logger.LogInformation("UpdatePassword endpoint called for LoginId {LoginId}", LoginId);
@@ -45,6 +62,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("ResetPassword")]
+    [RequiresPermission("user.reset_password")]
     public async Task<ActionResult<ServerResponse>> ResetPassword([FromQuery] string LoginId)
     {
         _logger.LogInformation("ResetPassword endpoint called for LoginId {LoginId}", LoginId);
@@ -54,6 +72,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("list")]
+    [RequiresPermission("user.view")]
     public async Task<ActionResult<IEnumerable<UserMaster>>> List([FromQuery] decimal orgId)
     {
         _logger.LogInformation("List endpoint called for OrgId {OrgId}", orgId);
@@ -63,6 +82,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("userAccounts")]
+    [RequiresPermission("user.view", "user.view_accounts")]
     public async Task<ActionResult<IEnumerable<AccountMaster>>> UserAccounts([FromQuery] decimal profileId)
     {
         _logger.LogInformation("UserAccounts endpoint called for ProfileId {ProfileId}", profileId);
@@ -72,6 +92,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("saveUserAccountAssignment")]
+    [RequiresPermission("user.assign_account")]
     public async Task<ActionResult<ServerResponse>> SaveUserAccountAssignment([FromForm] UserMaster entity)
     {
         _logger.LogInformation("SaveUserAccountAssignment endpoint called for UserId {UserId}, OrgId {OrgId}", entity.UserId, entity.OrgId);
@@ -81,9 +102,25 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("createUserWithProfile")]
+    [RequiresPermission("user.create")]
     public async Task<ActionResult<ServerResponse>> CreateUserWithProfile([FromForm] UserMaster entity)
     {
         _logger.LogInformation("CreateUserWithProfile endpoint called for LoginId {LoginId}, OrgId {OrgId}", entity.LoginId, entity.OrgId);
+
+        // Guard: Only Super Admin can assign the Super Admin role (RoleId = 100)
+        if (entity.RoleId == 100)
+        {
+            var callerRoleId = HttpContext.Items["RoleId"] as decimal? ?? 0;
+            if (callerRoleId != 100)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new ServerResponse
+                {
+                    IsSuccess = false,
+                    Error = "Only Super Admin can assign the Super Admin role."
+                });
+            }
+        }
+
         var response = await _userService.CreateUserWithProfileAsync(entity);
         _logger.LogInformation("CreateUserWithProfile response for LoginId {LoginId}: IsSuccess={IsSuccess}, Error={Error}", entity.LoginId, response.IsSuccess, response.Error);
         return Ok(response);
@@ -110,6 +147,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("SendVerificationCode")]
+    [RequiresPermission("user.update_profile")]
     public async Task<ActionResult<ServerResponse>> SendVerificationCode([FromQuery] decimal userId, [FromQuery] string mobileNo)
     {
         _logger.LogInformation("SendVerificationCode endpoint called for UserId {UserId}, MobileNo {MobileNo}", userId, mobileNo);
@@ -119,6 +157,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("VerifyAndSave")]
+    [RequiresPermission("user.update_profile")]
     public async Task<ActionResult<ServerResponse>> VerifyAndSave([FromQuery] decimal userId, [FromQuery] string mobileNo, [FromQuery] string otp)
     {
         _logger.LogInformation("VerifyAndSave endpoint called for UserId {UserId}, MobileNo {MobileNo}", userId, mobileNo);

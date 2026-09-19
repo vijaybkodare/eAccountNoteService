@@ -46,6 +46,7 @@ public class ReportController : ControllerBase
 
     // GET: api/report/chargeOrderSummary?orgId=1&fromDate=...&toDate=...
     [HttpGet("chargeOrderSummary")]
+    [RequiresPermission("report.view")]
     public async Task<ActionResult<ServerResponse>> ChargeOrderSummary([FromQuery] decimal orgId, [FromQuery] string fromDate, [FromQuery] string toDate)
     {
         var data = await _chargeOrderService.GetOrderSummaryAsync(orgId, fromDate, toDate);
@@ -54,6 +55,7 @@ public class ReportController : ControllerBase
 
     // GET: api/report/incomeExpense?orgId=1&fromDate=...&toDate=...
     [HttpGet("incomeExpense")]
+    [RequiresPermission("report.view")]
     public async Task<ActionResult<ServerResponse>> IncomeExpense([FromQuery] decimal orgId, [FromQuery] string fromDate, [FromQuery] string toDate)
     {
         var data = await _transactionService.GetIncomeExpenseAsync(orgId, fromDate, toDate);
@@ -62,6 +64,7 @@ public class ReportController : ControllerBase
 
     // GET: api/report/summaryData?orgId=1&fromDate=...&toDate=...
     [HttpGet("summaryData")]
+    [RequiresPermission("report.view")]
     public async Task<ActionResult<ServerResponse>> SummaryData([FromQuery] decimal orgId, [FromQuery] string fromDate, [FromQuery] string toDate)
     {
         // Income/expense
@@ -94,6 +97,7 @@ public class ReportController : ControllerBase
 
     // GET: api/report/chargePayTransRep?orgId=1&accountId=...&fromDate=...&toDate=...
     [HttpGet("chargePayTransRep")]
+    [RequiresPermission("report.view")]
     public async Task<ActionResult<IEnumerable<ChargePayTrans>>> ChargePayTransRep([FromQuery] decimal orgId, [FromQuery] decimal accountId, [FromQuery] string fromDate, [FromQuery] string toDate)
     {
         // Legacy code used GetAllRecords and JSON roundtrip; here we directly return the records.
@@ -103,6 +107,7 @@ public class ReportController : ControllerBase
 
     // GET: api/report/chargePayAndCummTrans?orgId=1&accountId=...&fromDate=...&toDate=...
     [HttpGet("chargePayAndCummTrans")]
+    [RequiresPermission("report.view", "report.charge_trans")]
     public async Task<ActionResult<IEnumerable<ReconciliationItem>>> ChargePayAndCummTrans([FromQuery] decimal orgId, [FromQuery] decimal accountId, [FromQuery] string fromDate, [FromQuery] string toDate)
     {
         var list = await _reconciliationService.GetRecordsAsync(orgId, accountId, fromDate, toDate);
@@ -111,6 +116,7 @@ public class ReportController : ControllerBase
 
     // GET: api/report/chargePayeeItemRep?orgId=1&accountId=...&fromDate=...&toDate=...
     [HttpGet("chargePayeeItemRep")]
+    [RequiresPermission("report.view", "report.charge_payee_item")]
     public async Task<ActionResult<IEnumerable<ChargePayeeDetail>>> ChargePayeeItemRep([FromQuery] decimal orgId, [FromQuery] decimal accountId, [FromQuery] string fromDate, [FromQuery] string toDate)
     {
         var list = await _chargePayeeDetailService.GetRecordsAsync(orgId, accountId, fromDate, toDate);
@@ -119,6 +125,7 @@ public class ReportController : ControllerBase
 
     // GET: Report/memberAccountStatus?OrgId=1&accountId=-1
     [HttpGet("memberAccountStatus")]
+    [RequiresPermission("report.view", "report.member_account_status")]
     public async Task<ActionResult> MemberAccountStatus([FromQuery] decimal orgId, [FromQuery] decimal accountId = -1)
     {
         var dt = await _chargePayeeDetailService.GetMemberAccountStatusAsync(orgId, accountId);
@@ -140,6 +147,7 @@ public class ReportController : ControllerBase
 
     // GET: api/report/downloadChargePayTransRep?orgId=1&accountId=...&fromDate=...&toDate=...
     [HttpGet("downloadChargePayTransRep")]
+    [RequiresPermission("report.download_csv")]
     public async Task<IActionResult> DownloadChargePayTransRep([FromQuery] decimal orgId, [FromQuery] decimal accountId, [FromQuery] string fromDate, [FromQuery] string toDate)
     {
         var result = await _chargePayTransService.GenerateChargePayTransCsvAsync(orgId, accountId, fromDate, toDate);
@@ -148,6 +156,7 @@ public class ReportController : ControllerBase
 
     // GET: api/report/downloadChargePayReceipt?orgId=1&cummulativeChargePayTransId=...
     [HttpGet("downloadChargePayReceipt")]
+    [RequiresPermission("receipt.download")]
     public async Task<IActionResult> DownloadChargePayReceipt([FromQuery] decimal orgId, [FromQuery] decimal id, [FromQuery] string source)
     {
         var result = await _chargePayTransService.GenerateChargePayReceiptPdfAsync(orgId, id, source);
@@ -156,6 +165,7 @@ public class ReportController : ControllerBase
 
     // GET: api/report/downloadMemberAccountStatus?orgId=1
     [HttpGet("downloadMemberAccountStatus")]
+    [RequiresPermission("report.download_csv")]
     public async Task<IActionResult> DownloadMemberAccountStatus([FromQuery] decimal orgId)
     {
         var result = await _chargePayeeDetailService.GenerateMemberAccountStatusCsvAsync(orgId);
@@ -164,6 +174,7 @@ public class ReportController : ControllerBase
 
     // GET: api/report/downloadBillReport?orgId=1
     [HttpGet("downloadBillReport")]
+    [RequiresPermission("report.download_csv")]
     public async Task<IActionResult> DownloadBillReport([FromQuery] decimal orgId)
     {
         var result = await _billOrderService.GenerateBillReportCsvAsync(orgId);
@@ -173,6 +184,7 @@ public class ReportController : ControllerBase
 
     // GET: api/report/evaluateUtrNoAsTransNo?orgId=1&accountId=...&fromDate=...&toDate=...
     [HttpGet("evaluateUtrNoAsTransNo")]
+    [RequiresPermission("report.execute")]
     public async Task<ActionResult<ServerResponse>> EvaluateUtrNoAsTransNo(
         [FromQuery] decimal orgId,
         [FromQuery] decimal accountId,

@@ -1,3 +1,4 @@
+using eAccountNoteService.Filters;
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using eAccountNoteService.Utility;
@@ -21,6 +22,7 @@ public class BankStatementController : ControllerBase
 
     // GET: api/bankstatement/list?orgId=1
     [HttpGet("list")]
+    [RequiresPermission("bank_statement.view")]
     public async Task<ActionResult<IEnumerable<BankStatementHeader>>> GetList([FromQuery] decimal orgId)
     {
         var data = await _headerService.GetRecordsAsync(orgId);
@@ -29,6 +31,7 @@ public class BankStatementController : ControllerBase
 
     // GET: api/bankstatement/entity?id=1&orgId=1
     [HttpGet("entity")]
+    [RequiresPermission("bank_statement.view")]
     public async Task<ActionResult<BankStatementHeader>> GetEntity([FromQuery] decimal id, [FromQuery] decimal orgId)
     {
         var entity = await _headerService.GetRecordAsync(id, orgId);
@@ -38,6 +41,7 @@ public class BankStatementController : ControllerBase
     // GET: api/bankstatement/report?id=1&orgId=1
     // Returns a PDF report for the specified bank statement header.
     [HttpGet("report")]
+    [RequiresPermission("bank_statement.report")]
     public async Task<FileContentResult> GetReport([FromQuery] decimal id, [FromQuery] decimal orgId)
     {
         var result = await _statementService.GenerateSingleBankStatementReportPdfAsync(id, orgId);
@@ -48,6 +52,7 @@ public class BankStatementController : ControllerBase
     // GET: api/bankstatement/bankstatementrep?orgId=1&fromDate=...&toDate=...&status=-1&transType=0&remark=...&repType=pdf
     // Returns a PDF or CSV bank statement report for the given date range depending on repType.
     [HttpGet("bankstatementrep")]
+    [RequiresPermission("bank_statement.report")]
     public async Task<IActionResult> GetBankStatementRep(
         [FromQuery] decimal orgId,
         [FromQuery] string fromDate,
@@ -63,6 +68,7 @@ public class BankStatementController : ControllerBase
 
     // GET: api/bankstatement/bankstatement?id=1&orgId=1&fromDate=...&toDate=...&remark=...
     [HttpGet("bankstatement")]
+    [RequiresPermission("bank_statement.view")]
     public async Task<ActionResult<IEnumerable<BankStatement>>> GetBankStatement([FromQuery] decimal id, [FromQuery] decimal orgId, [FromQuery] string? fromDate, [FromQuery] string? toDate, [FromQuery] string? remark)
     {
         var data = await _statementService.GetRecordsAsync(id, orgId, fromDate, toDate, -1, remark);
@@ -71,6 +77,7 @@ public class BankStatementController : ControllerBase
 
     // POST: api/bankstatement/save
     [HttpPost("save")]
+    [RequiresPermission("bank_statement.upload")]
     public async Task<bool> Save(
         [FromQuery] decimal id,
         [FromQuery] decimal orgId,
@@ -109,6 +116,7 @@ public class BankStatementController : ControllerBase
 
     // GET: api/bankstatement/statements?orgId=1&fromDate=...&toDate=...&status=0&remark=...
     [HttpGet("statements")]
+    [RequiresPermission("bank_statement.view")]
     public async Task<ActionResult<IEnumerable<BankStatement>>> GetStatements([FromQuery] decimal orgId, [FromQuery] string? fromDate, [FromQuery] string? toDate, [FromQuery] int status, [FromQuery] int transType, [FromQuery] string? remark)
     {
         var data = await _statementService.GetRecordsAsync(-1, orgId, fromDate, toDate, status, remark, transType);

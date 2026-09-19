@@ -1,3 +1,4 @@
+using eAccountNoteService.Filters;
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,7 @@ public class OrgMasterController : ControllerBase
 
     // GET: api/orgmaster/list
     [HttpGet("list")]
+    [RequiresPermission("org.view")]
     public async Task<ActionResult<IEnumerable<OrgMaster>>> GetList()
     {
         var data = await _service.GetRecordsAsync();
@@ -27,6 +29,7 @@ public class OrgMasterController : ControllerBase
 
     // GET: api/orgmaster/entity/5
     [HttpGet("entity/{id:int}")]
+    [RequiresPermission("org.view")]
     public async Task<ActionResult<OrgMaster?>> GetEntity(int id)
     {
         var entity = await _service.GetRecordAsync(id);
@@ -40,6 +43,7 @@ public class OrgMasterController : ControllerBase
     // POST: api/Org/save
     // This mirrors legacy OrgController.save(UserMaster), using Proc_Create_User under the hood
     [HttpPost("save")]
+    [RequiresPermission("org.create")]
     public async Task<ActionResult<ServerResponse>> Save([FromBody] UserMaster entity)
     {
         if (entity == null)
@@ -53,6 +57,7 @@ public class OrgMasterController : ControllerBase
 
     // POST: api/Org/update
     [HttpPost("update")]
+    [RequiresPermission("org.update")]
     public async Task<ActionResult<OrgMaster>> Update([FromBody] OrgMaster entity)
     {
         if (entity == null)
@@ -71,6 +76,7 @@ public class OrgMasterController : ControllerBase
 
     // DELETE: api/orgmaster/{id}
     [HttpDelete("{id:int}")]
+    [RequiresPermission("org.delete")]
     public async Task<IActionResult> Delete(int id)
     {
         var result = await _service.DeleteRecordAsync(id);

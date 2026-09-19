@@ -1,3 +1,4 @@
+using eAccountNoteService.Filters;
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,7 @@ public class AdvChargeController : ControllerBase
 
     // GET: api/advcharge/entity?orgId=1
     [HttpGet("entity")]
+    [RequiresPermission("adv_charge.view")]
     public async Task<ActionResult<AdvCharge>> GetEntity([FromQuery] decimal orgId)
     {
         var entity = await _service.GetRecordAsync(orgId);
@@ -28,6 +30,7 @@ public class AdvChargeController : ControllerBase
 
     // GET: api/advcharge/list?orgId=1
     [HttpGet("list")]
+    [RequiresPermission("adv_charge.view")]
     public async Task<ActionResult<IEnumerable<AdvCharge>>> GetList([FromQuery] decimal orgId)
     {
         var list = await _service.GetRecordsAsync(orgId);
@@ -36,6 +39,7 @@ public class AdvChargeController : ControllerBase
 
     // POST: api/advcharge/save
     [HttpPost("save")]
+    [RequiresPermission("adv_charge.create")]
     public async Task<ActionResult<ServerResponse>> Save([FromBody] AdvCharge entity)
     {
         var response = new ServerResponse { IsSuccess = false };
@@ -60,6 +64,7 @@ public class AdvChargeController : ControllerBase
 
     // GET: api/advcharge/account_summary?accountId=1
     [HttpGet("account_summary")]
+    [RequiresPermission("adv_charge.view")]
     public async Task<ActionResult<AdvCharge>> GetAccountSummary([FromQuery] decimal accountId)
     {
         var summary = await _service.GetGroupAccountSummaryAsync(accountId);

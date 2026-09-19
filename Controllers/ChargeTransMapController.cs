@@ -1,3 +1,4 @@
+using eAccountNoteService.Filters;
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using eAccountNoteService.Utility;
@@ -17,6 +18,7 @@ namespace eAccountNoteService.Controllers
         }
 
         [HttpGet("bankstatements")]
+        [RequiresPermission("charge_trans_map.view")]
         public async Task<ActionResult<IEnumerable<BankStatement>>> GetBankStatements(
             [FromQuery] decimal orgId,
             [FromQuery] string fromDate,
@@ -28,6 +30,7 @@ namespace eAccountNoteService.Controllers
         }
 
         [HttpPost("mapchargetrans")]
+        [RequiresPermission("charge_trans_map.save")]
         public async Task<ActionResult<ServerResponse>> MapChargeTrans(
             [FromBody] ChargeTransMap chargeTransMap)
         {
@@ -36,6 +39,7 @@ namespace eAccountNoteService.Controllers
         }
 
         [HttpGet("chargetransactions")]
+        [RequiresPermission("charge_trans_map.view")]
         public async Task<ActionResult<IEnumerable<ReconciliationItem>>> GetChargeTransactions(
             [FromQuery] decimal orgId,
             [FromQuery] decimal accountId,

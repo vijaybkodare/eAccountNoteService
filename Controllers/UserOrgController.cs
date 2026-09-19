@@ -59,6 +59,7 @@ public class UserOrgController : ControllerBase
     /// Body: { "UserId": 10, "OrgIds": [1, 2, 5] }
     /// </summary>
     [HttpPost("saveUserOrgs")]
+    [RequiresPermission("user_org.save")]
     public async Task<IActionResult> SaveUserOrgs([FromBody] SaveUserOrgsRequest request)
     {
         if (request == null || request.UserId <= 0)
@@ -75,6 +76,7 @@ public class UserOrgController : ControllerBase
     /// GET api/UserOrg/getAllUsers
     /// </summary>
     [HttpGet("getAllUsers")]
+    [RequiresPermission("user_org.view")]
     public async Task<IActionResult> GetAllUsers()
     {
         var result = await _userOrgService.GetAllUsersWithOrgCountAsync();

@@ -1,3 +1,4 @@
+using eAccountNoteService.Filters;
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ public class RevertTransController : ControllerBase
 
     // GET: api/reverttrans/listChargeTrans
     [HttpGet("listChargeTrans")]
+    [RequiresPermission("revert_trans.view")]
     public async Task<ActionResult<IEnumerable<ChargePayTrans>>> ListChargeTrans(
         [FromQuery] decimal orgId,
         [FromQuery] decimal accountId,
@@ -39,6 +41,7 @@ public class RevertTransController : ControllerBase
 
     // GET: api/reverttrans/listCummulativeChargeTrans
     [HttpGet("listCummulativeChargeTrans")]
+    [RequiresPermission("revert_trans.view")]
     public async Task<ActionResult<IEnumerable<CummulativeChargePayTrans>>> ListCummulativeChargeTrans(
         [FromQuery] decimal orgId,
         [FromQuery] decimal accountId,
@@ -51,6 +54,7 @@ public class RevertTransController : ControllerBase
 
     // GET: api/reverttrans/listAdvCharge
     [HttpGet("listAdvCharge")]
+    [RequiresPermission("revert_trans.view")]
     public async Task<ActionResult<IEnumerable<AdvCharge>>> ListAdvCharge(
         [FromQuery] decimal orgId,
         [FromQuery] decimal accountId,
@@ -63,6 +67,7 @@ public class RevertTransController : ControllerBase
 
     // GET: api/reverttrans/listBillTrans
     [HttpGet("listBillTrans")]
+    [RequiresPermission("revert_trans.view")]
     public async Task<ActionResult<IEnumerable<BillPayTrans>>> ListBillTrans(
         [FromQuery] decimal orgId,
         [FromQuery] decimal accountId,
@@ -75,6 +80,7 @@ public class RevertTransController : ControllerBase
 
     // GET: api/reverttrans/revertAdvChargeTrans/{id}
     [HttpGet("revertAdvChargeTrans")]
+    [RequiresPermission("revert_trans.execute")]
     public async Task<ActionResult<ServerResponse>> RevertAdvChargeTrans([FromQuery] decimal id)
     {
         var result = await _advChargeService.RevertAsync(id);
@@ -83,6 +89,7 @@ public class RevertTransController : ControllerBase
 
     // GET: api/reverttrans/revertChargeTrans/{id}
     [HttpGet("revertChargeTrans")]
+    [RequiresPermission("revert_trans.execute")]
     public async Task<ActionResult<ServerResponse>> RevertChargeTrans([FromQuery] decimal id)
     {
         var result = await _chargePayTransService.RevertAsync(id);
@@ -91,6 +98,7 @@ public class RevertTransController : ControllerBase
 
     // GET: api/reverttrans/revertCummulativeChargeTrans/{id}
     [HttpGet("revertCummulativeChargeTrans")]
+    [RequiresPermission("revert_trans.execute")]
     public async Task<ActionResult<ServerResponse>> RevertCummulativeChargeTrans([FromQuery] decimal id)
     {
         var result = await _cummulativeChargePayTransService.RevertAsync(id);
@@ -99,6 +107,7 @@ public class RevertTransController : ControllerBase
 
     // GET: api/reverttrans/revertBillTrans/?id={id}
     [HttpGet("revertBillTrans")]
+    [RequiresPermission("revert_trans.execute")]
     public async Task<ActionResult<ServerResponse>> RevertBillTrans([FromQuery] decimal id)
     {
         var result = await _billPayTransService.RevertAsync(id);

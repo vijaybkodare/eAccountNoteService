@@ -1,3 +1,4 @@
+using eAccountNoteService.Filters;
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,7 @@ public class ReconciliationController : ControllerBase
 
     // POST: api/reconciliation/processreconciliation?orgId=1&accountId=...&fromDate=...&toDate=...&useStoredBankStatement=true
     [HttpPost("processreconciliation")]
+    [RequiresPermission("reconciliation.process")]
     public async Task<FileContentResult> ProcessReconciliation(
         [FromQuery] decimal orgId,
         [FromQuery] decimal accountId,
@@ -43,6 +45,7 @@ public class ReconciliationController : ControllerBase
 
     // GET: api/reconciliation/reconciliation?orgId=1&accountId=...&fromDate=...&toDate=...
     [HttpGet("reconciliation")]
+    [RequiresPermission("reconciliation.view")]
     public async Task<ActionResult<IEnumerable<ReconciliationItem>>> GetReconciliation(
         [FromQuery] decimal orgId,
         [FromQuery] decimal accountId,
@@ -55,6 +58,7 @@ public class ReconciliationController : ControllerBase
 
     // GET: api/reconciliation/reconciliationrep?orgId=1&accountId=...&fromDate=...&toDate=...
     [HttpGet("reconciliationrep")]
+    [RequiresPermission("reconciliation.view")]
     public async Task<FileContentResult> GetReconciliationReport(
         [FromQuery] decimal orgId,
         [FromQuery] decimal accountId,

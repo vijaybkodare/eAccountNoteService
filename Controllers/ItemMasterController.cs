@@ -1,3 +1,4 @@
+using eAccountNoteService.Filters;
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,7 @@ public class ItemMasterController : ControllerBase
 
     // GET: api/itemmaster/list?orgId=1
     [HttpGet("list")]
+    [RequiresPermission("item.view")]
     public async Task<ActionResult<IEnumerable<ItemMaster>>> GetList([FromQuery] int orgId)
     {
         _logger.LogInformation("GetList endpoint called for OrgId {OrgId}", orgId);
@@ -30,6 +32,7 @@ public class ItemMasterController : ControllerBase
 
     // GET: api/itemmaster/entity/5
     [HttpGet("entity/{id:int}")]
+    [RequiresPermission("item.view")]
     public async Task<ActionResult<ItemMaster?>> GetEntity(int id)
     {
         _logger.LogInformation("GetEntity endpoint called for Id {Id}", id);
@@ -45,6 +48,7 @@ public class ItemMasterController : ControllerBase
 
     // POST: item/save
     [HttpPost("save")]
+    [RequiresPermission("item.save")]
     public async Task<ActionResult<ServerResponse>> Save([FromForm] ItemMaster entity)
     {
         if (entity == null)
@@ -69,6 +73,7 @@ public class ItemMasterController : ControllerBase
 
     // POST: item/delete
     [HttpPost("delete")]
+    [RequiresPermission("item.delete")]
     public async Task<ActionResult<ServerResponse>> Delete([FromForm] decimal id)
     {
         _logger.LogInformation("Delete endpoint called for Id {Id}", id);
@@ -88,6 +93,7 @@ public class ItemMasterController : ControllerBase
     // DELETE: item/delete/5 or item/5
     [HttpDelete("delete/{id:decimal}")]
     [HttpDelete("{id:decimal}")]
+    [RequiresPermission("item.delete")]
     public async Task<ActionResult<ServerResponse>> DeleteByRoute(decimal id)
     {
         _logger.LogInformation("DeleteByRoute endpoint called for Id {Id}", id);

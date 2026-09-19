@@ -52,6 +52,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDataProtection();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<DapperService>();
+builder.Services.AddSingleton<IPermissionService, PermissionService>();
 builder.Services.AddScoped<AuthActionFilter>();
 builder.Services.AddScoped<OrgMasterService>();
 builder.Services.AddScoped<AccountMasterService>();

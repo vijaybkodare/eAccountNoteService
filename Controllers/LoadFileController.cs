@@ -1,3 +1,4 @@
+using eAccountNoteService.Filters;
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using Microsoft.AspNetCore.Http;
@@ -30,6 +31,7 @@ public class LoadFileController : ControllerBase
     // Accepts an uploaded image file and extracts transaction details from it.
     // NOTE: We omit explicit [FromForm] on IFormFile to keep Swagger generation happy.
     [HttpPost("loadimage")]
+    [RequiresPermission("file.upload")]
     public async Task<ActionResult<ServerResponse>> LoadImage(IFormFile? file)
     {
         if (file == null)

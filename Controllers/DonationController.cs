@@ -1,3 +1,4 @@
+using eAccountNoteService.Filters;
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using eAccountNoteService.Utility;
@@ -20,6 +21,7 @@ public class DonationController : ControllerBase
 
     // GET: /Donation/list?orgId=1
     [HttpGet("list")]
+    [RequiresPermission("donation.view")]
     public async Task<ActionResult<IEnumerable<DonationHeader>>> GetList([FromQuery] decimal orgId)
     {
         var list = await _service.GetRecordsAsync(orgId);
@@ -28,6 +30,7 @@ public class DonationController : ControllerBase
 
     // GET: /Donation/detailList?orgId=1&donationHeaderId=1
     [HttpGet("detailList")]
+    [RequiresPermission("donation.view")]
     public async Task<ActionResult<IEnumerable<DonationDetail>>> GetDetailList([FromQuery] decimal orgId, [FromQuery] decimal donationHeaderId)
     {
         var list = await _service.GetDetailRecordsAsync(orgId, donationHeaderId);
@@ -36,6 +39,7 @@ public class DonationController : ControllerBase
 
     // GET: /Donation/entity?id=1&orgId=1
     [HttpGet("entity")]
+    [RequiresPermission("donation.view")]
     public async Task<ActionResult<DonationHeader>> Entity([FromQuery] decimal id, [FromQuery] decimal orgId)
     {
         var entity = await _service.GetRecordAsync(id, orgId);
@@ -44,6 +48,7 @@ public class DonationController : ControllerBase
 
     // POST: /Donation/save
     [HttpPost("save")]
+    [RequiresPermission("donation.create")]
     public async Task<ActionResult<bool>> Save([FromBody] DonationHeader entity)
     {
         var success = await _service.AddOrUpdateAsync(entity);
@@ -52,6 +57,7 @@ public class DonationController : ControllerBase
 
     // POST: /Donation/addDonationDetail
     [HttpPost("addDonationDetail")]
+    [RequiresPermission("donation.create")]
     public async Task<ActionResult<ServerResponse>> AddDonationDetail([FromBody] DonationDetail entity)
     {
         var error = string.Empty;

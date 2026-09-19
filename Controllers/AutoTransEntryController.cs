@@ -1,3 +1,4 @@
+using eAccountNoteService.Filters;
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ public class AutoTransEntryController : ControllerBase
 
     // POST: api/autotransentry/prepare
     [HttpPost("prepare")]
+    [RequiresPermission("auto_trans.execute")]
     public async Task<ActionResult<ServerResponse>> Prepare(
         [FromQuery] int orgId,
         [FromQuery] decimal accountId,
@@ -41,6 +43,7 @@ public class AutoTransEntryController : ControllerBase
     // GET: api/autotransentry/report
     // NOTE: RDLC report generation is not implemented; this endpoint only confirms data exists.
     [HttpGet("report")]
+    [RequiresPermission("auto_trans.view")]
     public async Task<ActionResult<IEnumerable<AutoTransEntry>>> GetReport([FromQuery] int orgId)
     {
         var data = await _mlAutoTransService.GetRecordsAsync(orgId);
@@ -49,6 +52,7 @@ public class AutoTransEntryController : ControllerBase
 
     // GET: api/autotransentry/prepare (GET variant returning auto transactions)
     [HttpGet("prepare")]
+    [RequiresPermission("auto_trans.view")]
     public async Task<ActionResult<List<AutoChargePayTrans>?>> GetAutoTransEntry(
         [FromQuery] int orgId,
         [FromQuery] decimal bankStatementHeaderId,
@@ -62,6 +66,7 @@ public class AutoTransEntryController : ControllerBase
 
     // POST: api/autotransentry/addTransToken
     [HttpPost("addTransToken")]
+    [RequiresPermission("auto_trans.save")]
     public async Task<ActionResult<ServerResponse>> AddTransToken(
         [FromQuery] int orgId,
         [FromQuery] decimal accountId,
@@ -82,6 +87,7 @@ public class AutoTransEntryController : ControllerBase
 
     // GET: api/autotransentry/getTransTokens
     [HttpGet("getTransTokens")]
+    [RequiresPermission("auto_trans.view")]
     public async Task<ActionResult<IEnumerable<AccountTransToken>>> GetTransTokens([
         FromQuery] decimal accountId,
         [FromQuery] int orgId = -1)
@@ -92,6 +98,7 @@ public class AutoTransEntryController : ControllerBase
 
     // GET: api/autotransentry/getTransTokenTypes
     [HttpGet("getTransTokenTypes")]
+    [RequiresPermission("auto_trans.view")]
     public async Task<ActionResult<IEnumerable<AccountTransToken>>> GetTransTokenTypes()
     {
         var types = await _accountTransTokenService.GetTransTokenTypesAsync();
@@ -100,6 +107,7 @@ public class AutoTransEntryController : ControllerBase
 
     // POST: api/autotransentry/delTransToken
     [HttpPost("delTransToken")]
+    [RequiresPermission("auto_trans.delete")]
     public async Task<ActionResult<ServerResponse>> DelTransToken([
         FromQuery] decimal accountId,
         [FromQuery] int tokenTypeId,
@@ -111,6 +119,7 @@ public class AutoTransEntryController : ControllerBase
 
     // GET: api/autotransentry/getAccountListWithTokens
     [HttpGet("getAccountListWithTokens")]
+    [RequiresPermission("auto_trans.view")]
     public async Task<ActionResult<IEnumerable<AccountDto>>> GetAccountListWithTokens([
         FromQuery] int orgId,
         [FromQuery] decimal accountId = -1)

@@ -469,13 +469,18 @@ WHERE UA.UserProfileId = @ProfileId";
             SELECT TOP 1 UPR.RoleId
             FROM UserProfile UP
             INNER JOIN UserProfileRole UPR ON UP.ProfileId = UPR.UserProfileId
-            WHERE UP.UserId = @UserId AND UPR.RoleId = 100";
+            WHERE UP.UserId = @UserId
+            ORDER BY 
+                CASE 
+                    WHEN UPR.RoleId = 100 THEN 1
+                    WHEN UPR.RoleId = 1 THEN 2
+                    WHEN UPR.RoleId = 3 THEN 3
+                    WHEN UPR.RoleId = 2 THEN 4
+                    ELSE 5 
+                END ASC";
 
-        var superAdminRoleId = await _dapperService.QuerySingleOrDefaultAsync<decimal?>(roleSql, new { UserId = user.UserId });
-        if (superAdminRoleId.HasValue && superAdminRoleId.Value == 100)
-        {
-            user.RoleId = 100;
-        }
+        var userRoleId = await _dapperService.QuerySingleOrDefaultAsync<decimal?>(roleSql, new { UserId = user.UserId });
+        user.RoleId = userRoleId ?? 2;
 
         if (Utility.AppConstants.useBearerToken)
         {
@@ -483,6 +488,17 @@ WHERE UA.UserProfileId = @ProfileId";
         }
 
         return new ServerResponse { IsSuccess = true, Data = user };
+    }
+
+    public async Task<bool> IsSuperAdminAsync(decimal userId)
+    {
+        const string roleSql = @"
+            SELECT TOP 1 1
+            FROM UserProfile UP
+            INNER JOIN UserProfileRole UPR ON UP.ProfileId = UPR.UserProfileId
+            WHERE UP.UserId = @UserId AND UPR.RoleId = 100";
+        var result = await _dapperService.QuerySingleOrDefaultAsync<int?>(roleSql, new { UserId = userId });
+        return result.HasValue && result.Value == 1;
     }
 
     private static string GenRandomAlphanumericString(int length)

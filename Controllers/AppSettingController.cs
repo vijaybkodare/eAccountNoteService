@@ -1,3 +1,4 @@
+using eAccountNoteService.Filters;
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,7 @@ public class AppSettingController : ControllerBase
 
     // GET: api/appsetting/monthly_maintainance_item?orgId=1
     [HttpGet("monthly_maintainance_item")]
+    [RequiresPermission("app_setting.view")]
     public async Task<ActionResult<ItemMaster>> GetMonthlyMaintainanceItem([FromQuery] decimal orgId)
     {
         // Get app setting value

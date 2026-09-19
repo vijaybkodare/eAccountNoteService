@@ -1,3 +1,4 @@
+using eAccountNoteService.Filters;
 using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,7 @@ public class AccountMasterController : ControllerBase
 
     // GET: api/accountmaster/list?orgId=1
     [HttpGet("list")]
+    [RequiresPermission("account.view")]
     public async Task<ActionResult<IEnumerable<AccountMaster>>> GetList([FromQuery] int orgId)
     {
         _logger.LogInformation("GetList endpoint called for OrgId {OrgId}", orgId);
@@ -30,6 +32,7 @@ public class AccountMasterController : ControllerBase
 
     // GET: api/accountmaster/entity/5
     [HttpGet("entity/{id:decimal}")]
+    [RequiresPermission("account.view")]
     public async Task<ActionResult<AccountMaster?>> GetEntity(decimal id)
     {
         _logger.LogInformation("GetEntity endpoint called for Id {Id}", id);
@@ -45,6 +48,7 @@ public class AccountMasterController : ControllerBase
 
     // GET: api/accountmaster/summary/1
     [HttpGet("summary/{orgId:int}")]
+    [RequiresPermission("account.view")]
     public async Task<ActionResult<AccountSummary>> GetSummary(int orgId)
     {
         _logger.LogInformation("GetSummary endpoint called for OrgId {OrgId}", orgId);
@@ -55,6 +59,7 @@ public class AccountMasterController : ControllerBase
 
     // POST: api/accountmaster/save
     [HttpPost("save")]
+    [RequiresPermission("account.save")]
     public async Task<ActionResult<ServerResponse>> Save([FromForm] AccountMaster entity)
     {
         if (entity == null)
@@ -80,6 +85,7 @@ public class AccountMasterController : ControllerBase
     // DELETE: account/delete/5 or account/5
     [HttpDelete("delete/{id:decimal}")]
     [HttpDelete("{id:decimal}")]
+    [RequiresPermission("account.delete")]
     public async Task<ActionResult<ServerResponse>> Delete(decimal id)
     {
         _logger.LogInformation("Delete endpoint called for Id {Id}", id);

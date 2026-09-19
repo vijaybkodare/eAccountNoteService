@@ -1,4 +1,5 @@
-﻿using eAccountNoteService.Models;
+using eAccountNoteService.Filters;
+using eAccountNoteService.Models;
 using eAccountNoteService.Services;
 using eAccountNoteService.Utility;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ namespace eAccountNoteService.Controllers
         }
 
         [HttpGet("bankstatements")]
+        [RequiresPermission("bill_trans_map.view")]
         public async Task<ActionResult<IEnumerable<BankStatement>>> GetBankStatements(
             [FromQuery] decimal orgId,
             [FromQuery] string fromDate,
@@ -42,6 +44,7 @@ namespace eAccountNoteService.Controllers
         }
 
         [HttpPost("mapbilltrans")]
+        [RequiresPermission("bill_trans_map.save")]
         public async Task<ActionResult<ServerResponse>> MapBillTrans(
             [FromBody] BillTransMap billTransMap)
         {
@@ -50,6 +53,7 @@ namespace eAccountNoteService.Controllers
         }
 
         [HttpGet("billtransactions")]
+        [RequiresPermission("bill_trans_map.view")]
         public async Task<ActionResult<IEnumerable<BillPayTrans>>> GetBillTransactions(
             [FromQuery] decimal orgId,
             [FromQuery] decimal accountId,
